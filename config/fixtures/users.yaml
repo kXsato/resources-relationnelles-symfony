@@ -6,3 +6,11 @@ users:
     - email: admin@gmail.com
       password: admin123
       roles: [ROLE_ADMIN]
+
+    - email: super.admin@gmail.com
+      password: admin123
+      roles: [ROLE_SUPER_ADMIN]
+
+    - email: moderator@gmail.com
+      password: admin123
+      roles: [ROLE_MODERATOR]
