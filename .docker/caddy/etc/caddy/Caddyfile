@@ -1,5 +1,5 @@
 resources-relationnelles.test {
-    tls internal
+    tls /etc/caddy/certs/resources-relationnelles.test.pem /etc/caddy/certs/resources-relationnelles.test-key.pem
 
     root * /var/www/html/public
 
