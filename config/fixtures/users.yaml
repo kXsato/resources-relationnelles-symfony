@@ -1,0 +1,8 @@
+users:
+    - email: user@gmail.com
+      password: admin123
+      roles: [ROLE_USER]
+
+    - email: admin@gmail.com
+      password: admin123
+      roles: [ROLE_ADMIN]

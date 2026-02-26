@@ -19,12 +19,11 @@ install: ## Installe le projet
 	$(MAKE) app.fixtures
 
 app.database: ## Réinitialise la base de données (drop, create, migrate)
-	$(call symfony.console,doctrine:database:drop --if-exists --force)
-	$(call symfony.console,doctrine:database:create --if-not-exists)
-	$(call symfony.console,doctrine:migrations:migrate -n)
+	$(call symfony.console,doctrine:schema:drop --force)
+	$(call symfony.console,doctrine:schema:create)
 
 app.fixtures: ## Charge les fixtures de données
-	$(call symfony.console,doctrine:fixtures:load -n)
+	$(call symfony.console,doctrine:fixtures:load --append)
 
 docker.build: ## Construit les images Docker
 	$(DOCKER_COMPOSE) build
