@@ -3,6 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Category;
+
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -20,13 +21,15 @@ class DashboardController extends AbstractDashboardController
     public function configureDashboard(): Dashboard
     {
         return Dashboard::new()
-            ->setTitle('Html');
+            ->setTitle('Super Admin Dashboard');
     }
 
     public function configureMenuItems(): iterable
-    {
-        yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
-        // yield MenuItem::linkToCrud('The Label', 'fas fa-list', EntityClass::class);
-        yield MenuItem::linkToDashboard('Catégories', 'fas fa-list', Category::class);
+    { return [
+        MenuItem::linkTo(UserCrudController::class, 'Utilisateurs', 'fas fa-users',),
+        MenuItem::LinkTo(CategoryCrudController::class, 'Catégories', 'fas fa-list'),
+        MenuItem::linkToLogout('Logout', 'fa fa-sign-out'),
+        ];
+
     }
 }
