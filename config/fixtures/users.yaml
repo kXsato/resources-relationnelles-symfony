@@ -2,15 +2,31 @@ users:
     - email: user@gmail.com
       password: admin123
       roles: [ROLE_USER]
+      userName: user
+      birthDate: 2000-01-01
+      lastLogin: 2024-01-01T12:00:00
+      registrationDate: 2024-01-01T10:00:00
 
     - email: admin@gmail.com
       password: admin123
       roles: [ROLE_ADMIN]
+      userName: admin
+      birthDate: 2000-01-01
+      lastLogin: 2024-01-01T12:00:00
+      registrationDate: 2024-01-01T10:00:00
 
     - email: super.admin@gmail.com
       password: admin123
       roles: [ROLE_SUPER_ADMIN]
+      userName: super_admin
+      birthDate: 2000-01-01
+      lastLogin: 2024-01-01T12:00:00
+      registrationDate: 2024-01-01T10:00:00
 
     - email: moderator@gmail.com
       password: admin123
       roles: [ROLE_MODERATOR]
+      userName: moderator
+      birthDate: 2000-01-01
+      lastLogin: 2024-01-01T12:00:00
+      registrationDate: 2024-01-01T10:00:00
