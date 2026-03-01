@@ -22,6 +22,9 @@ class UserFixtures extends Fixture
             $user = new User();
             $user->setEmail($userData['email']);
             $user->setRoles($userData['roles']);
+            $user->setUserName($userData['userName']);
+            $user->setBirthDate(new \DateTime($userData['birthDate']));
+            $user->setRegistrationDate(new \DateTime($userData['registrationDate']));
             $user->setPassword($this->hasher->hashPassword($user, $userData['password']));
 
             $manager->persist($user);

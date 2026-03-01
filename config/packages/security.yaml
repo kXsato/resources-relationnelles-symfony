@@ -51,7 +51,7 @@ security:
     access_control:
         - { path: ^/api/login, roles: PUBLIC_ACCESS }
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
-        # - { path: ^/admin, roles: ROLE_ADMIN }
+        # - { path: ^/admin, roles: !php/enum App\Enum\UserRole::ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
 
 when@test:
