@@ -15,6 +15,7 @@ use Doctrine\ORM\Mapping as ORM;
     // 'video' => Video::class,
     // 'game' => MiniGame::class
 ])]
+#[ORM\HasLifecycleCallbacks]
 abstract class Resource
 {
     #[ORM\Id]
@@ -103,6 +104,20 @@ abstract class Resource
         $this->updatedAt = $updatedAt;
 
         return $this;
+    }
+
+    #[ORM\PrePersist]
+    public function initTimestamps(): void
+    {
+        $now = new \DateTimeImmutable();
+        $this->createdAt = $now;
+        $this->updatedAt = $now;
+    }
+
+    #[ORM\PreUpdate]
+    public function updateTimestamp(): void
+    {
+        $this->updatedAt = new \DateTimeImmutable();
     }
 
     public function getStatus(): ?string

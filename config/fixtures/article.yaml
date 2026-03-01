@@ -1,0 +1,26 @@
+articles:
+    - title: "Introduction à la communication non-violente"
+      slug: "introduction-communication-non-violente"
+      description: "Découvrez les bases de la communication non-violente pour améliorer vos relations au quotidien."
+      status: "published"
+      content: |
+          La communication non-violente (CNV) est une approche développée par Marshall Rosenberg.
+          Elle repose sur quatre composantes : l'observation, le sentiment, le besoin et la demande.
+          En pratiquant la CNV, on apprend à exprimer ses émotions sans jugement ni reproche.
+
+    - title: "Gérer les conflits en milieu professionnel"
+      slug: "gerer-conflits-milieu-professionnel"
+      description: "Des outils concrets pour désamorcer les tensions et favoriser un climat de travail sain."
+      status: "published"
+      content: |
+          Les conflits en entreprise sont inévitables, mais ils peuvent être gérés de manière constructive.
+          Cet article présente des techniques d'écoute active et de médiation applicables au quotidien.
+
+    - title: "L'empathie comme levier de lien social"
+      slug: "empathie-levier-lien-social"
+      description: "Comprendre l'empathie et son rôle central dans la construction de relations durables."
+      status: "draft"
+      content: |
+          L'empathie ne se résume pas à ressentir ce que l'autre ressent.
+          C'est aussi la capacité à reconnaître et valider les émotions d'autrui sans les minimiser.
+          Cet article explore les différentes formes d'empathie et comment les développer.
