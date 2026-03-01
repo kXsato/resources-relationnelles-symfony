@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Rechercher une catégorie</h1>
+
+    <form method="GET">
+        <input type="text" name="name" value="{{ name }}" placeholder="Nom de la catégorie">
+        <button type="submit">Rechercher</button>
+    </form>
+
+    {% if name is not null %}
+        {% if found %}
+            <p style="color: green;">La catégorie "{{ found.name }}" existe !</p>
+        {% else %}
+            <p style="color: red;">La catégorie "{{ name }}" n'existe pas.</p>
+        {% endif %}
+    {% endif %}
+{% endblock %}
