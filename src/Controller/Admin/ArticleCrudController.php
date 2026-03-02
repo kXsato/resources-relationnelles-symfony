@@ -3,9 +3,11 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Article;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
+use EmilePerron\TinymceBundle\Form\Type\TinymceType;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
@@ -17,17 +19,25 @@ class ArticleCrudController extends AbstractCrudController
         return Article::class;
     }
 
+    public function configureCrud(Crud $crud): Crud
+    {
+        return $crud->addFormTheme('@Tinymce/form/tinymce_type.html.twig');
+    }
+
     public function configureFields(string $pageName): iterable
     {
         return [
             IdField::new('id')->hideOnForm(),
-            TextField::new('title'),
-            TextField::new('slug'),
-            TextField::new('description'),
-            DateTimeField::new('createdAt')->hideOnForm(),
-            DateTimeField::new('updatedAt')->hideOnForm(),
-            TextEditorField::new('content'),
-            ChoiceField::new('Status')
+            TextField::new('title','Titre'),
+            TextField::new('slug', 'Slug'),
+            TextField::new('description', 'Description'),
+            DateTimeField::new('createdAt', 'Date de création')->hideOnForm(),
+            DateTimeField::new('updatedAt', 'Date de mise à jour')->hideOnForm(),
+            Field::new('content', 'Contenu')
+            ->hideOnIndex()
+            ->setFormType(TinymceType::class),
+                
+            ChoiceField::new('Status', 'Statut')
                 ->setChoices([
                     'Draft' => 'draft',
                     'Published' => 'published',

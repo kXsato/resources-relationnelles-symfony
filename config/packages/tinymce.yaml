@@ -1,0 +1,4 @@
+tinymce:
+    plugins: "advlist autolink link image media lists code"
+    toolbar: "bold italic underline | bullist numlist | link image media | code"
+    config: "tinymceCustomConfig"
