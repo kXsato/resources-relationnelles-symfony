@@ -55,4 +55,9 @@ class Category
     {
         return $this->resources;
     }
+
+    public function getResourceCount(): int
+    {
+        return $this->resources->count();
+    }
 }
