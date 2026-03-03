@@ -3,8 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\Resource;
+use App\Repository\CategoryRepository;
 use App\Repository\ResourceRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -14,11 +16,14 @@ final class ResourceController extends AbstractController
      * PAGE DE LISTE : Affiche toutes les ressources (Cards)
      */
     #[Route('/resources', name: 'app_resource_list')]
-    public function list(ResourceRepository $resourceRepository): Response
+    public function list(Request $request, ResourceRepository $resourceRepository, CategoryRepository $categoryRepository): Response
     {
+        $categoryId = $request->query->getInt('category') ?: null;
+
         return $this->render('resource/list.html.twig', [
-            // On récupère uniquement ce qui est publié
-            'resources' => $resourceRepository->findBy(['status' => 'published'], ['id' => 'DESC']),
+            'resources'          => $resourceRepository->findPublished($categoryId),
+            'categories'         => $categoryRepository->findAll(),
+            'currentCategoryId'  => $categoryId,
         ]);
     }
 

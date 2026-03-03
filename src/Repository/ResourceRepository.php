@@ -16,6 +16,25 @@ class ResourceRepository extends ServiceEntityRepository
         parent::__construct($registry, Resource::class);
     }
 
+    /**
+     * @return Resource[]
+     */
+    public function findPublished(?int $categoryId = null): array
+    {
+        $qb = $this->createQueryBuilder('r')
+            ->where('r.status = :status')
+            ->setParameter('status', 'published')
+            ->orderBy('r.id', 'DESC');
+
+        if ($categoryId !== null) {
+            $qb->join('r.categories', 'c')
+               ->andWhere('c.id = :categoryId')
+               ->setParameter('categoryId', $categoryId);
+        }
+
+        return $qb->getQuery()->getResult();
+    }
+
     //    /**
     //     * @return Resource[] Returns an array of Resource objects
     //     */
