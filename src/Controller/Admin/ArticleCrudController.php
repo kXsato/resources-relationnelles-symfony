@@ -6,6 +6,7 @@ use App\Entity\Article;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
@@ -14,7 +15,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
-use Symfony\Component\Validator\Constraints\Choice;
 
 class ArticleCrudController extends AbstractCrudController
 {
@@ -30,7 +30,15 @@ class ArticleCrudController extends AbstractCrudController
 
     public function configureFilters(Filters $filters): Filters
     {
-        return $filters->add(EntityFilter::new('categories', 'Catégorie'));
+        return $filters
+            ->add(EntityFilter::new('categories', 'Catégorie'))
+            ->add(ChoiceFilter::new('status', 'Statut')->setChoices([
+                'Draft' => 'draft',
+                'Published' => 'published',
+                'Pending' => 'pending',
+                'Archived' => 'archived',
+                'Rejected' => 'rejected',
+            ]));
     }
 
     public function configureFields(string $pageName): iterable
