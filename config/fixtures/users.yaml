@@ -26,3 +26,17 @@ users:
       userName: "moderator"
       birthDate: "2000-01-01T00:00:00"
       registrationDate: "2024-01-01T10:00:00"
+
+    - email: "alice@gmail.com"
+      password: "user123"
+      roles: []
+      userName: "alice"
+      birthDate: "1995-06-15T00:00:00"
+      registrationDate: "2024-03-01T10:00:00"
+
+    - email: "bob@gmail.com"
+      password: "user123"
+      roles: []
+      userName: "bob"
+      birthDate: "1990-11-22T00:00:00"
+      registrationDate: "2024-04-10T10:00:00"

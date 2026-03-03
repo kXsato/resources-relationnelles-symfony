@@ -43,6 +43,10 @@ abstract class Resource
     #[ORM\Column(length: 20)]
     private ?string $status = null;
 
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'resources')]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?User $author = null;
+
     #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'resources')]
     #[ORM\JoinTable(name: 'resource_category')]
     private Collection $categories;
@@ -139,6 +143,18 @@ abstract class Resource
     public function setStatus(string $status): static
     {
         $this->status = $status;
+
+        return $this;
+    }
+
+    public function getAuthor(): ?User
+    {
+        return $this->author;
+    }
+
+    public function setAuthor(?User $author): static
+    {
+        $this->author = $author;
 
         return $this;
     }

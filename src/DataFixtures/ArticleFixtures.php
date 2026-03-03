@@ -4,6 +4,7 @@ namespace App\DataFixtures;
 
 use App\Entity\Article;
 use App\Entity\Category;
+use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -13,7 +14,7 @@ class ArticleFixtures extends Fixture implements DependentFixtureInterface
 {
     public function getDependencies(): array
     {
-        return [CategoryFixtures::class];
+        return [CategoryFixtures::class, UserFixtures::class];
     }
 
     public function load(ObjectManager $manager): void
@@ -30,6 +31,10 @@ class ArticleFixtures extends Fixture implements DependentFixtureInterface
 
             foreach ($articleData['categories'] as $categoryKey) {
                 $article->addCategory($this->getReference('category_' . $categoryKey, Category::class));
+            }
+
+            if (!empty($articleData['author'])) {
+                $article->setAuthor($this->getReference('user_' . $articleData['author'], User::class));
             }
 
             $manager->persist($article);
