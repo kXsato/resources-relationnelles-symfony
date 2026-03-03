@@ -1,3 +1,4 @@
-body {
-    background-color: pink;
+@import "tailwindcss";
+@plugin "../vendor/daisyui/daisyui.index.js" {
+    themes: pastel --default;
 }
