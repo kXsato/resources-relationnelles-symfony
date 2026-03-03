@@ -4,13 +4,17 @@ namespace App\Controller\Admin;
 
 use App\Entity\Article;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 use EmilePerron\TinymceBundle\Form\Type\TinymceType;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
+use Symfony\Component\Validator\Constraints\Choice;
 
 class ArticleCrudController extends AbstractCrudController
 {
@@ -22,6 +26,11 @@ class ArticleCrudController extends AbstractCrudController
     public function configureCrud(Crud $crud): Crud
     {
         return $crud->addFormTheme('@Tinymce/form/tinymce_type.html.twig');
+    }
+
+    public function configureFilters(Filters $filters): Filters
+    {
+        return $filters->add(EntityFilter::new('categories', 'Catégorie'));
     }
 
     public function configureFields(string $pageName): iterable
@@ -37,6 +46,9 @@ class ArticleCrudController extends AbstractCrudController
             ->hideOnIndex()
             ->setFormType(TinymceType::class),
                 
+            AssociationField::new('categories', 'Catégories')
+                ->setFormTypeOptions(['by_reference' => false]),
+
             ChoiceField::new('Status', 'Statut')
                 ->setChoices([
                     'Draft' => 'draft',
@@ -45,7 +57,7 @@ class ArticleCrudController extends AbstractCrudController
                     'Archived' => 'archived',
                     'rejected' => 'rejected',
                 ])
-                ->renderExpanded(),
+                
            
 
         ];

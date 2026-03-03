@@ -13,10 +13,11 @@ class CategoryFixtures extends Fixture
     {
         $data = Yaml::parseFile(__DIR__ . '/../../config/fixtures/category.yaml');
 
-        foreach ($data['users'] as $categoryData) {
+        foreach ($data['categories'] as $key => $categoryData) {
             $category = new Category();
             $category->setName($categoryData['name']);
             $manager->persist($category);
+            $this->addReference('category_' . $key, $category, Category::class);
         }
 
         $manager->flush();

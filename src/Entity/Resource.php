@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ResourceRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -40,6 +42,15 @@ abstract class Resource
 
     #[ORM\Column(length: 20)]
     private ?string $status = null;
+
+    #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'resources')]
+    #[ORM\JoinTable(name: 'resource_category')]
+    private Collection $categories;
+
+    public function __construct()
+    {
+        $this->categories = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -136,5 +147,29 @@ abstract class Resource
     {
         $parts = explode('\\', static::class);
         return strtolower(end($parts));
+    }
+
+    /**
+     * @return Collection<int, Category>
+     */
+    public function getCategories(): Collection
+    {
+        return $this->categories;
+    }
+
+    public function addCategory(Category $category): static
+    {
+        if (!$this->categories->contains($category)) {
+            $this->categories->add($category);
+        }
+
+        return $this;
+    }
+
+    public function removeCategory(Category $category): static
+    {
+        $this->categories->removeElement($category);
+
+        return $this;
     }
 }
