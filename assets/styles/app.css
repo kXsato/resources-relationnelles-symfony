@@ -1,4 +1,8 @@
 @import "tailwindcss";
+
+@theme {
+    --container-center: true;
+}
 @plugin "../vendor/daisyui/daisyui.index.js" {
     themes: pastel --default;
 }
