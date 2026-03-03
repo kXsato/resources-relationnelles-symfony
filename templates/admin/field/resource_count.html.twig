@@ -1,0 +1,10 @@
+{% if field.value > 0 %}
+    {% set url = ea_url()
+        .setController('App\\Controller\\Admin\\ArticleCrudController')
+        .setAction('index')
+        .set('filters', {'categories': {'comparison': '=', 'value': [entity.instance.id]}})
+        .generateUrl() %}
+    <a href="{{ url }}">{{ field.value }}</a>
+{% else %}
+    0
+{% endif %}

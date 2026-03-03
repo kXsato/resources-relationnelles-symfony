@@ -1,0 +1,13 @@
+{% extends '@!EasyAdmin/layout.html.twig' %}
+
+{% block head_javascript %}
+    {{ parent() }}
+    <script>
+        window.tinymceCustomConfig = {
+            license_key: 'gpl',
+            extended_valid_elements: 'iframe[src|width|height|frameborder|allowfullscreen|allow|title|class|id|style]',
+        };
+    </script>
+    <script src="{{ asset('bundles/tinymce/ext/tinymce/tinymce.min.js') }}"></script>
+    <script src="{{ asset('bundles/tinymce/ext/tinymce-webcomponent.js') }}" type="module"></script>
+{% endblock %}

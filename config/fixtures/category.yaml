@@ -1,4 +1,24 @@
-users:
-    - name: Santé
+categories:
+    communication:
+        name: "Communication"
 
-    - name: Jeux-video
+    empathie:
+        name: "Empathie"
+
+    bien_etre:
+        name: "Bien-être"
+
+    gestion_conflits:
+        name: "Gestion des conflits"
+
+    lien_social:
+        name: "Lien social"
+
+    developpement_personnel:
+        name: "Développement personnel"
+
+    nature:
+        name: "Nature & Ressourcement"
+
+    emotions:
+        name: "Émotions"
