@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ressources{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+
+    <header class="mb-5 text-center">
+        <h1 class="display-5 fw-bold">Découvrez nos ressources</h1>
+        <p class="text-muted fs-5">Articles et contenus pour enrichir vos relations</p>
+    </header>
+
+    {% if resources is empty %}
+        <div class="text-center py-5">
+            <p class="text-muted fs-5">Aucune ressource n'est disponible pour le moment.</p>
+        </div>
+    {% else %}
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            {% for resource in resources %}
+                <div class="col">
+                    <div class="card h-100 shadow-sm border-0">
+
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                {% set type = resource.resourceType %}
+                                {% if type == 'article' %}
+                                    <span class="badge bg-primary">📄 Article</span>
+                                {% elseif type == 'video' %}
+                                    <span class="badge bg-danger">🎬 Vidéo</span>
+                                {% elseif type == 'game' %}
+                                    <span class="badge bg-success">🎮 Jeu</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">{{ type|capitalize }}</span>
+                                {% endif %}
+                                <small class="text-muted">{{ resource.createdAt|date('d/m/Y') }}</small>
+                            </div>
+
+                            <h5 class="card-title fw-semibold">{{ resource.title }}</h5>
+                            {% set desc = resource.description|default('Découvrez cette ressource !') %}
+                            <p class="card-text text-muted">
+                                {{ desc|length > 100 ? desc|slice(0, 100) ~ '...' : desc }}
+                            </p>
+                        </div>
+
+                        <div class="card-footer bg-transparent border-top-0 pb-3">
+                            <a href="{{ path('app_resource_show', { id: resource.id }) }}" class="btn btn-primary w-100">
+                                Consulter
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+</div>
+{% endblock %}
