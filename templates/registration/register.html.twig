@@ -1,21 +1,51 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Register{% endblock %}
+{% block title %}Inscription{% endblock %}
 
 {% block body %}
-    <h1>Register</h1>
-
-    {{ form_errors(registrationForm) }}
-
-    {{ form_start(registrationForm) }}
-        {{ form_row(registrationForm.userName) }}
-        {{ form_row(registrationForm.email) }}
-        {{form_row(registrationForm.birthDate)}}
-        {{ form_row(registrationForm.plainPassword, {
-            label: 'Password'
-        }) }}
-        {{ form_row(registrationForm.agreeTerms) }}
-
-        <button type="submit" class="btn">S'inscrire</button>
-    {{ form_end(registrationForm) }}
+    <div class="hero grow">
+        <div class="hero-content flex-col lg:flex-row-reverse">
+            <div class="text-center lg:text-left">
+                <h1 class="text-5xl font-bold">Inscription</h1>
+                <p class="py-6">
+                    Rejoignez notre communauté et accédez à des ressources relationnelles pour mieux comprendre et améliorer vos relations au quotidien.
+                </p>
+            </div>
+            <div class="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
+                <div class="card-body">
+                    {{ form_errors(registrationForm) }}
+                    {{ form_start(registrationForm) }}
+                        <div class="flex flex-col gap-4">
+                            <div class="flex flex-col gap-2">
+                                {{ form_label(registrationForm.userName, "Nom d'utilisateur") }}
+                                {{ form_widget(registrationForm.userName, { attr: { class: 'input', placeholder: "Votre nom d'utilisateur" } }) }}
+                                {{ form_errors(registrationForm.userName) }}
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                {{ form_label(registrationForm.email, 'Adresse e-mail') }}
+                                {{ form_widget(registrationForm.email, { attr: { class: 'input', placeholder: 'mon@email.com' } }) }}
+                                {{ form_errors(registrationForm.email) }}
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                {{ form_label(registrationForm.birthDate, 'Date de naissance') }}
+                                {{ form_widget(registrationForm.birthDate, { attr: { class: 'input' } }) }}
+                                {{ form_errors(registrationForm.birthDate) }}
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                {{ form_label(registrationForm.plainPassword, 'Mot de passe') }}
+                                {{ form_widget(registrationForm.plainPassword, { attr: { class: 'input', placeholder: 'Votre mot de passe' } }) }}
+                                {{ form_errors(registrationForm.plainPassword) }}
+                            </div>
+                            <div class="flex flex-row gap-2 items-center">
+                                {{ form_widget(registrationForm.agreeTerms) }}
+                                {{ form_label(registrationForm.agreeTerms, "J'accepte les conditions d'utilisation") }}
+                                {{ form_errors(registrationForm.agreeTerms) }}
+                            </div>
+                            <button type="submit" class="btn btn-neutral mt-4">S'inscrire</button>
+                        </div>
+                    {{ form_end(registrationForm) }}
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
