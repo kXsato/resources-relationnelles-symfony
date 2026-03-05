@@ -3,6 +3,8 @@
 namespace App\Controller\Dashboard\Moderator;
 
 use App\Entity\User;
+use App\Enum\ResourceStatus;
+use App\Repository\ArticleRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -17,7 +19,10 @@ use Symfony\Component\HttpFoundation\Response;
 #[AdminDashboard(routePath: '/moderator', routeName: 'moderator_dashboard')]
 class ModeratorDashboardController extends AbstractDashboardController
 {
-    public function __construct(private AdminUrlGenerator $adminUrlGenerator) {}
+    public function __construct(
+        private AdminUrlGenerator $adminUrlGenerator,
+        private ArticleRepository $articleRepository,
+    ) {}
 
     public function index(): Response
     {
@@ -41,8 +46,11 @@ class ModeratorDashboardController extends AbstractDashboardController
 
     public function configureMenuItems(): iterable
     {
+        $pendingCount = $this->articleRepository->count(['status' => ResourceStatus::PENDING->value]);
+
         yield MenuItem::linkToDashboard('Mon profil', 'fas fa-user');
-        yield MenuItem::linkTo(ModeratorArticleCrudController::class, 'Articles en attente', 'fas fa-clock');
+        yield MenuItem::linkTo(ModeratorArticleCrudController::class, 'Articles en attente', 'fas fa-clock')
+            ->setBadge($pendingCount > 0 ? $pendingCount : null, 'danger');
         yield MenuItem::linkToLogout('Déconnexion', 'fas fa-sign-out');
     }
 }

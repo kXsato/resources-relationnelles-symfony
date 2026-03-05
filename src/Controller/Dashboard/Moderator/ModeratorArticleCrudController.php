@@ -29,9 +29,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 
 //TODO: Ajouter une confirmation avant de valider un article (modal JS) pour éviter les validations accidentelles.
-//TODO: Avoir un bouton pour afficher les articles en attente dans l'ordre de la date de publication.
 //TODO: Afficher une alerte sur le tableau de bord du modérateur s'il y a des articles en attente depuis plus de 48h pour éviter les délais de modération trop longs.
-//TODO: ajouter un badge sur le menu "Articles en attente" indiquant le nombre d'articles en attente pour attirer l'attention des modérateurs.
 //TODO: Ajouter une section "Commentaires" pour permettre aux modérateurs de valider ou supprimer les commentaires signalés.
 /**
  * CRUD des articles en attente de validation pour les modérateurs.
