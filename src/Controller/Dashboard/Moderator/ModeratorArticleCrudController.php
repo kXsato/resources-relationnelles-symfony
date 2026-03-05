@@ -82,10 +82,8 @@ class ModeratorArticleCrudController extends AbstractCrudController
             ->update(Crud::PAGE_DETAIL, Action::INDEX, fn(Action $a) => $a
                 ->setLabel('Retour à la liste')
                 ->setIcon('fas fa-arrow-left'))
-            // Page édition : "Enregistrer", "Valider", "Retour à la liste"
-            ->update(Crud::PAGE_EDIT, Action::SAVE_AND_RETURN, fn(Action $a) => $a
-                ->setLabel('Enregistrer')
-                ->setIcon('fas fa-save'))
+            // Page édition : "Valider", "Retour à la liste"
+            ->remove(Crud::PAGE_EDIT, Action::SAVE_AND_RETURN)
             ->add(Crud::PAGE_EDIT, Action::INDEX)
             ->update(Crud::PAGE_EDIT, Action::INDEX, fn(Action $a) => $a
                 ->setLabel('Retour à la liste')
