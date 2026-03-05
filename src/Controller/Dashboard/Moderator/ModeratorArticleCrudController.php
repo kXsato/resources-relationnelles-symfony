@@ -24,6 +24,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -42,6 +43,7 @@ class ModeratorArticleCrudController extends AbstractCrudController
     public function __construct(
         private RequestStack $requestStack,
         private AdminUrlGenerator $adminUrlGenerator,
+        private Security $security,
     ) {}
 
     public static function getEntityFqcn(): string
@@ -72,12 +74,16 @@ class ModeratorArticleCrudController extends AbstractCrudController
      */
     public function configureActions(Actions $actions): Actions
     {
+        $currentUser = $this->security->getUser();
+
         $validate = Action::new('validate', 'Valider', 'fas fa-check')
             ->displayAsButton()
             ->askConfirmation('Êtes-vous sûr de vouloir valider cet article ?')
             ->addCssClass('btn btn-success')
-            ->setHtmlAttributes(['name' => '_save_btn', 'value' => ResourceStatus::PUBLISHED->value],)
-            ->linkToCrudAction(Action::SAVE_AND_RETURN);
+            ->setHtmlAttributes(['name' => '_save_btn', 'value' => ResourceStatus::PUBLISHED->value])
+            ->linkToCrudAction(Action::SAVE_AND_RETURN)
+            // Un modérateur ne peut pas valider ses propres articles
+            ->displayIf(fn(Article $article) => $article->getAuthor()?->getId() !== $currentUser?->getId());
 
         return $actions
             ->disable(Action::NEW, Action::DELETE)

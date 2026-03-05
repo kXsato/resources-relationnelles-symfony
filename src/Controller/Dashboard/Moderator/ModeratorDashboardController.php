@@ -49,6 +49,7 @@ class ModeratorDashboardController extends AbstractDashboardController
         $pendingCount = $this->articleRepository->count(['status' => ResourceStatus::PENDING->value]);
 
         yield MenuItem::linkToDashboard('Mon profil', 'fas fa-user');
+        yield MenuItem::linkTo(ModeratorOwnArticleCrudController::class, 'Mes articles', 'fas fa-newspaper');
         yield MenuItem::linkTo(ModeratorArticleCrudController::class, 'Articles en attente', 'fas fa-clock')
             ->setBadge($pendingCount > 0 ? $pendingCount : null, 'danger');
         yield MenuItem::linkToLogout('Déconnexion', 'fas fa-sign-out');
