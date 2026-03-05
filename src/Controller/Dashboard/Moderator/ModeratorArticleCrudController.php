@@ -74,8 +74,9 @@ class ModeratorArticleCrudController extends AbstractCrudController
     {
         $validate = Action::new('validate', 'Valider', 'fas fa-check')
             ->displayAsButton()
+            ->askConfirmation('Êtes-vous sûr de vouloir valider cet article ?')
             ->addCssClass('btn btn-success')
-            ->setHtmlAttributes(['name' => '_save_btn', 'value' => ResourceStatus::PUBLISHED->value])
+            ->setHtmlAttributes(['name' => '_save_btn', 'value' => ResourceStatus::PUBLISHED->value],)
             ->linkToCrudAction(Action::SAVE_AND_RETURN);
 
         return $actions
