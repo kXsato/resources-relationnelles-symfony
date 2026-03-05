@@ -73,6 +73,7 @@ class UserArticleCrudController extends AbstractCrudController
      * - "Soumettre pour relecture" → status PENDING (_save_btn=pending)
      * - "Abandonner"           → retour à la liste sans sauvegarde
      * - "Supprimer"            → suppression de l'article (page édition uniquement)
+     * - "Consulter"            → vue lecture seule (page détail, visible sur la liste)
      */
     public function configureActions(Actions $actions): Actions
     {
@@ -88,6 +89,20 @@ class UserArticleCrudController extends AbstractCrudController
             // Suppression des boutons par défaut inutiles
             ->remove(Crud::PAGE_NEW, Action::SAVE_AND_ADD_ANOTHER)
             ->remove(Crud::PAGE_EDIT, Action::SAVE_AND_CONTINUE)
+            // Bouton "Consulter" (détail lecture seule) visible sur la liste pour tous les articles
+            ->add(Crud::PAGE_INDEX, Action::DETAIL)
+            ->update(Crud::PAGE_INDEX, Action::DETAIL, fn(Action $a) => $a
+                ->setLabel('Consulter')
+                ->setIcon('fas fa-eye'))
+            // Masquer le bouton "Modifier" sur la liste pour les articles publiés
+            ->update(Crud::PAGE_INDEX, Action::EDIT, fn(Action $a) => $a
+                ->displayIf(fn(Article $article) => $article->getStatus() !== ResourceStatus::PUBLISHED->value))
+            // Retirer le bouton "Modifier" de la page détail (lecture seule)
+            ->remove(Crud::PAGE_DETAIL, Action::EDIT)
+            // Bouton "Retour à la liste" sur la page détail (déjà présent par défaut, on le renomme)
+            ->update(Crud::PAGE_DETAIL, Action::INDEX, fn(Action $a) => $a
+                ->setLabel('Retour à la liste')
+                ->setIcon('fas fa-arrow-left'))
             // Bouton Supprimer sur la page d'édition uniquement
             ->add(Crud::PAGE_EDIT, Action::DELETE)
             ->update(Crud::PAGE_EDIT, Action::DELETE, fn(Action $a) => $a
@@ -148,6 +163,31 @@ class UserArticleCrudController extends AbstractCrudController
         $article->setStatus(ResourceStatus::DRAFT->value);
 
         return $article;
+    }
+
+    /**
+     * Bloque l'accès à la page d'édition pour les articles publiés.
+     * Complète le masquage du bouton sur la liste pour éviter tout accès direct par URL.
+     */
+    public function edit(AdminContext $context): mixed
+    {
+        /** @var Article $article */
+        $article = $context->getEntity()->getInstance();
+
+        if ($article->getStatus() === ResourceStatus::PUBLISHED->value) {
+            $this->addFlash('warning', 'Les articles publiés ne peuvent pas être modifiés.');
+
+            return $this->redirect(
+                $this->adminUrlGenerator
+                    ->setDashboard(UserDashboardController::class)
+                    ->setController(self::class)
+                    ->setAction(Action::DETAIL)
+                    ->setEntityId($article->getId())
+                    ->generateUrl()
+            );
+        }
+
+        return parent::edit($context);
     }
 
     /**
