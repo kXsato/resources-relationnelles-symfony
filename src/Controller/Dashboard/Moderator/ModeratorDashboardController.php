@@ -42,6 +42,7 @@ class ModeratorDashboardController extends AbstractDashboardController
     public function configureMenuItems(): iterable
     {
         yield MenuItem::linkToDashboard('Mon profil', 'fas fa-user');
+        yield MenuItem::linkTo(ModeratorArticleCrudController::class, 'Articles en attente', 'fas fa-clock');
         yield MenuItem::linkToLogout('Déconnexion', 'fas fa-sign-out');
     }
 }

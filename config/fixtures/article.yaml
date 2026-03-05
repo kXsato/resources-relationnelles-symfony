@@ -39,6 +39,30 @@ articles:
       categories: [nature, bien_etre]
       content: "<p>Se reconnecter à la nature est l'un des moyens les plus accessibles pour retrouver un équilibre émotionnel.</p><p>Que ce soit une simple promenade en forêt ou un moment de contemplation au bord de l'eau, ces instants permettent de ralentir et de renouer avec soi-même.</p><figure><img src=\"https://images.pexels.com/photos/36385973/pexels-photo-36385973.jpeg\" alt=\"Paysage naturel apaisant\" style=\"max-width: 100%; height: auto;\"/></figure><p>Ces espaces de silence et de beauté nous rappellent l'essentiel et nous aident à mieux nous relier aux autres.</p>"
 
+    - title: "Le pouvoir de l'ecoute active"
+      slug: "pouvoir-ecoute-active"
+      description: "Comment l'ecoute active transforme nos echanges et renforce la confiance dans les relations."
+      status: "pending"
+      author: "alice"
+      categories: [communication, empathie]
+      content: "L'ecoute active va bien au-dela du simple fait d'entendre les mots de l'autre. Elle implique une presence totale, une attention aux emotions sous-jacentes et une reformulation bienveillante."
+
+    - title: "Sortir de l'isolement grace aux cercles de parole"
+      slug: "sortir-isolement-cercles-parole"
+      description: "Les cercles de parole, une pratique ancestrale remise au gout du jour pour recreer du lien social."
+      status: "pending"
+      author: "bob"
+      categories: [lien_social, bien_etre]
+      content: "Le cercle de parole est un espace ou chacun peut s'exprimer librement, sans etre interrompu ni juge. Cette pratique favorise l'expression des emotions et le sentiment d'appartenance a une communaute."
+
+    - title: "Mieux vivre ses emotions au quotidien"
+      slug: "mieux-vivre-emotions-quotidien"
+      description: "Des pistes concretes pour identifier, accueillir et exprimer ses emotions de facon saine."
+      status: "pending"
+      author: "user"
+      categories: [emotions, developpement_personnel]
+      content: "Nos emotions sont des signaux precieux qui nous informent sur nos besoins profonds. Apprendre a les reconnaitre sans les reprimer ni les laisser nous submerger est un vrai travail sur soi."
+
     - title: "Comprendre les émotions grâce à la vidéo"
       slug: "comprendre-emotions-video"
       description: "Une ressource vidéo pour explorer les mécanismes des émotions et leur impact sur nos relations."
