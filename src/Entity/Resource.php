@@ -44,7 +44,7 @@ abstract class Resource
     private ?string $status = null;
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'resources')]
-    #[ORM\JoinColumn(nullable: true)]
+    #[ORM\JoinColumn(nullable: false)]
     private ?User $author = null;
 
     #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'resources')]

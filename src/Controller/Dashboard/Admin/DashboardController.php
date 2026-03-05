@@ -1,8 +1,6 @@
 <?php
 
-namespace App\Controller\Admin;
-
-use App\Entity\Category;
+namespace App\Controller\Dashboard\Admin;
 
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\Admin;
+namespace App\Controller\Dashboard\User;
 
 use App\Entity\User;
 use Doctrine\ORM\QueryBuilder;

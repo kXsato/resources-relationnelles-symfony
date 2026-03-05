@@ -29,14 +29,14 @@ users:
 
     - email: "alice@gmail.com"
       password: "user123"
-      roles: []
+      roles: [ROLE_USER]
       userName: "alice"
       birthDate: "1995-06-15T00:00:00"
       registrationDate: "2024-03-01T10:00:00"
 
     - email: "bob@gmail.com"
       password: "user123"
-      roles: []
+      roles: [ROLE_USER]
       userName: "bob"
       birthDate: "1990-11-22T00:00:00"
       registrationDate: "2024-04-10T10:00:00"

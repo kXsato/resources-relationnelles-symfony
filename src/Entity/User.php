@@ -194,4 +194,25 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->resources;
     }
+
+    public function addResource(Resource $resource): static
+    {
+        if (!$this->resources->contains($resource)) {
+            $this->resources->add($resource);
+            $resource->setAuthor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeResource(Resource $resource): static
+    {
+        if ($this->resources->removeElement($resource)) {
+            if ($resource->getAuthor() === $this) {
+                $resource->setAuthor(null);
+            }
+        }
+
+        return $this;
+    }
 }

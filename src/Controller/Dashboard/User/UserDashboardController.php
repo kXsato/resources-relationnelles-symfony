@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\Admin;
+namespace App\Controller\Dashboard\User;
 
 use App\Entity\User;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
@@ -38,7 +38,7 @@ class UserDashboardController extends AbstractDashboardController
     public function configureMenuItems(): iterable
     {
         yield MenuItem::linkToDashboard('Mon profil', 'fas fa-user');
-        yield MenuItem::linkTo(UserResourceCrudController::class, 'Mes ressources', 'fas fa-folder');
+        yield MenuItem::linkTo(UserArticleCrudController::class, 'Mes articles', 'fas fa-newspaper');
         yield MenuItem::linkToLogout('Déconnexion', 'fas fa-sign-out');
     }
 }

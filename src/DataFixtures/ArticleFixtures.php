@@ -34,7 +34,9 @@ class ArticleFixtures extends Fixture implements DependentFixtureInterface
             }
 
             if (!empty($articleData['author'])) {
-                $article->setAuthor($this->getReference('user_' . $articleData['author'], User::class));
+                /** @var User $user */
+                $user = $this->getReference('user_' . $articleData['author'], User::class);
+                $article->setAuthor($user);
             }
 
             $manager->persist($article);
