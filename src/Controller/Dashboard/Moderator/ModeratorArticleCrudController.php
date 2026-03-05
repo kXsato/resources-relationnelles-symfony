@@ -34,7 +34,9 @@ class ModeratorArticleCrudController extends AbstractCrudController
 
     public function configureCrud(Crud $crud): Crud
     {
-        return $crud->setPageTitle('index', 'Articles en attente');
+        return $crud
+            ->setPageTitle('index', 'Articles en attente')
+            ->setPageTitle('edit', 'Consulter l\'article');
     }
 
     /**
