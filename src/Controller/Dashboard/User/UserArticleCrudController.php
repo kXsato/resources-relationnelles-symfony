@@ -25,13 +25,17 @@ use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 use EmilePerron\TinymceBundle\Form\Type\TinymceType;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
+use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 
 class UserArticleCrudController extends AbstractCrudController
 {
     public function __construct(
         private Security $security,
         private RequestStack $requestStack,
+        private AdminUrlGenerator $adminUrlGenerator,
     ) {}
 
     public static function getEntityFqcn(): string
@@ -64,9 +68,13 @@ class UserArticleCrudController extends AbstractCrudController
             ->linkToCrudAction(Action::SAVE_AND_RETURN);
 
         return $actions
-            ->disable(Action::DELETE)
             ->remove(Crud::PAGE_NEW, Action::SAVE_AND_ADD_ANOTHER)
             ->remove(Crud::PAGE_EDIT, Action::SAVE_AND_CONTINUE)
+            ->add(Crud::PAGE_EDIT, Action::DELETE)
+            ->update(Crud::PAGE_EDIT, Action::DELETE, fn(Action $a) => $a
+                ->setLabel('Supprimer')
+                ->setIcon('fas fa-trash')
+                ->addCssClass('btn btn-danger'))
             // Renommer SAVE_AND_RETURN en "Sauvegarder" avec _save_btn=draft
             ->update(Crud::PAGE_NEW, Action::SAVE_AND_RETURN, fn(Action $a) => $a
                 ->setLabel('Sauvegarder')
@@ -115,6 +123,17 @@ class UserArticleCrudController extends AbstractCrudController
         $article->setStatus(ResourceStatus::DRAFT->value);
 
         return $article;
+    }
+
+    protected function getRedirectResponseAfterSave(AdminContext $context, string $action): RedirectResponse
+    {
+        return $this->redirect(
+            $this->adminUrlGenerator
+                ->setDashboard(UserDashboardController::class)
+                ->setController(self::class)
+                ->setAction(Action::INDEX)
+                ->generateUrl()
+        );
     }
 
     public function persistEntity(EntityManagerInterface $em, mixed $entityInstance): void
