@@ -30,6 +30,12 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 
+/**
+ * CRUD des articles pour le tableau de bord utilisateur.
+ *
+ * Chaque utilisateur ne voit et ne gère que ses propres articles.
+ * Les articles peuvent être sauvegardés en brouillon ou soumis pour relecture (pending).
+ */
 class UserArticleCrudController extends AbstractCrudController
 {
     public function __construct(
@@ -57,10 +63,21 @@ class UserArticleCrudController extends AbstractCrudController
             ->add(ChoiceFilter::new('status', 'Statut')->setChoices(ResourceStatus::choices()));
     }
 
+    /**
+     * Configure les actions disponibles sur les pages de liste, création et édition.
+     *
+     * Les boutons de sauvegarde utilisent le paramètre POST "_save_btn" pour transmettre
+     * le status voulu (draft ou pending) sans sortir du pipeline natif d'EasyAdmin.
+     *
+     * - "Sauvegarder"          → status DRAFT   (_save_btn=draft)
+     * - "Soumettre pour relecture" → status PENDING (_save_btn=pending)
+     * - "Abandonner"           → retour à la liste sans sauvegarde
+     * - "Supprimer"            → suppression de l'article (page édition uniquement)
+     */
     public function configureActions(Actions $actions): Actions
     {
-        // Bouton "Soumettre" : soumet vers saveAndReturn (même pipeline que Sauvegarder)
-        // mais avec _save_btn=pending dans le POST pour différencier dans persistEntity/updateEntity
+        // Bouton "Soumettre pour relecture" : emprunte le pipeline saveAndReturn d'EasyAdmin
+        // mais envoie _save_btn=pending pour que persistEntity/updateEntity fixe le bon status.
         $submitForReview = Action::new('submitForReview', 'Soumettre pour relecture', 'fas fa-paper-plane')
             ->displayAsButton()
             ->addCssClass('btn btn-success')
@@ -68,14 +85,16 @@ class UserArticleCrudController extends AbstractCrudController
             ->linkToCrudAction(Action::SAVE_AND_RETURN);
 
         return $actions
+            // Suppression des boutons par défaut inutiles
             ->remove(Crud::PAGE_NEW, Action::SAVE_AND_ADD_ANOTHER)
             ->remove(Crud::PAGE_EDIT, Action::SAVE_AND_CONTINUE)
+            // Bouton Supprimer sur la page d'édition uniquement
             ->add(Crud::PAGE_EDIT, Action::DELETE)
             ->update(Crud::PAGE_EDIT, Action::DELETE, fn(Action $a) => $a
                 ->setLabel('Supprimer')
                 ->setIcon('fas fa-trash')
                 ->addCssClass('btn btn-danger'))
-            // Renommer SAVE_AND_RETURN en "Sauvegarder" avec _save_btn=draft
+            // Renommer SAVE_AND_RETURN en "Sauvegarder" et lui associer _save_btn=draft
             ->update(Crud::PAGE_NEW, Action::SAVE_AND_RETURN, fn(Action $a) => $a
                 ->setLabel('Sauvegarder')
                 ->setIcon('fas fa-save')
@@ -86,7 +105,7 @@ class UserArticleCrudController extends AbstractCrudController
                 ->setIcon('fas fa-save')
                 ->addCssClass('btn btn-secondary')
                 ->setHtmlAttributes(['name' => '_save_btn', 'value' => ResourceStatus::DRAFT->value]))
-            // Bouton Abandonner (lien simple vers la liste, sans sauvegarde)
+            // Bouton Abandonner : lien vers la liste, sans soumettre le formulaire
             ->add(Crud::PAGE_NEW, Action::INDEX)
             ->add(Crud::PAGE_EDIT, Action::INDEX)
             ->update(Crud::PAGE_NEW, Action::INDEX, fn(Action $a) => $a
@@ -101,6 +120,9 @@ class UserArticleCrudController extends AbstractCrudController
             ->add(Crud::PAGE_EDIT, $submitForReview);
     }
 
+    /**
+     * Restreint la liste aux articles dont l'utilisateur connecté est l'auteur.
+     */
     public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
     {
         $qb = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters);
@@ -113,6 +135,9 @@ class UserArticleCrudController extends AbstractCrudController
         return $qb;
     }
 
+    /**
+     * Initialise un nouvel article avec l'auteur connecté et le status brouillon par défaut.
+     */
     public function createEntity(string $entityFqcn): Article
     {
         /** @var User $user */
@@ -125,6 +150,13 @@ class UserArticleCrudController extends AbstractCrudController
         return $article;
     }
 
+    /**
+     * Redirige toujours vers la liste des articles après une sauvegarde.
+     *
+     * Override nécessaire car nos boutons utilisent "name=_save_btn" au lieu du
+     * paramètre natif "ea[newForm][btn]", ce qui ferait sinon atterrir sur le profil
+     * utilisateur (comportement par défaut du dashboard sans contrôleur spécifié).
+     */
     protected function getRedirectResponseAfterSave(AdminContext $context, string $action): RedirectResponse
     {
         return $this->redirect(
@@ -136,12 +168,18 @@ class UserArticleCrudController extends AbstractCrudController
         );
     }
 
+    /**
+     * Applique le status issu du paramètre POST "_save_btn" avant la persistance.
+     */
     public function persistEntity(EntityManagerInterface $em, mixed $entityInstance): void
     {
         $entityInstance->setStatus($this->getIntendedStatus()->value);
         parent::persistEntity($em, $entityInstance);
     }
 
+    /**
+     * Applique le status issu du paramètre POST "_save_btn" avant la mise à jour.
+     */
     public function updateEntity(EntityManagerInterface $em, mixed $entityInstance): void
     {
         $entityInstance->setStatus($this->getIntendedStatus()->value);
@@ -150,7 +188,7 @@ class UserArticleCrudController extends AbstractCrudController
 
     /**
      * Lit le paramètre POST "_save_btn" pour déterminer le status voulu.
-     * Défaut : DRAFT si le paramètre est absent ou invalide.
+     * Retourne DRAFT si le paramètre est absent ou invalide.
      */
     private function getIntendedStatus(): ResourceStatus
     {
@@ -168,6 +206,7 @@ class UserArticleCrudController extends AbstractCrudController
             ->hideOnIndex()
             ->setFormType(TinymceType::class);
         yield AssociationField::new('categories', 'Catégories');
+        // Le status est en lecture seule sur le formulaire (géré par les boutons)
         yield ChoiceField::new('status', 'Statut')
             ->setChoices(ResourceStatus::choices())
             ->hideOnForm();
