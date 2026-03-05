@@ -82,26 +82,37 @@ class ModeratorArticleCrudController extends AbstractCrudController
 
     /**
      * Champs affichés selon la page :
-     * - Liste et détail : tous les champs en lecture seule
-     * - Formulaire d'édition : uniquement les catégories
+     * - Liste    : titre, catégories, auteur, statut, date de création
+     * - Détail   : tous les champs en lecture seule
+     * - Édition  : titre, slug, description, contenu, auteur, dates (lecture seule) + catégories (modifiable)
      */
     public function configureFields(string $pageName): iterable
     {
+        $readonly = ['readonly' => 'readonly'];
+
         yield TextField::new('title', 'Titre')
-            ->hideOnForm();
+            ->setFormTypeOption('attr', $readonly);
+        yield TextField::new('slug', 'Slug')
+            ->hideOnIndex()
+            ->setFormTypeOption('attr', $readonly);
         yield TextField::new('description', 'Description')
-            ->hideOnForm()
-            ->hideOnIndex();
+            ->hideOnIndex()
+            ->setFormTypeOption('attr', $readonly);
+        // Contenu affiché en lecture seule sur le formulaire (textarea non éditable)
         yield Field::new('content', 'Contenu')
-            ->hideOnForm()
-            ->hideOnIndex();
+            ->hideOnIndex()
+            ->setFormTypeOption('attr', ['readonly' => 'readonly', 'rows' => 10]);
         yield AssociationField::new('categories', 'Catégories');
+        // Auteur en lecture seule sur le formulaire
         yield AssociationField::new('author', 'Auteur')
-            ->hideOnForm();
+            ->setFormTypeOption('disabled', true);
         yield ChoiceField::new('status', 'Statut')
             ->setChoices(ResourceStatus::choices())
             ->hideOnForm();
         yield DateTimeField::new('createdAt', 'Créé le')
-            ->hideOnForm();
+            ->setFormTypeOption('disabled', true);
+        yield DateTimeField::new('updatedAt', 'Modifié le')
+            ->hideOnIndex()
+            ->setFormTypeOption('disabled', true);
     }
 }
