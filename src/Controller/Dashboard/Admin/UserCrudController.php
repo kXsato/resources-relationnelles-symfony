@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Controller\Admin;
+namespace App\Controller\Dashboard\Admin;
 
 use App\Entity\User;
-use Dom\Text;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;

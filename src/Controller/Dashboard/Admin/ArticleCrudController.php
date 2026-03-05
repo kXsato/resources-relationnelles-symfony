@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Controller\Admin;
+namespace App\Controller\Dashboard\Admin;
 
 use App\Entity\Article;
+use App\Enum\ResourceStatus;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
@@ -32,13 +33,7 @@ class ArticleCrudController extends AbstractCrudController
     {
         return $filters
             ->add(EntityFilter::new('categories', 'Catégorie'))
-            ->add(ChoiceFilter::new('status', 'Statut')->setChoices([
-                'Draft' => 'draft',
-                'Published' => 'published',
-                'Pending' => 'pending',
-                'Archived' => 'archived',
-                'Rejected' => 'rejected',
-            ]));
+            ->add(ChoiceFilter::new('status', 'Statut')->setChoices(ResourceStatus::choices()));
     }
 
     public function configureFields(string $pageName): iterable
@@ -58,13 +53,7 @@ class ArticleCrudController extends AbstractCrudController
                 ->setFormTypeOptions(['by_reference' => false]),
 
             ChoiceField::new('status', 'Statut')
-                ->setChoices([
-                    'Draft' => 'draft',
-                    'Published' => 'published',
-                    'Pending' => 'pending',
-                    'Archived' => 'archived',
-                    'Rejected' => 'rejected',
-                ]),
+                ->setChoices(ResourceStatus::choices()),
         ];
     }
 }

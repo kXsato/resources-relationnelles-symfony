@@ -3,6 +3,7 @@ articles:
       slug: "introduction-communication-non-violente"
       description: "Découvrez les bases de la communication non-violente pour améliorer vos relations au quotidien."
       status: "published"
+      author: "alice"
       categories: [communication, bien_etre]
       content: |
           La communication non-violente (CNV) est une approche développée par Marshall Rosenberg.
@@ -13,6 +14,7 @@ articles:
       slug: "gerer-conflits-milieu-professionnel"
       description: "Des outils concrets pour désamorcer les tensions et favoriser un climat de travail sain."
       status: "published"
+      author: "alice"
       categories: [gestion_conflits, communication]
       content: |
           Les conflits en entreprise sont inévitables, mais ils peuvent être gérés de manière constructive.
@@ -22,6 +24,7 @@ articles:
       slug: "empathie-levier-lien-social"
       description: "Comprendre l'empathie et son rôle central dans la construction de relations durables."
       status: "draft"
+      author: "bob"
       categories: [empathie, lien_social]
       content: |
           L'empathie ne se résume pas à ressentir ce que l'autre ressent.
@@ -32,6 +35,7 @@ articles:
       slug: "nature-espace-ressourcement"
       description: "Découvrez comment la connexion avec la nature favorise le bien-être émotionnel et renforce les liens humains."
       status: "published"
+      author: "bob"
       categories: [nature, bien_etre]
       content: "<p>Se reconnecter à la nature est l'un des moyens les plus accessibles pour retrouver un équilibre émotionnel.</p><p>Que ce soit une simple promenade en forêt ou un moment de contemplation au bord de l'eau, ces instants permettent de ralentir et de renouer avec soi-même.</p><figure><img src=\"https://images.pexels.com/photos/36385973/pexels-photo-36385973.jpeg\" alt=\"Paysage naturel apaisant\" style=\"max-width: 100%; height: auto;\"/></figure><p>Ces espaces de silence et de beauté nous rappellent l'essentiel et nous aident à mieux nous relier aux autres.</p>"
 
@@ -39,5 +43,6 @@ articles:
       slug: "comprendre-emotions-video"
       description: "Une ressource vidéo pour explorer les mécanismes des émotions et leur impact sur nos relations."
       status: "published"
+      author: "user"
       categories: [emotions, developpement_personnel]
       content: "<p>Les émotions jouent un rôle fondamental dans nos interactions sociales. Comprendre leur origine et leur fonctionnement est une étape clé vers des relations plus épanouissantes.</p><p>Voici une ressource vidéo pour approfondir ce sujet :</p><figure><iframe src=\"https://www.youtube.com/embed/9Gi122XqU6c\" width=\"560\" height=\"315\" title=\"Comprendre les émotions\" frameborder=\"0\" allowfullscreen=\"true\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture\"></iframe></figure><p>Prenez le temps de visionner cette vidéo et de noter ce qui résonne avec votre propre expérience.</p>"
