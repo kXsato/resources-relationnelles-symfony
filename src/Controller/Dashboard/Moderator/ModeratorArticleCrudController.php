@@ -28,8 +28,6 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-
-
 //TODO: Afficher une alerte sur le tableau de bord du modérateur s'il y a des articles en attente depuis plus de 48h pour éviter les délais de modération trop longs.
 //TODO: Ajouter une section "Commentaires" pour permettre aux modérateurs de valider ou supprimer les commentaires signalés.
 /**
@@ -121,7 +119,9 @@ class ModeratorArticleCrudController extends AbstractCrudController
         $qb = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters);
 
         $qb->andWhere('entity.status = :status')
-           ->setParameter('status', ResourceStatus::PENDING->value);
+           ->setParameter('status', ResourceStatus::PENDING->value)
+           ->andWhere('entity.author != :currentUser')
+           ->setParameter('currentUser', $this->security->getUser());
 
         return $qb;
     }

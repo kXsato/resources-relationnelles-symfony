@@ -46,7 +46,9 @@ class ModeratorDashboardController extends AbstractDashboardController
 
     public function configureMenuItems(): iterable
     {
-        $pendingCount = $this->articleRepository->count(['status' => ResourceStatus::PENDING->value]);
+        /** @var \App\Entity\User $moderator */
+        $moderator = $this->getUser();
+        $pendingCount = $this->articleRepository->countPendingExcludingAuthor($moderator);
 
         yield MenuItem::linkToDashboard('Mon profil', 'fas fa-user');
         yield MenuItem::linkTo(ModeratorOwnArticleCrudController::class, 'Mes articles', 'fas fa-newspaper');
