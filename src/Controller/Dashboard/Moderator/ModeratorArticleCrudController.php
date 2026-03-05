@@ -4,12 +4,14 @@ namespace App\Controller\Dashboard\Moderator;
 
 use App\Entity\Article;
 use App\Enum\ResourceStatus;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
@@ -18,15 +20,23 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * CRUD des articles en attente de validation pour les modérateurs.
  *
- * Les modérateurs peuvent consulter les articles avec le statut "pending"
- * et modifier uniquement leurs catégories.
+ * Les modérateurs peuvent consulter les articles avec le statut "pending",
+ * modifier leurs catégories, et les valider (status → published).
  */
 class ModeratorArticleCrudController extends AbstractCrudController
 {
+    public function __construct(
+        private RequestStack $requestStack,
+        private AdminUrlGenerator $adminUrlGenerator,
+    ) {}
+
     public static function getEntityFqcn(): string
     {
         return Article::class;
@@ -40,11 +50,20 @@ class ModeratorArticleCrudController extends AbstractCrudController
     }
 
     /**
-     * Configure les actions : lecture seule sur la liste et le détail,
-     * formulaire d'édition limité aux catégories.
+     * Configure les actions disponibles.
+     *
+     * - "Enregistrer"  → sauvegarde les catégories sans changer le statut (_save_btn absent)
+     * - "Valider"      → publie l'article (_save_btn=published)
+     * - "Retour"       → retour à la liste sans sauvegarde
      */
     public function configureActions(Actions $actions): Actions
     {
+        $validate = Action::new('validate', 'Valider', 'fas fa-check')
+            ->displayAsButton()
+            ->addCssClass('btn btn-success')
+            ->setHtmlAttributes(['name' => '_save_btn', 'value' => ResourceStatus::PUBLISHED->value])
+            ->linkToCrudAction(Action::SAVE_AND_RETURN);
+
         return $actions
             ->disable(Action::NEW, Action::DELETE)
             ->remove(Crud::PAGE_EDIT, Action::SAVE_AND_CONTINUE)
@@ -63,10 +82,16 @@ class ModeratorArticleCrudController extends AbstractCrudController
             ->update(Crud::PAGE_DETAIL, Action::INDEX, fn(Action $a) => $a
                 ->setLabel('Retour à la liste')
                 ->setIcon('fas fa-arrow-left'))
-            // Page édition : renommer le bouton de sauvegarde
+            // Page édition : "Enregistrer", "Valider", "Retour à la liste"
             ->update(Crud::PAGE_EDIT, Action::SAVE_AND_RETURN, fn(Action $a) => $a
                 ->setLabel('Enregistrer')
-                ->setIcon('fas fa-save'));
+                ->setIcon('fas fa-save'))
+            ->add(Crud::PAGE_EDIT, Action::INDEX)
+            ->update(Crud::PAGE_EDIT, Action::INDEX, fn(Action $a) => $a
+                ->setLabel('Retour à la liste')
+                ->setIcon('fas fa-arrow-left')
+                ->addCssClass('btn btn-link'))
+            ->add(Crud::PAGE_EDIT, $validate);
     }
 
     /**
@@ -80,6 +105,36 @@ class ModeratorArticleCrudController extends AbstractCrudController
            ->setParameter('status', ResourceStatus::PENDING->value);
 
         return $qb;
+    }
+
+    /**
+     * Change le statut uniquement si le bouton "Valider" a été cliqué (_save_btn=published).
+     * Sinon, conserve le statut existant (sauvegarde des catégories uniquement).
+     */
+    public function updateEntity(EntityManagerInterface $em, mixed $entityInstance): void
+    {
+        $value = $this->requestStack->getCurrentRequest()?->request->get('_save_btn');
+        $newStatus = ResourceStatus::tryFrom($value);
+
+        if ($newStatus !== null) {
+            $entityInstance->setStatus($newStatus->value);
+        }
+
+        parent::updateEntity($em, $entityInstance);
+    }
+
+    /**
+     * Redirige toujours vers la liste des articles en attente après une sauvegarde.
+     */
+    protected function getRedirectResponseAfterSave(AdminContext $context, string $action): RedirectResponse
+    {
+        return $this->redirect(
+            $this->adminUrlGenerator
+                ->setDashboard(ModeratorDashboardController::class)
+                ->setController(self::class)
+                ->setAction(Action::INDEX)
+                ->generateUrl()
+        );
     }
 
     /**
