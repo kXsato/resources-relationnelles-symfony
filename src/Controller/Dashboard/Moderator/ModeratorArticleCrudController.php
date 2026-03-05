@@ -29,7 +29,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 
-//TODO: Ajouter une confirmation avant de valider un article (modal JS) pour éviter les validations accidentelles.
+
 //TODO: Afficher une alerte sur le tableau de bord du modérateur s'il y a des articles en attente depuis plus de 48h pour éviter les délais de modération trop longs.
 //TODO: Ajouter une section "Commentaires" pour permettre aux modérateurs de valider ou supprimer les commentaires signalés.
 /**

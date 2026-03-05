@@ -182,7 +182,7 @@ class UserArticleCrudController extends AbstractCrudController
             return $this->redirect(
                 $this->adminUrlGenerator
                     ->setDashboard($this->getDashboardClass())
-                    ->setController(self::class)
+                    ->setController(static::class)
                     ->setAction(Action::DETAIL)
                     ->setEntityId($article->getId())
                     ->generateUrl()
@@ -204,7 +204,7 @@ class UserArticleCrudController extends AbstractCrudController
         return $this->redirect(
             $this->adminUrlGenerator
                 ->setDashboard($this->getDashboardClass())
-                ->setController(self::class)
+                ->setController(static::class)
                 ->setAction(Action::INDEX)
                 ->generateUrl()
         );
