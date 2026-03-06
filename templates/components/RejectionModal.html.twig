@@ -1,0 +1,75 @@
+<div {{ attributes }}>
+    <button
+        type="button"
+        data-action="live#action"
+        data-live-action-param="open"
+        style="background-color:#E2B1B1; border:none; border-radius:0.375rem; padding:0.5rem 1rem; cursor:pointer; font-size:0.875rem; font-weight:500;"
+    >
+        <i class="fas fa-times"></i> Rejeter
+    </button>
+
+    {% if isOpen %}
+        <div style="position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.4);">
+            <div style="
+                background: rgba(255,255,255,0.2);
+                backdrop-filter: blur(14px);
+                -webkit-backdrop-filter: blur(14px);
+                border: 1px solid rgba(255,255,255,0.35);
+                border-radius: 1rem;
+                padding: 2rem;
+                min-width: 420px;
+                max-width: 560px;
+                box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+                background-color: #fff;
+            ">
+                <h3 style="margin:0 0 0.75rem;font-size:1.125rem;font-weight:600;color:#374151;">
+                    Rejeter l'article
+                </h3>
+                <p style="margin:0 0 1rem;color:#5F6C80;font-size:0.875rem;line-height:1.5;">
+                    Veuillez indiquer la raison du rejet. Ce motif sera transmis à l'auteur.
+                </p>
+                <textarea
+                    data-model="on(change)|rejectionReason"
+                    placeholder="Motif du rejet…"
+                    rows="4"
+                    style="
+                        width:100%;
+                        box-sizing:border-box;
+                        border:1px solid {{ hasError ? '#EF4444' : '#D1D5DB' }};
+                        border-radius:0.5rem;
+                        padding:0.625rem 0.75rem;
+                        font-size:0.875rem;
+                        color:#5F6C80;
+                        resize:vertical;
+                        outline:none;
+                    "
+                >{{ rejectionReason }}</textarea>
+
+                {% if hasError %}
+                    <p style="margin:0.25rem 0 0;font-size:0.75rem;color:#EF4444;">
+                        Le motif de rejet est obligatoire.
+                    </p>
+                {% endif %}
+
+                <div style="display:flex;justify-content:flex-end;gap:0.75rem;margin-top:1.25rem;">
+                    <button
+                        type="button"
+                        data-action="live#action"
+                        data-live-action-param="close"
+                        style="padding:0.5rem 1rem;border:1px solid #D1D5DB;border-radius:0.375rem;background:#fff;color:#374151;cursor:pointer;font-size:0.875rem;"
+                    >
+                        Annuler
+                    </button>
+                    <button
+                        type="button"
+                        data-action="live#action"
+                        data-live-action-param="confirm"
+                        style="padding:0.5rem 1rem;border:none;border-radius:0.375rem;background:#E2B1B1;color:#374151;cursor:pointer;font-size:0.875rem;font-weight:500;"
+                    >
+                        Confirmer le rejet
+                    </button>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>

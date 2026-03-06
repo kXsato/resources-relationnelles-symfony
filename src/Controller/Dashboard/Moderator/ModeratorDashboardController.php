@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Enum\ResourceStatus;
 use App\Repository\ArticleRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
@@ -37,6 +38,11 @@ class ModeratorDashboardController extends AbstractDashboardController
                 ->setEntityId($user->getId())
                 ->generateUrl()
         );
+    }
+
+    public function configureAssets(): Assets
+    {
+        return Assets::new()->addAssetMapperEntry('app');
     }
 
     public function configureDashboard(): Dashboard
