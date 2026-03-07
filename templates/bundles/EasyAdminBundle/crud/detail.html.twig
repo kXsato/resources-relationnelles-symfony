@@ -19,7 +19,7 @@
 {% block main %}
     {% set ea = ea() %}
 
-    {% if ea.crud.controllerFqcn == 'App\\Controller\\Dashboard\\User\\UserArticleCrudController'
+    {% if is_crud_controller(ea.crud.controllerFqcn, 'App\\Contract\\OwnArticleCrudControllerInterface')
         and entity.instance.status == 'rejected'
         and entity.instance.rejectionReason
     %}

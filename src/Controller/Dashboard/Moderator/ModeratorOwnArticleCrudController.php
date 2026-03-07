@@ -2,16 +2,12 @@
 
 namespace App\Controller\Dashboard\Moderator;
 
-use App\Controller\Dashboard\User\UserArticleCrudController;
+use App\Controller\Dashboard\Common\BaseOwnArticleCrudController;
 
 /**
- * CRUD des articles personnels du modérateur.
- *
- * Hérite de UserArticleCrudController pour réutiliser toute la logique
- * (filtrage par auteur, boutons Sauvegarder / Soumettre / Abandonner, etc.)
- * en pointant vers le dashboard modérateur au lieu du dashboard utilisateur.
+ * CRUD des articles personnels du modérateur connecté.
  */
-class ModeratorOwnArticleCrudController extends UserArticleCrudController
+class ModeratorOwnArticleCrudController extends BaseOwnArticleCrudController
 {
     protected function getDashboardClass(): string
     {
