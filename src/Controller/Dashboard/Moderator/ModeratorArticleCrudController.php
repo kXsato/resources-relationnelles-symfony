@@ -6,6 +6,7 @@ use App\Entity\Article;
 use App\Enum\ResourceStatus;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
+use Symfony\Component\HttpFoundation\Response;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
@@ -42,6 +43,7 @@ class ModeratorArticleCrudController extends AbstractCrudController
         private RequestStack $requestStack,
         private AdminUrlGenerator $adminUrlGenerator,
         private Security $security,
+        private EntityManagerInterface $em,
     ) {}
 
     public static function getEntityFqcn(): string
@@ -66,7 +68,6 @@ class ModeratorArticleCrudController extends AbstractCrudController
     /**
      * Configure les actions disponibles.
      *
-     * - "Enregistrer"  → sauvegarde les catégories sans changer le statut (_save_btn absent)
      * - "Valider"      → publie l'article (_save_btn=published)
      * - "Retour"       → retour à la liste sans sauvegarde
      */
@@ -83,24 +84,27 @@ class ModeratorArticleCrudController extends AbstractCrudController
             // Un modérateur ne peut pas valider ses propres articles
             ->displayIf(fn(Article $article) => $article->getAuthor()?->getId() !== $currentUser?->getId());
 
+        $validateDetail = Action::new('validateArticle', 'Valider', 'fas fa-check')
+            ->addCssClass('btn btn-success')
+            ->askConfirmation('Êtes-vous sûr de vouloir valider cet article ?')
+            ->linkToCrudAction('validateArticle')
+            ->displayIf(fn(Article $article) => $article->getAuthor()?->getId() !== $currentUser?->getId());
+
         return $actions
             ->disable(Action::NEW, Action::DELETE)
             ->remove(Crud::PAGE_EDIT, Action::SAVE_AND_CONTINUE)
-            // Page liste : bouton "Consulter" et bouton "Modifier les catégories"
+            // Page liste : clic sur le titre → page détail ; EDIT retiré de l'index
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
             ->update(Crud::PAGE_INDEX, Action::DETAIL, fn(Action $a) => $a
                 ->setLabel('Consulter')
                 ->setIcon('fas fa-eye'))
-            ->update(Crud::PAGE_INDEX, Action::EDIT, fn(Action $a) => $a
-                ->setLabel('Modifier les catégories')
-                ->setIcon('fas fa-tags'))
-            // Page détail : bouton "Modifier les catégories"
+            ->remove(Crud::PAGE_INDEX, Action::EDIT)
+            // Page détail : "Modifier les catégories", "Valider" — Rejeter et Retour gérés dans le template
+            ->add(Crud::PAGE_DETAIL, $validateDetail)
             ->update(Crud::PAGE_DETAIL, Action::EDIT, fn(Action $a) => $a
                 ->setLabel('Modifier les catégories')
                 ->setIcon('fas fa-tags'))
-            ->update(Crud::PAGE_DETAIL, Action::INDEX, fn(Action $a) => $a
-                ->setLabel('Retour à la liste')
-                ->setIcon('fas fa-arrow-left'))
+            ->remove(Crud::PAGE_DETAIL, Action::INDEX)
             // Page édition : "Valider", "Retour à la liste"
             ->remove(Crud::PAGE_EDIT, Action::SAVE_AND_RETURN)
             ->add(Crud::PAGE_EDIT, Action::INDEX)
@@ -109,6 +113,30 @@ class ModeratorArticleCrudController extends AbstractCrudController
                 ->setIcon('fas fa-arrow-left')
                 ->addCssClass('btn btn-link'))
             ->add(Crud::PAGE_EDIT, $validate);
+    }
+
+    /**
+     * Valide un article depuis la page de détail (pas de formulaire → action custom).
+     */
+    public function validateArticle(AdminContext $context): Response
+    {
+        /** @var Article $article */
+        $article = $context->getEntity()->getInstance();
+
+        if ($article->getAuthor()?->getUserIdentifier() === $this->security->getUser()?->getUserIdentifier()) {
+            throw $this->createAccessDeniedException('Vous ne pouvez pas valider votre propre article.');
+        }
+
+        $article->setStatus(ResourceStatus::PUBLISHED->value);
+        $this->em->flush();
+
+        return $this->redirect(
+            $this->adminUrlGenerator
+                ->setDashboard(ModeratorDashboardController::class)
+                ->setController(self::class)
+                ->setAction(Action::INDEX)
+                ->generateUrl()
+        );
     }
 
     /**
