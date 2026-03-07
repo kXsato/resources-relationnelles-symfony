@@ -37,7 +37,7 @@ class AdminDashboardController extends AbstractDashboardController
     public function configureDashboard(): Dashboard
     {
         return Dashboard::new()
-            ->setTitle('Super Admin Dashboard');
+            ->setTitle('Espace Admin');
     }
 
     public function configureMenuItems(): iterable
