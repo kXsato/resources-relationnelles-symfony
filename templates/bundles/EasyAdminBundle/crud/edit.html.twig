@@ -1,13 +1,29 @@
 {% extends '@!EasyAdmin/crud/edit.html.twig' %}
 
 {% block page_actions %}
+    {% set ea = ea() %}
+
     {{ parent() }}
 
-    {% set ea = ea() %}
     {% if ea.crud.controllerFqcn == 'App\\Controller\\Dashboard\\Moderator\\ModeratorArticleCrudController'
         and entity.instance.author is not null
         and entity.instance.author.id != app.user.id
     %}
         {{ component('RejectionModal', { articleId: entity.instance.id }) }}
     {% endif %}
+{% endblock %}
+
+{% block main %}
+    {% set ea = ea() %}
+
+    {% if is_crud_controller(ea.crud.controllerFqcn, 'App\\Contract\\OwnArticleCrudControllerInterface')
+        and entity.instance.status == 'rejected'
+        and entity.instance.rejectionReason
+    %}
+        <div role="alert" class="alert alert-warning alert-soft">
+            <span><strong>Motif de rejet :</strong> {{ entity.instance.rejectionReason }}</span>
+        </div>
+    {% endif %}
+
+    {{ parent() }}
 {% endblock %}
