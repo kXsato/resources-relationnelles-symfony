@@ -72,6 +72,14 @@ abstract class BaseOwnArticleCrudController extends AbstractCrudController imple
      */
     public function configureActions(Actions $actions): Actions
     {
+        // Boutons custom : EasyAdmin affiche les boutons (displayAsButton) avant les liens,
+        // dans leur ordre d'ajout. L'ordre d'add() détermine l'ordre d'affichage.
+        $saveDraft = Action::new('saveDraft', 'Sauvegarder', 'fas fa-save')
+            ->displayAsButton()
+            ->addCssClass('btn btn-secondary')
+            ->setHtmlAttributes(['name' => '_save_btn', 'value' => ResourceStatus::DRAFT->value])
+            ->linkToCrudAction(Action::SAVE_AND_RETURN);
+
         $submitForReview = Action::new('submitForReview', 'Soumettre pour relecture', 'fas fa-paper-plane')
             ->displayAsButton()
             ->addCssClass('btn btn-success')
@@ -80,7 +88,9 @@ abstract class BaseOwnArticleCrudController extends AbstractCrudController imple
 
         return $actions
             ->remove(Crud::PAGE_NEW, Action::SAVE_AND_ADD_ANOTHER)
+            ->remove(Crud::PAGE_NEW, Action::SAVE_AND_RETURN)
             ->remove(Crud::PAGE_EDIT, Action::SAVE_AND_CONTINUE)
+            ->remove(Crud::PAGE_EDIT, Action::SAVE_AND_RETURN)
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
             ->update(Crud::PAGE_INDEX, Action::DETAIL, fn(Action $a) => $a
                 ->setLabel('Consulter')
@@ -91,33 +101,27 @@ abstract class BaseOwnArticleCrudController extends AbstractCrudController imple
             ->update(Crud::PAGE_DETAIL, Action::INDEX, fn(Action $a) => $a
                 ->setLabel('Retour à la liste')
                 ->setIcon('fas fa-arrow-left'))
+            // Ordre affiché : Sauvegarder | Soumettre | Supprimer | Retour à la liste
+            // Boutons (displayAsButton) en premier, liens ensuite — dans l'ordre d'ajout
+            ->add(Crud::PAGE_NEW, $saveDraft)
+            ->add(Crud::PAGE_EDIT, $saveDraft)
+            ->add(Crud::PAGE_NEW, $submitForReview)
+            ->add(Crud::PAGE_EDIT, $submitForReview)
             ->add(Crud::PAGE_EDIT, Action::DELETE)
             ->update(Crud::PAGE_EDIT, Action::DELETE, fn(Action $a) => $a
                 ->setLabel('Supprimer')
                 ->setIcon('fas fa-trash')
                 ->addCssClass('btn btn-danger'))
-            ->update(Crud::PAGE_NEW, Action::SAVE_AND_RETURN, fn(Action $a) => $a
-                ->setLabel('Sauvegarder')
-                ->setIcon('fas fa-save')
-                ->addCssClass('btn btn-secondary')
-                ->setHtmlAttributes(['name' => '_save_btn', 'value' => ResourceStatus::DRAFT->value]))
-            ->update(Crud::PAGE_EDIT, Action::SAVE_AND_RETURN, fn(Action $a) => $a
-                ->setLabel('Sauvegarder')
-                ->setIcon('fas fa-save')
-                ->addCssClass('btn btn-secondary')
-                ->setHtmlAttributes(['name' => '_save_btn', 'value' => ResourceStatus::DRAFT->value]))
             ->add(Crud::PAGE_NEW, Action::INDEX)
             ->add(Crud::PAGE_EDIT, Action::INDEX)
             ->update(Crud::PAGE_NEW, Action::INDEX, fn(Action $a) => $a
-                ->setLabel('Abandonner')
-                ->setIcon('fas fa-times')
+                ->setLabel('Retour à la liste')
+                ->setIcon('fas fa-arrow-left')
                 ->addCssClass('btn btn-link text-danger'))
             ->update(Crud::PAGE_EDIT, Action::INDEX, fn(Action $a) => $a
-                ->setLabel('Abandonner')
-                ->setIcon('fas fa-times')
-                ->addCssClass('btn btn-link text-danger'))
-            ->add(Crud::PAGE_NEW, $submitForReview)
-            ->add(Crud::PAGE_EDIT, $submitForReview);
+                ->setLabel('Retour à la liste')
+                ->setIcon('fas fa-arrow-left')
+                ->addCssClass('btn btn-link text-danger'));
     }
 
     /**
@@ -228,6 +232,10 @@ abstract class BaseOwnArticleCrudController extends AbstractCrudController imple
 
     /**
      * Lit le paramètre POST "_save_btn" pour déterminer le status voulu.
+     *
+     * - Bouton "Sauvegarder"              → _save_btn=draft    → DRAFT
+     * - Bouton "Soumettre pour relecture" → _save_btn=pending  → PENDING
+     *
      * Retourne DRAFT si le paramètre est absent ou invalide.
      */
     private function getIntendedStatus(): ResourceStatus
