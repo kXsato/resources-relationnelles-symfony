@@ -30,6 +30,8 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 
+
+//TODO: modifier l'ordre des boutons d'action (Soumettre, sauvegarder, abandonner).
 /**
  * CRUD des articles pour le tableau de bord utilisateur.
  *
@@ -179,8 +181,8 @@ class UserArticleCrudController extends AbstractCrudController
 
             return $this->redirect(
                 $this->adminUrlGenerator
-                    ->setDashboard(UserDashboardController::class)
-                    ->setController(self::class)
+                    ->setDashboard($this->getDashboardClass())
+                    ->setController(static::class)
                     ->setAction(Action::DETAIL)
                     ->setEntityId($article->getId())
                     ->generateUrl()
@@ -201,11 +203,20 @@ class UserArticleCrudController extends AbstractCrudController
     {
         return $this->redirect(
             $this->adminUrlGenerator
-                ->setDashboard(UserDashboardController::class)
-                ->setController(self::class)
+                ->setDashboard($this->getDashboardClass())
+                ->setController(static::class)
                 ->setAction(Action::INDEX)
                 ->generateUrl()
         );
+    }
+
+    /**
+     * Retourne la classe du dashboard associé à ce contrôleur.
+     * Peut être surchargée dans les sous-classes (ex. modérateur).
+     */
+    protected function getDashboardClass(): string
+    {
+        return UserDashboardController::class;
     }
 
     /**

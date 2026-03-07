@@ -1595,6 +1595,9 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *     powerpaste_html_import?: scalar|Param|null,
  *     powerpaste_allow_local_images?: scalar|Param|null,
  * }
+ * @psalm-type LiveComponentConfig = array{
+ *     secret?: scalar|Param|null, // The secret used to compute fingerprints and checksums // Default: "%kernel.secret%"
+ * }
  * @psalm-type ConfigType = array{
  *     imports?: ImportsConfig,
  *     parameters?: ParametersConfig,
@@ -1612,6 +1615,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *     twig_component?: TwigComponentConfig,
  *     lexik_jwt_authentication?: LexikJwtAuthenticationConfig,
  *     tinymce?: TinymceConfig,
+ *     live_component?: LiveComponentConfig,
  *     "when@dev"?: array{
  *         imports?: ImportsConfig,
  *         parameters?: ParametersConfig,
@@ -1632,6 +1636,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         twig_component?: TwigComponentConfig,
  *         lexik_jwt_authentication?: LexikJwtAuthenticationConfig,
  *         tinymce?: TinymceConfig,
+ *         live_component?: LiveComponentConfig,
  *     },
  *     "when@prod"?: array{
  *         imports?: ImportsConfig,
@@ -1650,6 +1655,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         twig_component?: TwigComponentConfig,
  *         lexik_jwt_authentication?: LexikJwtAuthenticationConfig,
  *         tinymce?: TinymceConfig,
+ *         live_component?: LiveComponentConfig,
  *     },
  *     "when@test"?: array{
  *         imports?: ImportsConfig,
@@ -1669,6 +1675,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         twig_component?: TwigComponentConfig,
  *         lexik_jwt_authentication?: LexikJwtAuthenticationConfig,
  *         tinymce?: TinymceConfig,
+ *         live_component?: LiveComponentConfig,
  *     },
  *     ...<string, ExtensionType|array{ // extra keys must follow the when@%env% pattern or match an extension alias
  *         imports?: ImportsConfig,

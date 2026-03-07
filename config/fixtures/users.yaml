@@ -21,7 +21,7 @@ users:
       registrationDate: "2024-01-01T10:00:00"
 
     - email: "moderator@gmail.com"
-      password: "admin123"
+      password: "modo123"
       roles: [ROLE_MODERATOR]
       userName: "moderator"
       birthDate: "2000-01-01T00:00:00"

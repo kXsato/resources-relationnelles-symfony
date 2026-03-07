@@ -23,14 +23,13 @@ class DashboardController extends AbstractDashboardController
     }
 
     public function configureMenuItems(): iterable
-    { return [
-        MenuItem::linkTo(UserCrudController::class, 'Utilisateurs', 'fas fa-users',),
-        MenuItem::LinkTo(CategoryCrudController::class, 'Catégories', 'fas fa-list'),
-        MenuItem::subMenu('Ressources', 'fas fa-folder')->setSubItems([
-            MenuItem::linkTo(ArticleCrudController::class, 'Articles', 'fas fa-book'),
-        ]),
-        MenuItem::linkToLogout('Logout', 'fa fa-sign-out'),
-        ];
-
+    { 
+        yield MenuItem::linkTo(UserCrudController::class, 'Utilisateurs', 'fas fa-users',);
+        yield MenuItem::LinkTo(CategoryCrudController::class, 'Catégories', 'fas fa-list');
+        yield MenuItem::subMenu ('Ressources','fas fa-folder')->setSubItems([
+            yield MenuItem::linkTo(ArticleCrudController::class, 'Articles', 'fas fa-book')
+        ]);
+        yield MenuItem::linkToLogout('Logout', 'fa fa-sign-out');
+       
     }
 }
