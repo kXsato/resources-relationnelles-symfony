@@ -31,10 +31,9 @@
 </article>
 
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    const btn = document.getElementById('btn-favorite');
-    if (!btn) return;
+const btn = document.getElementById('btn-favorite');
 
+if (btn) {
     const articleId = btn.dataset.articleId;
 
     fetch('/favorites/list')
@@ -62,6 +61,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     });
-});
+}
 </script>
 {% endblock %}
