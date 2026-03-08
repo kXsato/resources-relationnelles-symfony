@@ -13,9 +13,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
-use App\Enum\UserRole;
 use Symfony\Bundle\SecurityBundle\Security;
 
 class UserCrudController extends AbstractCrudController
@@ -39,30 +39,37 @@ class UserCrudController extends AbstractCrudController
         return $qb;
     }
 
+    public function configureActions(Actions $actions): Actions
+    {
+        return $actions
+            ->disable(Action::NEW, Action::EDIT)
+            ->add(Crud::PAGE_INDEX, Action::DETAIL)
+            ->update(Crud::PAGE_INDEX, Action::DETAIL, fn(Action $a) => $a
+                ->setLabel('Consulter')
+                ->setIcon('fas fa-eye'));
+    }
+
     public function configureCrud(Crud $crud): Crud
     {
-       return $crud
-       ->setPageTitle('index', 'Gérer les utilisateurs')
-       ;
+        return $crud->setPageTitle('index', 'Gérer les utilisateurs');
     }
-    
+
     public function configureFields(string $pageName): iterable
     {
+        $readonly = ['readonly' => 'readonly'];
+
         return [
             IdField::new('id')->hideOnForm(),
-            TextField::new('username'),
-            EmailField::new('email'),
-            ChoiceField::new('roles')
-                ->setChoices([
-                    'Super Admin' => UserRole::ROLE_SUPER_ADMIN->value,
-                    'Admin' => UserRole::ROLE_ADMIN->value,
-                    'Moderator' => UserRole::ROLE_MODERATOR->value,
-                ])
-                ->allowMultipleChoices()
-                ->renderExpanded(),
-            DateTimeField::new('BirthDate'),
-            DateTimeField::new('registrationDate'),
-            DateTimeField::new('lastLogin'),
+            TextField::new('username')
+                ->setFormTypeOption('attr', $readonly),
+            EmailField::new('email')
+                ->setFormTypeOption('attr', $readonly),
+            DateTimeField::new('BirthDate')
+                ->setFormTypeOption('attr', $readonly),
+            DateTimeField::new('registrationDate')
+                ->setFormTypeOption('attr', $readonly),
+            DateTimeField::new('lastLogin')
+                ->setFormTypeOption('attr', $readonly),
 
         ];
     }
