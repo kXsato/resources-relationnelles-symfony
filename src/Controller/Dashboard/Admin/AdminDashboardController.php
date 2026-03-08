@@ -47,11 +47,14 @@ class AdminDashboardController extends AbstractDashboardController
                 MenuItem::linkToDashboard('Mon compte', 'fas fa-user'),
                 MenuItem::linkTo(AdminOwnArticleCrudController::class, "Mes articles", 'fas fa-book'),
             ]);
-        yield MenuItem::linkTo(UserCrudController::class, 'Utilisateurs', 'fas fa-users');
-        yield MenuItem::linkTo(CategoryCrudController::class, 'Catégories', 'fas fa-list');
-        yield MenuItem::subMenu('Ressources', 'fas fa-folder')->setSubItems([
-            MenuItem::linkTo(ArticleCrudController::class, 'Articles', 'fas fa-book'),
-        ]);
+
+        yield MenuItem::subMenu('Gestion')->setSubItems(
+            [
+                MenuItem::linkTo(UserCrudController::class, 'Utilisateurs', 'fas fa-users'),
+                MenuItem::linkTo(CategoryCrudController::class, 'Catégories', 'fas fa-list'),
+                MenuItem::linkTo(ArticleCrudController::class, 'Articles', 'fas fa-book'),
+            ]);
+        
         yield MenuItem::linkToLogout('Logout', 'fa fa-sign-out');
     }
 }
