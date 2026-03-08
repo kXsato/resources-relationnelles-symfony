@@ -1,34 +1,36 @@
 <?php
 
-namespace App\Controller\Dashboard\Admin;
+namespace App\Controller\Dashboard\Common;
 
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
-use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
-use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
-use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
-use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Attribute\Route;
 
-class UserCrudController extends AbstractCrudController
+abstract class BaseUserCrudController extends AbstractCrudController
 {
     public function __construct(
-        private Security $security,
-        private EntityManagerInterface $entityManager,
-        private AdminUrlGenerator $adminUrlGenerator,
+        protected Security $security,
+        protected EntityManagerInterface $entityManager,
+        protected AdminUrlGenerator $adminUrlGenerator,
     ) {}
+
+    abstract protected function getDashboardFqcn(): string;
 
     public static function getEntityFqcn(): string
     {
@@ -42,8 +44,8 @@ class UserCrudController extends AbstractCrudController
         /** @var User $currentUser */
         $currentUser = $this->security->getUser();
         $qb->andWhere('entity.id != :currentUser')
-           ->andWhere("entity.roles NOT LIKE :adminRole")
-           ->andWhere("entity.roles NOT LIKE :superAdminRole")
+           ->andWhere('entity.roles NOT LIKE :adminRole')
+           ->andWhere('entity.roles NOT LIKE :superAdminRole')
            ->setParameter('currentUser', $currentUser->getId())
            ->setParameter('adminRole', '%ROLE_ADMIN%')
            ->setParameter('superAdminRole', '%ROLE_SUPER_ADMIN%');
@@ -122,7 +124,7 @@ class UserCrudController extends AbstractCrudController
 
         return $this->redirect(
             $this->adminUrlGenerator
-                ->setController(self::class)
+                ->setController(static::class)
                 ->setAction(Action::DETAIL)
                 ->setEntityId($user->getId())
                 ->generateUrl()

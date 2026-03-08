@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\Dashboard\Admin;
+namespace App\Controller\Dashboard\Common;
 
 use App\Entity\Category;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
@@ -11,7 +11,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
-class CategoryCrudController extends AbstractCrudController
+abstract class BaseCategoryCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string
     {
