@@ -52,7 +52,9 @@ class AdminDashboardController extends AbstractDashboardController
             [
                 MenuItem::linkTo(UserCrudController::class, 'Utilisateurs', 'fas fa-users'),
                 MenuItem::linkTo(CategoryCrudController::class, 'Catégories', 'fas fa-list'),
-                MenuItem::linkTo(ArticleCrudController::class, 'Articles', 'fas fa-book'),
+                MenuItem::linkTo(AdminArticleCrudController::class, 'Articles en attente', 'fas fa-book')
+                    ->setBadge($pendingCount > 0 ? $pendingCount : null, 'danger'),
+                MenuItem::linkTo(AdminPublishedArticleCrudController::class, 'Articles publiés', 'fas fa-check'),
             ]);
         
         yield MenuItem::linkToLogout('Logout', 'fa fa-sign-out');
