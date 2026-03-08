@@ -39,6 +39,16 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
      *
      * @return User[]
      */
+    public function countReactivationRequests(): int
+    {
+        return (int) $this->createQueryBuilder('u')
+            ->select('COUNT(u.id)')
+            ->where('u.reactivationRequestedAt IS NOT NULL')
+            ->andWhere('u.isAccountActivated = false')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
     public function findInactiveActiveUsers(\DateTimeImmutable $threshold): array
     {
         return $this->createQueryBuilder('u')
