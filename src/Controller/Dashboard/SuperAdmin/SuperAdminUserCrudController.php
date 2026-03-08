@@ -120,8 +120,7 @@ class SuperAdminUserCrudController extends BaseUserCrudController
             ->hideOnForm();
 
         yield TextField::new('accountStatus')
-            ->setLabel('Compte actif')
-            ->onlyOnDetail();
+            ->setLabel('Compte actif');
     }
 
     public function persistEntity(EntityManagerInterface $entityManager, mixed $entityInstance): void

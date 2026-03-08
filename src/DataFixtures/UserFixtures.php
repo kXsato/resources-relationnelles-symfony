@@ -26,6 +26,7 @@ class UserFixtures extends Fixture
             $user->setBirthDate(new \DateTime($userData['birthDate']));
             $user->setRegistrationDate(new \DateTime($userData['registrationDate']));
             $user->setPassword($this->hasher->hashPassword($user, $userData['password']));
+            $user->setIsAccountActivated($userData['isAccountActivated'] ?? true);
 
             $manager->persist($user);
             $this->addReference('user_' . $userData['userName'], $user);

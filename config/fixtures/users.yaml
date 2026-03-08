@@ -33,6 +33,7 @@ users:
       userName: "alice"
       birthDate: "1995-06-15T00:00:00"
       registrationDate: "2024-03-01T10:00:00"
+      isAccountActivated: true
 
     - email: "bob@gmail.com"
       password: "user123"
@@ -40,3 +41,12 @@ users:
       userName: "bob"
       birthDate: "1990-11-22T00:00:00"
       registrationDate: "2024-04-10T10:00:00"
+      isAccountActivated: true
+
+    - email: "charlie@gmail.com"
+      password: "user123"
+      roles: [ROLE_USER]
+      userName: "charlie"
+      birthDate: "1988-03-10T00:00:00"
+      registrationDate: "2024-05-20T10:00:00"
+      isAccountActivated: false

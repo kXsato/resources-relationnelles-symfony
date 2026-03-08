@@ -107,8 +107,7 @@ abstract class BaseUserCrudController extends AbstractCrudController
                 ->setLabel('Date de dernière connection')
                 ->setFormTypeOption('attr', $readonly),
             TextField::new('accountStatus')
-                ->setLabel('Compte actif')
-                ->onlyOnDetail(),
+                ->setLabel('Compte actif'),
         ];
     }
 
