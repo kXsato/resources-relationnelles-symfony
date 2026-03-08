@@ -174,6 +174,15 @@ abstract class Resource
         return $this;
     }
 
+    public function getDisplayAuthor(): string
+    {
+        if ($this->author === null || !$this->author->isAccountActivated()) {
+            return 'Anonyme';
+        }
+
+        return $this->author->getUserName();
+    }
+
     public function getResourceType(): string
     {
         $parts = explode('\\', static::class);
