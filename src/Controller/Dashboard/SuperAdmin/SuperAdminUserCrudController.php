@@ -121,6 +121,11 @@ class SuperAdminUserCrudController extends BaseUserCrudController
 
         yield TextField::new('accountStatus')
             ->setLabel('Compte actif');
+
+        yield DateTimeField::new('reactivationRequestedAt')
+            ->setLabel('Demande de réactivation')
+            ->hideOnForm()
+            ->formatValue(fn ($value) => $value ? $value->format('d/m/Y H:i') : '—');
     }
 
     public function persistEntity(EntityManagerInterface $entityManager, mixed $entityInstance): void
