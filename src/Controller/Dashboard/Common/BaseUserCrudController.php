@@ -20,7 +20,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\Routing\Attribute\Route;
 
 abstract class BaseUserCrudController extends AbstractCrudController
 {
@@ -31,6 +30,7 @@ abstract class BaseUserCrudController extends AbstractCrudController
     ) {}
 
     abstract protected function getDashboardFqcn(): string;
+    abstract protected function getToggleRouteName(): string;
 
     public static function getEntityFqcn(): string
     {
@@ -61,7 +61,7 @@ abstract class BaseUserCrudController extends AbstractCrudController
             ->setHtmlAttributes(['title' => 'Activer / Désactiver le compte'])
             ->displayIf(fn (User $user) => !in_array('ROLE_ADMIN', $user->getRoles()))
             ->linkToRoute(
-                'admin_toggle_user_account',
+                $this->getToggleRouteName(),
                 fn (User $user) => ['id' => $user->getId()]
             )
             ->setTemplatePath('admin/user/toggle_action.html.twig');
@@ -107,8 +107,7 @@ abstract class BaseUserCrudController extends AbstractCrudController
         ];
     }
 
-    #[Route('/admin/user/{id}/toggle-account', name: 'admin_toggle_user_account')]
-    public function toggleAccount(User $user): RedirectResponse
+    protected function toggleAccountAction(User $user): RedirectResponse
     {
         $user->setIsAccountActivated(!$user->isAccountActivated());
         $this->entityManager->flush();
