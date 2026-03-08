@@ -50,6 +50,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?\DateTime $registrationDate = null;
 
+    #[ORM\Column(options: ['default' => true])]
+    private bool $isAccountActivated = true;
+
     #[ORM\OneToMany(targetEntity: Resource::class, mappedBy: 'author')]
     private Collection $resources;
 
@@ -217,6 +220,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $resource->setAuthor(null);
             }
         }
+
+        return $this;
+    }
+
+    public function isAccountActivated(): bool
+    {
+        return $this->isAccountActivated;
+    }
+
+    public function getAccountStatus(): string
+    {
+        return $this->isAccountActivated ? 'Oui' : 'Non';
+    }
+
+    public function setIsAccountActivated(bool $isAccountActivated): static
+    {
+        $this->isAccountActivated = $isAccountActivated;
 
         return $this;
     }
