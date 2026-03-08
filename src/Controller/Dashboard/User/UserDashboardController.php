@@ -40,5 +40,6 @@ class UserDashboardController extends AbstractDashboardController
         yield MenuItem::linkToDashboard('Mon profil', 'fas fa-user');
         yield MenuItem::linkTo(UserArticleCrudController::class, 'Mes articles', 'fas fa-newspaper');
         yield MenuItem::linkToLogout('Déconnexion', 'fas fa-sign-out');
+        yield MenuItem::linkToRoute('Mes favoris', 'fas fa-star', 'app_favorites');
     }
 }
