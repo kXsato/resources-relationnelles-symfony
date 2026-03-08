@@ -4,6 +4,7 @@ namespace App\Controller\Dashboard\Admin;
 
 use App\Entity\User;
 use App\Repository\ArticleRepository;
+use App\Repository\UserRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -17,6 +18,7 @@ class AdminDashboardController extends AbstractDashboardController
     public function __construct(
         private AdminUrlGenerator $adminUrlGenerator,
         private ArticleRepository $articleRepository,
+        private UserRepository $userRepository,
     ) {}
 
     public function index(): Response
@@ -45,6 +47,7 @@ class AdminDashboardController extends AbstractDashboardController
          /** @var \App\Entity\User $admin */
         $admin = $this->getUser();
         $pendingCount = $this->articleRepository->countPendingExcludingAuthor($admin);
+        $reactivationCount = $this->userRepository->countReactivationRequests();
 
         yield MenuItem::subMenu('Mon espace personnelle')->setSubItems(
             [
@@ -54,6 +57,8 @@ class AdminDashboardController extends AbstractDashboardController
 
         yield MenuItem::subMenu('Gestion')->setSubItems(
             [
+                MenuItem::linkTo(AdminUserCrudController::class, 'Utilisateurs', 'fas fa-users')
+                    ->setBadge($reactivationCount > 0 ? $reactivationCount : null, 'warning'),
                 MenuItem::linkTo(AdminCategoryCrudController::class, 'Catégories', 'fas fa-list'),
                 MenuItem::linkTo(AdminArticleCrudController::class, 'Articles en attente', 'fas fa-book')
                     ->setBadge($pendingCount > 0 ? $pendingCount : null, 'danger'),

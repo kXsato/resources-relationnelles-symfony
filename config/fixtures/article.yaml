@@ -63,6 +63,38 @@ articles:
       categories: [emotions, developpement_personnel]
       content: "Nos emotions sont des signaux precieux qui nous informent sur nos besoins profonds. Apprendre a les reconnaitre sans les reprimer ni les laisser nous submerger est un vrai travail sur soi."
 
+    - title: "Construire des relations de confiance"
+      slug: "construire-relations-confiance"
+      description: "Les piliers d'une relation de confiance durable entre individus."
+      status: "published"
+      author: "charlie"
+      categories: [lien_social, communication]
+      content: "La confiance se construit pas à pas, à travers la cohérence entre les paroles et les actes. Cet article explore les comportements qui renforcent ou fragilisent ce lien essentiel."
+
+    - title: "Reconnaître ses propres limites"
+      slug: "reconnaitre-ses-propres-limites"
+      description: "Apprendre à poser des limites saines est un acte de respect envers soi et les autres."
+      status: "published"
+      author: "charlie"
+      categories: [developpement_personnel, bien_etre]
+      content: "Dire non n'est pas un manque de générosité. C'est une façon d'honorer ses propres besoins tout en maintenant des relations authentiques et durables."
+
+    - title: "Retrouver le calme intérieur"
+      slug: "retrouver-calme-interieur"
+      description: "Des techniques simples pour apaiser le mental et revenir à l'instant présent."
+      status: "published"
+      author: ~
+      categories: [bien_etre, developpement_personnel]
+      content: "La méditation, la respiration consciente et la pleine conscience sont des outils accessibles à tous pour retrouver un état de calme durable."
+
+    - title: "Le deuil et la reconstruction de soi"
+      slug: "deuil-reconstruction-de-soi"
+      description: "Comment traverser les épreuves et en ressortir grandi, avec le soutien des autres."
+      status: "published"
+      author: ~
+      categories: [emotions, lien_social]
+      content: "Le deuil n'est pas réservé à la perte d'un proche. Il accompagne toute transformation profonde. Cet article propose des pistes pour traverser ces périodes avec bienveillance."
+
     - title: "Comprendre les émotions grâce à la vidéo"
       slug: "comprendre-emotions-video"
       description: "Une ressource vidéo pour explorer les mécanismes des émotions et leur impact sur nos relations."

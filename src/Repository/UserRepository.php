@@ -33,6 +33,35 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->getEntityManager()->flush();
     }
 
+    /**
+     * Retourne les utilisateurs actifs inactifs depuis plus de $months mois.
+     * Référence d'activité : lastLogin si disponible, sinon registrationDate.
+     *
+     * @return User[]
+     */
+    public function countReactivationRequests(): int
+    {
+        return (int) $this->createQueryBuilder('u')
+            ->select('COUNT(u.id)')
+            ->where('u.reactivationRequestedAt IS NOT NULL')
+            ->andWhere('u.isAccountActivated = false')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    public function findInactiveActiveUsers(\DateTimeImmutable $threshold): array
+    {
+        return $this->createQueryBuilder('u')
+            ->where('u.isAccountActivated = true')
+            ->andWhere(
+                '(u.lastLogin IS NOT NULL AND u.lastLogin < :threshold)
+                OR (u.lastLogin IS NULL AND u.registrationDate < :threshold)'
+            )
+            ->setParameter('threshold', $threshold)
+            ->getQuery()
+            ->getResult();
+    }
+
     //    /**
     //     * @return User[] Returns an array of User objects
     //     */

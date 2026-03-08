@@ -3,6 +3,7 @@
 namespace App\Controller\Dashboard\Common;
 
 use App\Entity\User;
+use App\Filter\ReactivationRequestFilter;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
@@ -10,6 +11,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
@@ -85,6 +87,11 @@ abstract class BaseUserCrudController extends AbstractCrudController
         return $crud->setPageTitle('index', 'Gérer les utilisateurs');
     }
 
+    public function configureFilters(Filters $filters): Filters
+    {
+        return $filters->add(ReactivationRequestFilter::new());
+    }
+
     public function configureFields(string $pageName): iterable
     {
         $readonly = ['readonly' => 'readonly'];
@@ -107,14 +114,18 @@ abstract class BaseUserCrudController extends AbstractCrudController
                 ->setLabel('Date de dernière connection')
                 ->setFormTypeOption('attr', $readonly),
             TextField::new('accountStatus')
-                ->setLabel('Compte actif')
-                ->onlyOnDetail(),
+                ->setLabel('Compte actif'),
         ];
     }
 
     protected function toggleAccountAction(User $user): RedirectResponse
     {
         $user->setIsAccountActivated(!$user->isAccountActivated());
+
+        if ($user->isAccountActivated()) {
+            $user->setReactivationRequestedAt(null);
+        }
+
         $this->entityManager->flush();
 
         $this->addFlash(

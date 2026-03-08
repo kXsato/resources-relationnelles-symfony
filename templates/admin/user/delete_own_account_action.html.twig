@@ -1,0 +1,7 @@
+<form method="POST" action="{{ action.linkUrl }}"
+      onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer définitivement votre compte ? Cette action est irréversible et toutes vos données personnelles seront effacées.')">
+    <input type="hidden" name="_token" value="{{ csrf_token('delete_own_account') }}">
+    <button type="submit" class="btn btn-sm btn-danger">
+        <i class="fas fa-user-slash"></i> Supprimer mon compte
+    </button>
+</form>

@@ -7,6 +7,7 @@ COPY --from=composer /usr/bin/composer /usr/bin/composer
 RUN apk add --no-cache \
         icu-dev \
         libzip-dev \
+        dcron \
     && docker-php-ext-install \
         intl \
         opcache \
@@ -19,3 +20,9 @@ RUN apk add --no-cache $PHPIZE_DEPS linux-headers \
     && apk del $PHPIZE_DEPS
 
 COPY usr/local/etc/php/conf.d/ /usr/local/etc/php/conf.d/
+
+COPY crontab /etc/crontabs/www-data
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]
