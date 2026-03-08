@@ -54,7 +54,6 @@ class AdminDashboardController extends AbstractDashboardController
 
         yield MenuItem::subMenu('Gestion')->setSubItems(
             [
-                MenuItem::linkTo(AdminUserCrudController::class, 'Utilisateurs', 'fas fa-users'),
                 MenuItem::linkTo(AdminCategoryCrudController::class, 'Catégories', 'fas fa-list'),
                 MenuItem::linkTo(AdminArticleCrudController::class, 'Articles en attente', 'fas fa-book')
                     ->setBadge($pendingCount > 0 ? $pendingCount : null, 'danger'),

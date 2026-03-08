@@ -53,6 +53,7 @@ security:
         - { path: ^/api/login, roles: PUBLIC_ACCESS }
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/admin, roles: ROLE_ADMIN }
+        - { path: ^/super-admin, roles: ROLE_SUPER_ADMIN }
         - { path: ^/moderator, roles: ROLE_MODERATOR }
         - { path: ^/mon-compte, roles: ROLE_USER }
 
