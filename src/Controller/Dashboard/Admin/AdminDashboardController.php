@@ -42,6 +42,10 @@ class AdminDashboardController extends AbstractDashboardController
 
     public function configureMenuItems(): iterable
     {
+         /** @var \App\Entity\User $admin */
+        $admin = $this->getUser();
+        $pendingCount = $this->articleRepository->countPendingExcludingAuthor($admin);
+
         yield MenuItem::subMenu('Mon espace personnelle')->setSubItems(
             [
                 MenuItem::linkToDashboard('Mon compte', 'fas fa-user'),
