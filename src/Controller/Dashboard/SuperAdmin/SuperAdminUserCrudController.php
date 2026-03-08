@@ -5,6 +5,7 @@ namespace App\Controller\Dashboard\SuperAdmin;
 use App\Controller\Dashboard\Common\BaseUserCrudController;
 use App\Entity\User;
 use App\Enum\UserRole;
+use App\Service\UserDeletionService;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
@@ -27,6 +28,7 @@ class SuperAdminUserCrudController extends BaseUserCrudController
         EntityManagerInterface $entityManager,
         \EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator $adminUrlGenerator,
         private readonly UserPasswordHasherInterface $passwordHasher,
+        private readonly UserDeletionService $userDeletionService,
     ) {
         parent::__construct($security, $entityManager, $adminUrlGenerator);
     }
@@ -69,7 +71,10 @@ class SuperAdminUserCrudController extends BaseUserCrudController
                 ->setIcon('fas fa-eye'))
             ->update(Crud::PAGE_DETAIL, Action::EDIT, fn(Action $a) => $a
                 ->setLabel('Modifier le rôle')
-                ->setIcon('fas fa-user-shield'));
+                ->setIcon('fas fa-user-shield'))
+            ->update(Crud::PAGE_DETAIL, Action::DELETE, fn(Action $a) => $a
+                ->setLabel('Supprimer le compte (RGPD)')
+                ->setIcon('fas fa-user-slash'));
     }
 
     public function configureFields(string $pageName): iterable
@@ -130,6 +135,12 @@ class SuperAdminUserCrudController extends BaseUserCrudController
         }
 
         parent::persistEntity($entityManager, $entityInstance);
+    }
+
+    public function deleteEntity(EntityManagerInterface $entityManager, mixed $entityInstance): void
+    {
+        /** @var User $entityInstance */
+        $this->userDeletionService->delete($entityInstance);
     }
 
     #[Route('/super-admin/user/{id}/toggle-account', name: 'super_admin_toggle_user_account')]

@@ -47,7 +47,7 @@ abstract class Resource
     private ?string $rejectionReason = null;
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'resources')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?User $author = null;
 
     #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'resources')]
