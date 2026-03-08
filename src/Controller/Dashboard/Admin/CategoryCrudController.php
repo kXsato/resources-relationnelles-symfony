@@ -32,7 +32,7 @@ class CategoryCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         return [
-            IdField::new('id'),
+            IdField::new('id')->hideOnForm(),
             TextField::new('name', 'Nom'),
             IntegerField::new('resourceCount', 'Nombre de ressources')
                 ->setTemplatePath('admin/field/resource_count.html.twig')
