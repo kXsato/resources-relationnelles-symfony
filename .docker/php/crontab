@@ -1,0 +1,3 @@
+# Désactivation des comptes inactifs depuis plus de 2 ans (RGPD/CNIL)
+# Exécution chaque dimanche à 2h00
+0 2 * * 0 www-data php /var/www/html/bin/console app:deactivate-inactive-accounts >> /var/log/cron.log 2>&1
