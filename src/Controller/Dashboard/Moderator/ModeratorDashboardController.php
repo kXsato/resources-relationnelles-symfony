@@ -63,7 +63,8 @@ class ModeratorDashboardController extends AbstractDashboardController
             ]);
         yield MenuItem::subMenu('Modération')->setSubItems([
             MenuItem::linkTo(ModeratorArticleCrudController::class, 'Articles en attente', 'fas fa-clock')
-            ->setBadge($pendingCount > 0 ? $pendingCount : null, 'danger'),
+                ->setBadge($pendingCount > 0 ? $pendingCount : null, 'danger'),
+            MenuItem::linkTo(ModeratorPublishedArticleCrudController::class, 'Articles publiés', 'fas fa-check'),
         ]);
         yield MenuItem::linkToLogout('Déconnexion', 'fas fa-sign-out');
     }

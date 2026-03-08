@@ -40,7 +40,7 @@ abstract class BaseOwnProfileCrudController extends AbstractCrudController imple
 
     public function configureActions(Actions $actions): Actions
     {
-        return $actions->disable(Action::NEW, Action::DELETE, Action::INDEX);
+        return $actions->disable(Action::NEW, Action::DELETE, Action::INDEX, Action::SAVE_AND_RETURN);
     }
 
     /**
