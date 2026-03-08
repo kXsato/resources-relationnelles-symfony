@@ -42,7 +42,11 @@ class UserCrudController extends AbstractCrudController
         /** @var User $currentUser */
         $currentUser = $this->security->getUser();
         $qb->andWhere('entity.id != :currentUser')
-           ->setParameter('currentUser', $currentUser->getId());
+           ->andWhere("entity.roles NOT LIKE :adminRole")
+           ->andWhere("entity.roles NOT LIKE :superAdminRole")
+           ->setParameter('currentUser', $currentUser->getId())
+           ->setParameter('adminRole', '%ROLE_ADMIN%')
+           ->setParameter('superAdminRole', '%ROLE_SUPER_ADMIN%');
 
         return $qb;
     }
