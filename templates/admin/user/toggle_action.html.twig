@@ -1,0 +1,7 @@
+{% set activated = entity.instance.isAccountActivated %}
+<a class="btn btn-sm {{ activated ? 'btn-danger' : 'btn-success' }}"
+   href="{{ action.linkUrl }}"
+   title="{{ activated ? 'Désactiver le compte' : 'Activer le compte' }}">
+    <i class="fas fa-power-off"></i>
+    {{ activated ? 'Désactiver' : 'Activer' }}
+</a>
