@@ -43,14 +43,19 @@ abstract class BaseUserCrudController extends AbstractCrudController
 
         /** @var User $currentUser */
         $currentUser = $this->security->getUser();
+        $this->applyUserFilters($qb, $currentUser);
+
+        return $qb;
+    }
+
+    protected function applyUserFilters(QueryBuilder $qb, User $currentUser): void
+    {
         $qb->andWhere('entity.id != :currentUser')
            ->andWhere('entity.roles NOT LIKE :adminRole')
            ->andWhere('entity.roles NOT LIKE :superAdminRole')
            ->setParameter('currentUser', $currentUser->getId())
            ->setParameter('adminRole', '%ROLE_ADMIN%')
            ->setParameter('superAdminRole', '%ROLE_SUPER_ADMIN%');
-
-        return $qb;
     }
 
     public function configureActions(Actions $actions): Actions

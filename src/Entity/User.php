@@ -240,4 +240,32 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    public function getRole(): string
+    {
+        $specialRoles = array_filter($this->roles, fn($r) => $r !== 'ROLE_USER');
+
+        return !empty($specialRoles) ? reset($specialRoles) : 'ROLE_USER';
+    }
+
+    public function setRole(string $role): static
+    {
+        $this->roles = $role !== 'ROLE_USER' ? [$role] : [];
+
+        return $this;
+    }
+
+    private ?string $plainPassword = null;
+
+    public function getPlainPassword(): ?string
+    {
+        return $this->plainPassword;
+    }
+
+    public function setPlainPassword(?string $plainPassword): static
+    {
+        $this->plainPassword = $plainPassword;
+
+        return $this;
+    }
 }
