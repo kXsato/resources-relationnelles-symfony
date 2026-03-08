@@ -32,7 +32,6 @@
             {% for resource in resources %}
                 <div class="col">
                     <div class="card h-100 shadow-sm border-0">
-
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 {% set type = resource.resourceType %}
@@ -60,11 +59,71 @@
                                 Consulter
                             </a>
                         </div>
-
                     </div>
                 </div>
             {% endfor %}
         </div>
+    {% endif %}
+
+    {% if app.user %}
+    <section class="mt-5">
+        <h2 class="fw-bold mb-3">Mes articles favoris</h2>
+        <div id="flash-favorites"></div>
+        <div id="favorites-list" class="row row-cols-1 row-cols-md-3 g-3">
+            <p class="text-muted">Chargement...</p>
+        </div>
+    </section>
+
+    <script>
+    function loadFavorites() {
+        fetch('/favorites/list')
+            .then(r => r.json())
+            .then(favorites => {
+                const container = document.getElementById('favorites-list');
+                if (favorites.length === 0) {
+                    container.innerHTML = '<p class="text-muted">Vous n\'avez pas encore de favoris.</p>';
+                    return;
+                }
+                container.innerHTML = favorites.map(f => `
+                    <div class="col" id="fav-card-${f.id}">
+                        <div class="card shadow-sm border-0 h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">${f.title}</h5>
+                                <small class="text-muted">Ajouté le ${f.createdAt}</small>
+                            </div>
+                            <div class="card-footer bg-transparent border-0 d-flex gap-2">
+                                <a href="/resources/${f.id}" class="btn btn-primary w-100">Consulter</a>
+                                <button onclick="removeFavorite(${f.id})" class="btn btn-danger w-100">Retirer</button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            });
+    }
+
+    function removeFavorite(articleId) {
+        fetch(`/favorites/toggle/${articleId}`, {
+            method: 'POST',
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.status === 'removed') {
+                document.getElementById(`fav-card-${articleId}`)?.remove();
+
+                const flash = document.getElementById('flash-favorites');
+                flash.innerHTML = '<div class="alert alert-success">✅ Ressource retirée des favoris.</div>';
+                setTimeout(() => flash.innerHTML = '', 3000);
+
+                if (document.querySelectorAll('#favorites-list .col').length === 0) {
+                    document.getElementById('favorites-list').innerHTML = '<p class="text-muted">Vous n\'avez pas encore de favoris.</p>';
+                }
+            }
+        });
+    }
+
+    loadFavorites();
+    </script>
     {% endif %}
 
 </div>
