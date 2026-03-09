@@ -28,4 +28,7 @@ return [
     'daisyui' => [
         'version' => '5.5.19',
     ],
+'@symfony/ux-live-component' => [
+        'path' => './vendor/symfony/ux-live-component/assets/dist/live_controller.js',
+    ],
 ];

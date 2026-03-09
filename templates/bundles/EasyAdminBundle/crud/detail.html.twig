@@ -1,0 +1,32 @@
+{% extends '@!EasyAdmin/crud/detail.html.twig' %}
+
+{% block page_actions %}
+    {% set ea = ea() %}
+
+    {{ parent() }}
+
+    {% if ea.crud.controllerFqcn == 'App\\Controller\\Dashboard\\Moderator\\ModeratorArticleCrudController' %}
+        {% if entity.instance.author is not null and entity.instance.author.id != app.user.id %}
+            {{ component('RejectionModal', { articleId: entity.instance.id }) }}
+        {% endif %}
+
+        <a href="{{ ea_url().setAction('index').generateUrl() }}" class="btn btn-link">
+            <i class="fas fa-arrow-left"></i> Retour à la liste
+        </a>
+    {% endif %}
+{% endblock %}
+
+{% block main %}
+    {% set ea = ea() %}
+
+    {% if is_crud_controller(ea.crud.controllerFqcn, 'App\\Contract\\OwnArticleCrudControllerInterface')
+        and entity.instance.status == 'rejected'
+        and entity.instance.rejectionReason
+    %}
+        <div role="alert" class="alert alert-warning alert-soft mb-5">
+            <span><strong>Motif de rejet :</strong> {{ entity.instance.rejectionReason }}</span>
+        </div>
+    {% endif %}
+
+    {{ parent() }}
+{% endblock %}
