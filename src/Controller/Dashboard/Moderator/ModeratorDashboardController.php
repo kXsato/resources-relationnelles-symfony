@@ -60,6 +60,7 @@ class ModeratorDashboardController extends AbstractDashboardController
 
         yield MenuItem::subMenu('Mes ressources')->setSubItems([
             MenuItem::linkTo(ModeratorOwnArticleCrudController::class, 'Mes articles', 'fas fa-newspaper'),
+            MenuItem::linkTo(ModeratorFavoriteCrudController::class, 'Mes favoris', 'fas fa-star'),
             ]);
         yield MenuItem::subMenu('Modération')->setSubItems([
             MenuItem::linkTo(ModeratorArticleCrudController::class, 'Articles en attente', 'fas fa-clock')
