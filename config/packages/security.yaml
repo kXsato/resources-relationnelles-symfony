@@ -58,6 +58,7 @@ security:
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/super-admin, roles: ROLE_SUPER_ADMIN }
         - { path: ^/moderator, roles: ROLE_MODERATOR }
+        - { path: ^/compte-desactive, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/mon-compte, roles: ROLE_USER }
 
 when@test:

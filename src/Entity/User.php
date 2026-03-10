@@ -47,6 +47,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(options: ['default' => true])]
     private bool $isAccountActivated = true;
 
+    #[ORM\Column(nullable: true)]
+    private ?\DateTime $reactivationRequestedAt = null;
+
     #[ORM\OneToMany(targetEntity: Resource::class, mappedBy: 'author')]
     private Collection $resources;
 
@@ -242,6 +245,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setIsAccountActivated(bool $isAccountActivated): static
     {
         $this->isAccountActivated = $isAccountActivated;
+
+        return $this;
+    }
+
+    public function getReactivationRequestedAt(): ?\DateTime
+    {
+        return $this->reactivationRequestedAt;
+    }
+
+    public function setReactivationRequestedAt(?\DateTime $reactivationRequestedAt): static
+    {
+        $this->reactivationRequestedAt = $reactivationRequestedAt;
 
         return $this;
     }

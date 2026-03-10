@@ -1,0 +1,66 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Compte désactivé{% endblock %}
+
+{% block body %}
+<div class="container mt-5" style="max-width: 600px;">
+
+    <div class="alert alert-warning text-center mb-4">
+        <i class="fas fa-exclamation-triangle me-2"></i>
+        Votre compte est actuellement <strong>désactivé</strong>.
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header fw-semibold">
+            <i class="fas fa-user me-2"></i>Vos informations
+        </div>
+        <div class="card-body">
+            <dl class="row mb-0">
+                <dt class="col-sm-4">Pseudo</dt>
+                <dd class="col-sm-8">{{ user.userName }}</dd>
+
+                <dt class="col-sm-4">Adresse mail</dt>
+                <dd class="col-sm-8">{{ user.email }}</dd>
+
+                <dt class="col-sm-4">Membre depuis</dt>
+                <dd class="col-sm-8">{{ user.registrationDate|date('d/m/Y') }}</dd>
+
+                <dt class="col-sm-4">Dernière connexion</dt>
+                <dd class="col-sm-8">
+                    {{ user.lastLogin ? user.lastLogin|date('d/m/Y') : 'Jamais' }}
+                </dd>
+            </dl>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body text-center">
+            {% if user.reactivationRequestedAt %}
+                <p class="text-success mb-0">
+                    <i class="fas fa-check-circle me-2"></i>
+                    Demande de réactivation envoyée le <strong>{{ user.reactivationRequestedAt|date('d/m/Y à H:i') }}</strong>.
+                    <br>Un administrateur traitera votre demande prochainement.
+                </p>
+            {% else %}
+                <p class="text-muted mb-3">
+                    Votre compte a été désactivé suite à une longue période d'inactivité.<br>
+                    Vous pouvez demander sa réactivation ci-dessous.
+                </p>
+                <form method="POST" action="{{ path('app_compte_desactive_request') }}">
+                    <input type="hidden" name="_token" value="{{ csrf_token('reactivation_request') }}">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-redo me-2"></i>Demander la réactivation
+                    </button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="text-center">
+        <a href="{{ path('app_logout') }}" class="btn btn-outline-secondary btn-sm">
+            <i class="fas fa-sign-out-alt me-1"></i>Se déconnecter
+        </a>
+    </div>
+
+</div>
+{% endblock %}
