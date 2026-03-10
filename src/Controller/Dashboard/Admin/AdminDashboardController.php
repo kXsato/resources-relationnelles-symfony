@@ -53,6 +53,7 @@ class AdminDashboardController extends AbstractDashboardController
             [
                 MenuItem::linkToDashboard('Mon compte', 'fas fa-user'),
                 MenuItem::linkTo(AdminOwnArticleCrudController::class, "Mes articles", 'fas fa-book'),
+                MenuItem::linkTo(AdminFavoriteCrudController::class, 'Mes favoris', 'fas fa-star'),
             ]);
 
         yield MenuItem::subMenu('Gestion')->setSubItems(

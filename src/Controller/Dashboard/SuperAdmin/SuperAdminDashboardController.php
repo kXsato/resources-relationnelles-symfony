@@ -52,6 +52,7 @@ class SuperAdminDashboardController extends AbstractDashboardController
         yield MenuItem::subMenu('Mon espace personnelle')->setSubItems([
             MenuItem::linkToDashboard('Mon compte', 'fas fa-user'),
             MenuItem::linkTo(SuperAdminOwnArticleCrudController::class, 'Mes articles', 'fas fa-book'),
+            MenuItem::linkTo(SuperAdminFavoriteCrudController::class, 'Mes favoris', 'fas fa-star'),
         ]);
 
         yield MenuItem::subMenu('Gestion')->setSubItems([
