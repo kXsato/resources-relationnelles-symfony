@@ -62,7 +62,7 @@ class CommentController extends AbstractController
     {
         $user = $this->getUser();
 
-        if (!$comment->isOwnedBy($user) && !$this->isGranted('ROLE_MODERATOR')) {
+        if (!($user instanceof \App\Entity\User && $comment->isOwnedBy($user)) && !$this->isGranted('ROLE_MODERATOR')) {
             return $this->json(['error' => 'Non autorisé'], 403);
         }
 
@@ -79,14 +79,22 @@ class CommentController extends AbstractController
     private function formatComment(Comment $comment): array
     {
         $author = $comment->getUser();
-        $isActive = $author?->isAccountActivated() ?? false;
+        $authorName = ($author !== null && $author->isAccountActivated())
+            ? $author->getUserName()
+            : 'Anonyme';
+
+        $currentUser = $this->getUser();
+        $isOwner = false;
+        if ($currentUser instanceof \App\Entity\User) {
+            $isOwner = $comment->isOwnedBy($currentUser);
+        }
 
         return [
             'id'          => $comment->getId(),
             'content'     => $comment->getContent(),
             'createdAt'   => $comment->getCreatedAt()->format('d/m/Y H:i'),
-            'author'      => $isActive ? $author->getUserName() : 'Anonyme',
-            'isOwner'     => $comment->isOwnedBy($this->getUser()),
+            'author'      => $authorName,
+            'isOwner'     => $isOwner,
             'isModerator' => $this->isGranted('ROLE_MODERATOR'),
             'children'    => array_map(fn(Comment $c) => $this->formatComment($c), $comment->getChildren()->toArray()),
         ];

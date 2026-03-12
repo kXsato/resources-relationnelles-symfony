@@ -154,8 +154,9 @@ class Comment
         return $this;
     }
 
-    public function isOwnedBy(User $user): bool
+    public function isOwnedBy(?User $user): bool
     {
+        if ($user === null) return false;
         return $this->user === $user;
     }
 }
