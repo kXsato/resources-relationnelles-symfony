@@ -1,0 +1,47 @@
+progress:
+    - user: "user"
+      article: "introduction-communication-non-violente"
+      status: "in_progress"
+      readPercentage: 45
+
+    - user: "user"
+      article: "nature-espace-ressourcement"
+      status: "in_progress"
+      readPercentage: 10
+
+    - user: "user"
+      article: "comprendre-emotions-video"
+      status: "completed"
+      readPercentage: 100
+      completeAt: "2026-02-15T10:00:00"
+
+    - user: "alice"
+      article: "gerer-conflits-milieu-professionnel"
+      status: "in_progress"
+      readPercentage: 60
+
+    - user: "alice"
+      article: "retrouver-calme-interieur"
+      status: "in_progress"
+      readPercentage: 30
+
+    - user: "alice"
+      article: "construire-relations-confiance"
+      status: "completed"
+      readPercentage: 100
+      completeAt: "2026-01-20T14:00:00"
+
+    - user: "bob"
+      article: "reconnaitre-ses-propres-limites"
+      status: "in_progress"
+      readPercentage: 75
+
+    - user: "bob"
+      article: "deuil-reconstruction-de-soi"
+      status: "in_progress"
+      readPercentage: 20
+
+    - user: "charlie"
+      article: "introduction-communication-non-violente"
+      status: "in_progress"
+      readPercentage: 55

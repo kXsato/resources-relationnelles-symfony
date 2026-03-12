@@ -25,6 +25,7 @@ security:
             stateless: false
             provider: app_user_provider
             lazy: true
+            context: main
 
         dev:
             # Ensure dev tools and static assets are always allowed

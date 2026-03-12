@@ -3,6 +3,8 @@
 namespace App\Controller\Dashboard\SuperAdmin;
 
 use App\Entity\User;
+use App\Controller\Dashboard\SuperAdmin\SuperAdminProgressCrudController;
+use App\Controller\Dashboard\SuperAdmin\SuperAdminCompletedProgressCrudController;
 use App\Repository\ArticleRepository;
 use App\Repository\UserRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
@@ -53,6 +55,8 @@ class SuperAdminDashboardController extends AbstractDashboardController
             MenuItem::linkToDashboard('Mon compte', 'fas fa-user'),
             MenuItem::linkTo(SuperAdminOwnArticleCrudController::class, 'Mes articles', 'fas fa-book'),
             MenuItem::linkTo(SuperAdminFavoriteCrudController::class, 'Mes favoris', 'fas fa-star'),
+            MenuItem::linkTo(SuperAdminProgressCrudController::class, 'Mes lectures en cours', 'fas fa-book-open'),
+            MenuItem::linkTo(SuperAdminCompletedProgressCrudController::class, 'Mes lectures terminées', 'fas fa-check-circle'),
         ]);
 
         yield MenuItem::subMenu('Gestion')->setSubItems([

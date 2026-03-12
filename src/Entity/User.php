@@ -58,10 +58,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     private ?string $plainPassword = null;
 
+    /**
+     * @var Collection<int, UserRessourceProgress>
+     */
+    #[ORM\OneToMany(targetEntity: UserRessourceProgress::class, mappedBy: 'UserRessources', cascade: ['remove'], orphanRemoval: true)]
+    private Collection $userRessourceProgress;
+
     public function __construct()
     {
         $this->resources = new ArrayCollection();
         $this->favorites = new ArrayCollection();
+        $this->userRessourceProgress = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -283,6 +290,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPlainPassword(?string $plainPassword): static
     {
         $this->plainPassword = $plainPassword;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, UserRessourceProgress>
+     */
+    public function getUserRessourceProgress(): Collection
+    {
+        return $this->userRessourceProgress;
+    }
+
+    public function addUserRessourceProgress(UserRessourceProgress $userRessourceProgress): static
+    {
+        if (!$this->userRessourceProgress->contains($userRessourceProgress)) {
+            $this->userRessourceProgress->add($userRessourceProgress);
+            $userRessourceProgress->setUserRessources($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserRessourceProgress(UserRessourceProgress $userRessourceProgress): static
+    {
+        if ($this->userRessourceProgress->removeElement($userRessourceProgress)) {
+            // set the owning side to null (unless already changed)
+            if ($userRessourceProgress->getUserRessources() === $this) {
+                $userRessourceProgress->setUserRessources(null);
+            }
+        }
 
         return $this;
     }

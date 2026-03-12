@@ -54,9 +54,16 @@ abstract class Resource
     #[ORM\JoinTable(name: 'resource_category')]
     private Collection $categories;
 
+    /**
+     * @var Collection<int, UserRessourceProgress>
+     */
+    #[ORM\OneToMany(targetEntity: UserRessourceProgress::class, mappedBy: 'resource', orphanRemoval: true)]
+    private Collection $userRessourceProgresses;
+
     public function __construct()
     {
         $this->categories = new ArrayCollection();
+        $this->userRessourceProgresses = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -209,6 +216,35 @@ abstract class Resource
     public function removeCategory(Category $category): static
     {
         $this->categories->removeElement($category);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, UserRessourceProgress>
+     */
+    public function getUserRessourceProgresses(): Collection
+    {
+        return $this->userRessourceProgresses;
+    }
+
+    public function addUserRessourceProgress(UserRessourceProgress $userRessourceProgress): static
+    {
+        if (!$this->userRessourceProgresses->contains($userRessourceProgress)) {
+            $this->userRessourceProgresses->add($userRessourceProgress);
+            $userRessourceProgress->setResource($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserRessourceProgress(UserRessourceProgress $userRessourceProgress): static
+    {
+        if ($this->userRessourceProgresses->removeElement($userRessourceProgress)) {
+            if ($userRessourceProgress->getResource() === $this) {
+                $userRessourceProgress->setResource(null);
+            }
+        }
 
         return $this;
     }
