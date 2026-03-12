@@ -25,11 +25,10 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class ProgressCleanupCommand extends Command
 {
-    private const DEFAULT_DAYS = 30;
-
     public function __construct(
         private readonly UserRessourceProgressRepository $progressRepository,
         private readonly EntityManagerInterface $entityManager,
+        private readonly int $purgeDelayDays,
     ) {
         parent::__construct();
     }
@@ -40,15 +39,14 @@ class ProgressCleanupCommand extends Command
             'days',
             'd',
             InputOption::VALUE_REQUIRED,
-            'Nombre de jours de rétention après complétion',
-            self::DEFAULT_DAYS,
+            'Nombre de jours de rétention après complétion (défaut : paramètre app.progress.purge_delay_days)',
         );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $days = (int) $input->getOption('days');
+        $days = (int) ($input->getOption('days') ?? $this->purgeDelayDays);
 
         $threshold = new \DateTimeImmutable(sprintf('-%d days', $days));
         $entries = $this->progressRepository->findCompletedBefore($threshold);
