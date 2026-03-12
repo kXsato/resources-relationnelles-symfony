@@ -3,16 +3,16 @@
 namespace App\Twig\Components;
 
 use App\Service\StatsProviderService;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\UX\Chartjs\Builder\ChartBuilderInterface;
 use Symfony\UX\Chartjs\Model\Chart;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
+use Symfony\UX\LiveComponent\Attribute\LiveArg;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 
 #[AsLiveComponent]
-class StatsDashboardComponent extends AbstractController
+class StatsDashboardComponent
 {
     use DefaultActionTrait;
 
@@ -228,7 +228,7 @@ class StatsDashboardComponent extends AbstractController
      * startDate et endDate simultanément.
      */
     #[LiveAction]
-    public function setPeriod(int $days): void
+    public function setPeriod(#[LiveArg] int $days): void
     {
         $this->endDate   = (new \DateTimeImmutable())->format('Y-m-d');
         $this->startDate = (new \DateTimeImmutable("-{$days} days"))->format('Y-m-d');
