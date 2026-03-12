@@ -11,6 +11,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Component\HttpFoundation\Response;
+use App\Controller\Dashboard\Admin\AdminCommentCrudController;
 
 #[AdminDashboard(routePath: '/admin', routeName: 'admin')]
 class AdminDashboardController extends AbstractDashboardController
@@ -54,6 +55,7 @@ class AdminDashboardController extends AbstractDashboardController
                 MenuItem::linkToDashboard('Mon compte', 'fas fa-user'),
                 MenuItem::linkTo(AdminOwnArticleCrudController::class, "Mes articles", 'fas fa-book'),
                 MenuItem::linkTo(AdminFavoriteCrudController::class, 'Mes favoris', 'fas fa-star'),
+                MenuItem::linkTo(AdminCommentCrudController::class, 'Commentaires', 'fas fa-comments'),
             ]);
 
         yield MenuItem::subMenu('Gestion')->setSubItems(
