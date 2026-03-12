@@ -17,7 +17,7 @@ class UserRessourceProgress
     private ?string $status = null;
 
     #[ORM\Column]
-    private ?int $readPrecentage = null;
+    private ?int $readPercentage = null;
 
     #[ORM\Column(nullable: true)]
     private ?\DateTime $completeAt = null;
@@ -47,14 +47,14 @@ class UserRessourceProgress
 
     public function getReadPrecentage(): ?int
     {
-        return $this->readPrecentage;
+        return $this->readPercentage;
     }
 
-    public function setReadPrecentage(int $readPrecentage): static
+    public function setReadPrecentage(int $readPercentage): static
     {
-        $this->readPrecentage = $readPrecentage;
+        $this->readPercentage = $readPercentage;
 
-        if ($readPrecentage >= 100) {
+        if ($readPercentage >= 100) {
             $this->status = 'completed';
             $this->completeAt = $this->completeAt ?? new \DateTime();
         }

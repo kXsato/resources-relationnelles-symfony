@@ -14,7 +14,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Symfony\Bundle\SecurityBundle\Security;
 
 abstract class BaseProgressCrudController extends AbstractCrudController
@@ -26,9 +25,11 @@ abstract class BaseProgressCrudController extends AbstractCrudController
         return UserRessourceProgress::class;
     }
 
+    abstract protected function getStatusFilter(): string;
+
     public function configureCrud(Crud $crud): Crud
     {
-        return $crud->setPageTitle('index', 'Ressources en cours');
+        return $crud->setPageTitle('index', 'Mes ressources');
     }
 
     public function configureActions(Actions $actions): Actions
@@ -40,11 +41,10 @@ abstract class BaseProgressCrudController extends AbstractCrudController
     {
         $qb = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters);
 
-        $user = $this->security->getUser();
         $qb->andWhere('entity.UserRessources = :user')
            ->andWhere('entity.status = :status')
-           ->setParameter('user', $user)
-           ->setParameter('status', 'in_progress');
+           ->setParameter('user', $this->security->getUser())
+           ->setParameter('status', $this->getStatusFilter());
 
         return $qb;
     }
@@ -52,7 +52,6 @@ abstract class BaseProgressCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         yield AssociationField::new('resource', 'Ressource');
-        yield IntegerField::new('readPrecentage', 'Progression (%)');
-        yield TextField::new('status', 'Statut');
+        yield IntegerField::new('readPercentage', 'Progression (%)')->setTemplatePath('admin/field/percentage.html.twig');
     }
 }

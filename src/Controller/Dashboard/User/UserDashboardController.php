@@ -3,6 +3,7 @@
 namespace App\Controller\Dashboard\User;
 
 use App\Entity\User;
+use App\Controller\Dashboard\User\UserCompletedProgressCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -41,6 +42,7 @@ class UserDashboardController extends AbstractDashboardController
         yield MenuItem::linkTo(UserArticleCrudController::class, 'Mes articles', 'fas fa-newspaper');
         yield MenuItem::linkTo(UserFavoriteCrudController::class, 'Mes favoris', 'fas fa-star');
         yield MenuItem::linkTo(UserProgressCrudController::class, 'En cours de lecture', 'fas fa-book-open');
+        yield MenuItem::linkTo(UserCompletedProgressCrudController::class, 'Ressources terminées', 'fas fa-check-circle');
         yield MenuItem::linkToLogout('Déconnexion', 'fas fa-sign-out');
         
     }

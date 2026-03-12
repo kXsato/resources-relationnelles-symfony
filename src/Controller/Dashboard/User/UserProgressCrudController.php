@@ -3,5 +3,17 @@
 namespace App\Controller\Dashboard\User;
 
 use App\Controller\Dashboard\Common\BaseProgressCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 
-class UserProgressCrudController extends BaseProgressCrudController {}
+class UserProgressCrudController extends BaseProgressCrudController
+{
+    protected function getStatusFilter(): string
+    {
+        return 'in_progress';
+    }
+
+    public function configureCrud(Crud $crud): Crud
+    {
+        return $crud->setPageTitle('index', 'En cours de lecture');
+    }
+}
