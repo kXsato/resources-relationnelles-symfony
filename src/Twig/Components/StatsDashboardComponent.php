@@ -90,32 +90,21 @@ class StatsDashboardComponent extends AbstractController
         return $this->statsProvider->getGlobalStats();
     }
 
-    public function getMostReadResources(): array
-    {
-        return $this->statsProvider->getMostReadResources(10);
-    }
-
-    public function getAverageReadingProgressPerResource(): array
-    {
-        return $this->statsProvider->getAverageReadingProgressPerResource();
-    }
-
     // -----------------------------------------------------------------------
     // Graphiques Chart.js
     // -----------------------------------------------------------------------
 
     /**
-     * Courbe : nouveaux inscrits par jour sur la période filtrée.
+     * Courbe : ressources créées par jour (tous statuts) sur la période filtrée.
      */
-    public function getNewUsersChart(): Chart
+    public function getResourcesCreatedChart(): Chart
     {
-        $rows = $this->statsProvider->getNewUsersPerDay($this->getFrom(), $this->getTo());
-
+        $rows  = $this->statsProvider->getResourcesCreatedPerDay($this->getFrom(), $this->getTo());
         $chart = $this->chartBuilder->createChart(Chart::TYPE_LINE);
         $chart->setData([
             'labels'   => array_column($rows, 'day'),
             'datasets' => [[
-                'label'           => 'Nouveaux inscrits',
+                'label'           => 'Ressources créées',
                 'data'            => array_map('intval', array_column($rows, 'total')),
                 'borderColor'     => 'rgb(79, 70, 229)',
                 'backgroundColor' => 'rgba(79, 70, 229, 0.1)',
@@ -134,87 +123,88 @@ class StatsDashboardComponent extends AbstractController
     }
 
     /**
-     * Courbe : ressources publiées par jour sur la période filtrée.
+     * Doughnut : ressources validées (published) vs rejetées (rejected).
      */
-    public function getPublishedResourcesChart(): Chart
+    public function getValidatedVsRejectedChart(): Chart
     {
-        $rows = $this->statsProvider->getPublishedResourcesPerDay($this->getFrom(), $this->getTo());
-
-        $chart = $this->chartBuilder->createChart(Chart::TYPE_LINE);
+        $stats = $this->statsProvider->getValidatedVsRejectedStats();
+        $chart = $this->chartBuilder->createChart(Chart::TYPE_DOUGHNUT);
         $chart->setData([
-            'labels'   => array_column($rows, 'day'),
+            'labels'   => ['Validées', 'Rejetées'],
             'datasets' => [[
-                'label'           => 'Ressources publiées',
-                'data'            => array_map('intval', array_column($rows, 'total')),
-                'borderColor'     => 'rgb(5, 150, 105)',
-                'backgroundColor' => 'rgba(5, 150, 105, 0.1)',
-                'fill'            => true,
-                'tension'         => 0.3,
-                'pointRadius'     => 3,
+                'data'            => [$stats['published'], $stats['rejected']],
+                'backgroundColor' => ['rgba(5, 150, 105, 0.8)', 'rgba(220, 38, 38, 0.8)'],
+                'borderColor'     => ['rgb(5, 150, 105)', 'rgb(220, 38, 38)'],
+                'borderWidth'     => 2,
             ]],
         ]);
         $chart->setOptions([
             'responsive' => true,
-            'plugins'    => ['legend' => ['display' => false]],
-            'scales'     => ['y' => ['beginAtZero' => true, 'ticks' => ['stepSize' => 1]]],
+            'plugins'    => ['legend' => ['position' => 'bottom']],
         ]);
 
         return $chart;
     }
 
     /**
-     * Doughnut : répartition des ressources publiées par catégorie.
+     * Doughnut : % d'utilisateurs actifs vs inactifs.
+     */
+    public function getActiveUsersChart(): Chart
+    {
+        $percentage = $this->statsProvider->getActiveUsersPercentage();
+        $inactive   = round(100 - $percentage, 1);
+        $chart      = $this->chartBuilder->createChart(Chart::TYPE_DOUGHNUT);
+        $chart->setData([
+            'labels'   => ['Actifs', 'Inactifs'],
+            'datasets' => [[
+                'data'            => [$percentage, $inactive],
+                'backgroundColor' => ['rgba(79, 70, 229, 0.8)', 'rgba(209, 213, 219, 0.6)'],
+                'borderColor'     => ['rgb(79, 70, 229)', 'rgb(209, 213, 219)'],
+                'borderWidth'     => 2,
+            ]],
+        ]);
+        $chart->setOptions([
+            'responsive' => true,
+            'plugins'    => ['legend' => ['position' => 'bottom']],
+        ]);
+
+        return $chart;
+    }
+
+    public function getActiveUsersPercentage(): float
+    {
+        return $this->statsProvider->getActiveUsersPercentage();
+    }
+
+    public function getAvgResourcesPerActiveUser(): float
+    {
+        return $this->statsProvider->getAvgResourcesPerActiveUser();
+    }
+
+    public function getRetentionRate(): float
+    {
+        return $this->statsProvider->getRetentionRate();
+    }
+
+    public function getResourcePopularity(): array
+    {
+        return $this->statsProvider->getResourcePopularity(10);
+    }
+
+    /**
+     * Barres horizontales : volume de ressources créées par catégorie (tous statuts).
      */
     public function getResourcesByCategoryChart(): Chart
     {
-        $rows = $this->statsProvider->getResourcesByCategoryStats();
-
-        $palette = [
-            'rgba(79, 70, 229, 0.8)',
-            'rgba(5, 150, 105, 0.8)',
-            'rgba(217, 119, 6, 0.8)',
-            'rgba(220, 38, 38, 0.8)',
-            'rgba(124, 58, 237, 0.8)',
-            'rgba(14, 165, 233, 0.8)',
-            'rgba(236, 72, 153, 0.8)',
-            'rgba(16, 185, 129, 0.8)',
-        ];
-
-        $chart = $this->chartBuilder->createChart(Chart::TYPE_DOUGHNUT);
+        $rows   = $this->statsProvider->getResourcesByCategory();
+        $chart  = $this->chartBuilder->createChart(Chart::TYPE_BAR);
         $chart->setData([
             'labels'   => array_column($rows, 'categoryName'),
             'datasets' => [[
+                'label'           => 'Ressources',
                 'data'            => array_map('intval', array_column($rows, 'total')),
-                'backgroundColor' => array_slice($palette, 0, count($rows)),
-                'borderWidth'     => 2,
-                'borderColor'     => '#fff',
-            ]],
-        ]);
-        $chart->setOptions([
-            'responsive' => true,
-            'plugins'    => [
-                'legend' => ['position' => 'right'],
-            ],
-        ]);
-
-        return $chart;
-    }
-
-    /**
-     * Barres horizontales : top articles les plus mis en favoris.
-     */
-    public function getTopFavoritedArticlesChart(): Chart
-    {
-        $rows = $this->statsProvider->getTopFavoritedArticles(8);
-
-        $chart = $this->chartBuilder->createChart(Chart::TYPE_BAR);
-        $chart->setData([
-            'labels'   => array_column($rows, 'title'),
-            'datasets' => [[
-                'label'           => 'Favoris',
-                'data'            => array_map('intval', array_column($rows, 'total')),
-                'backgroundColor' => 'rgba(217, 119, 6, 0.75)',
-                'borderColor'     => 'rgb(217, 119, 6)',
+                'backgroundColor' => 'rgba(14, 165, 233, 0.75)',
+                'borderColor'     => 'rgb(14, 165, 233)',
                 'borderWidth'     => 1,
                 'borderRadius'    => 4,
             ]],

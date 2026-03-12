@@ -50,6 +50,25 @@ class ResourceRepository extends ServiceEntityRepository
     }
 
     /**
+     * Nombre de ressources créées par jour (tous statuts) sur une période donnée.
+     * Retourne [['day' => 'YYYY-MM-DD', 'total' => N], ...]
+     */
+    public function countCreatedPerDay(\DateTimeInterface $from, \DateTimeInterface $to): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+        $sql  = 'SELECT DATE(created_at) AS day, COUNT(id) AS total
+                 FROM resource
+                 WHERE created_at BETWEEN :from AND :to
+                 GROUP BY DATE(created_at)
+                 ORDER BY day ASC';
+
+        return $conn->executeQuery($sql, [
+            'from' => $from->format('Y-m-d 00:00:00'),
+            'to'   => $to->format('Y-m-d 23:59:59'),
+        ])->fetchAllAssociative();
+    }
+
+    /**
      * Nombre de ressources publiées créées par jour sur une période donnée.
      * Retourne [['day' => 'YYYY-MM-DD', 'total' => N], ...]
      */
@@ -67,6 +86,47 @@ class ResourceRepository extends ServiceEntityRepository
             'status' => 'published',
             'from'   => $from->format('Y-m-d 00:00:00'),
             'to'     => $to->format('Y-m-d 23:59:59'),
+        ])->fetchAllAssociative();
+    }
+
+    /**
+     * Nombre de ressources créées par catégorie (tous statuts).
+     * Retourne [['categoryName' => '...', 'total' => N], ...]
+     */
+    public function countAllByCategory(): array
+    {
+        return $this->createQueryBuilder('r')
+            ->select('c.name AS categoryName, COUNT(r.id) AS total')
+            ->join('r.categories', 'c')
+            ->groupBy('c.id')
+            ->orderBy('total', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * Popularité des ressources publiées : vues (lecteurs uniques) + favoris.
+     * Retourne [['title' => '...', 'views' => N, 'favorites' => N], ...]
+     */
+    public function getPopularityStats(int $limit = 10): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+        $sql  = 'SELECT r.title,
+                        COUNT(DISTINCT p.user_ressources_id) AS views,
+                        COUNT(DISTINCT f.id)                 AS favorites
+                 FROM resource r
+                 LEFT JOIN user_ressource_progress p ON p.resource_id = r.id
+                 LEFT JOIN favorite f               ON f.article_id   = r.id
+                 WHERE r.status = :status
+                 GROUP BY r.id, r.title
+                 ORDER BY views DESC, favorites DESC
+                 LIMIT :lim';
+
+        return $conn->executeQuery($sql, [
+            'status' => 'published',
+            'lim'    => $limit,
+        ], [
+            'lim' => \Doctrine\DBAL\ParameterType::INTEGER,
         ])->fetchAllAssociative();
     }
 

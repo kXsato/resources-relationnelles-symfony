@@ -82,6 +82,20 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     }
 
     /**
+     * Nombre d'utilisateurs "retenus" : ceux dont le dernier login
+     * est au moins 1 jour après la date d'inscription.
+     */
+    public function countRetainedUsers(): int
+    {
+        $conn = $this->getEntityManager()->getConnection();
+        $sql  = 'SELECT COUNT(id) FROM `user`
+                 WHERE last_login IS NOT NULL
+                   AND DATEDIFF(last_login, registration_date) >= 1';
+
+        return (int) $conn->executeQuery($sql)->fetchOne();
+    }
+
+    /**
      * Répartition des utilisateurs par statut d'activation.
      * Retourne ['active' => N, 'inactive' => N]
      */

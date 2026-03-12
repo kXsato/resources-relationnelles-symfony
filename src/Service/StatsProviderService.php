@@ -154,4 +154,88 @@ class StatsProviderService
     {
         return $this->categoryRepository->findWithPublishedResourceCount();
     }
+
+    /**
+     * Ressources créées par jour (tous statuts) sur une période donnée.
+     * Retourne [['day' => 'YYYY-MM-DD', 'total' => N], ...]
+     */
+    public function getResourcesCreatedPerDay(\DateTimeInterface $from, \DateTimeInterface $to): array
+    {
+        return $this->resourceRepository->countCreatedPerDay($from, $to);
+    }
+
+    /**
+     * Nombre de ressources validées (published) et rejetées (rejected).
+     * Retourne ['published' => N, 'rejected' => N]
+     */
+    public function getValidatedVsRejectedStats(): array
+    {
+        $stats = ['published' => 0, 'rejected' => 0];
+        foreach ($this->resourceRepository->countByStatus() as $row) {
+            if ($row['status'] === 'published') {
+                $stats['published'] = (int) $row['total'];
+            } elseif ($row['status'] === 'rejected') {
+                $stats['rejected'] = (int) $row['total'];
+            }
+        }
+
+        return $stats;
+    }
+
+    /**
+     * Pourcentage d'utilisateurs actifs parmi l'ensemble des comptes.
+     */
+    public function getActiveUsersPercentage(): float
+    {
+        $counts = $this->userRepository->countByActivationStatus();
+        $total  = $counts['active'] + $counts['inactive'];
+
+        return $total > 0 ? round($counts['active'] / $total * 100, 1) : 0.0;
+    }
+
+    /**
+     * Nombre moyen de ressources postées par utilisateur actif.
+     */
+    public function getAvgResourcesPerActiveUser(): float
+    {
+        $counts  = $this->userRepository->countByActivationStatus();
+        $active  = $counts['active'];
+        $byStatus = [];
+        foreach ($this->resourceRepository->countByStatus() as $row) {
+            $byStatus[$row['status']] = (int) $row['total'];
+        }
+        $total = array_sum($byStatus);
+
+        return $active > 0 ? round($total / $active, 2) : 0.0;
+    }
+
+    /**
+     * Taux de rétention : % d'utilisateurs revenus au moins 1 jour après inscription.
+     */
+    public function getRetentionRate(): float
+    {
+        $counts   = $this->userRepository->countByActivationStatus();
+        $total    = $counts['active'] + $counts['inactive'];
+        $retained = $this->userRepository->countRetainedUsers();
+
+        return $total > 0 ? round($retained / $total * 100, 1) : 0.0;
+    }
+
+    /**
+     * Nombre de ressources créées par catégorie (tous statuts).
+     * Retourne [['categoryName' => '...', 'total' => N], ...]
+     */
+    public function getResourcesByCategory(): array
+    {
+        return $this->resourceRepository->countAllByCategory();
+    }
+
+    /**
+     * Popularité des ressources publiées (vues + favoris).
+     * Retourne [['title' => '...', 'views' => N, 'favorites' => N], ...]
+     */
+    public function getResourcePopularity(int $limit = 10): array
+    {
+        return $this->resourceRepository->getPopularityStats($limit);
+    }
 }
