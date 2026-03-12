@@ -46,15 +46,13 @@ class AdminDashboardController extends AbstractDashboardController
             MenuItem::linkTo(AdminCompletedProgressCrudController::class, 'Mes lectures terminées', 'fas fa-check-circle'),
         ]);
 
-        yield MenuItem::subMenu('Gestion')->setSubItems([
-            MenuItem::linkTo(AdminUserCrudController::class, 'Utilisateurs', 'fas fa-users')
-                ->setBadge($reactivationCount > 0 ? $reactivationCount : null, 'warning'),
-            MenuItem::linkTo(AdminCategoryCrudController::class, 'Catégories', 'fas fa-list'),
-            MenuItem::linkTo(AdminArticleCrudController::class, 'Articles en attente', 'fas fa-book')
-                ->setBadge($pendingCount > 0 ? $pendingCount : null, 'danger'),
-            MenuItem::linkTo(AdminPublishedArticleCrudController::class, 'Articles publiés', 'fas fa-check'),
-        ]);
-
+        
+        yield   MenuItem::linkTo(AdminUserCrudController::class, 'Utilisateurs', 'fas fa-users')
+                ->setBadge($reactivationCount > 0 ? $reactivationCount : null, 'warning');
+        yield  MenuItem::linkTo(AdminCategoryCrudController::class, 'Catégories', 'fas fa-list');
+        yield   MenuItem::linkTo(AdminArticleCrudController::class, 'Articles en attente', 'fas fa-book')
+                ->setBadge($pendingCount > 0 ? $pendingCount : null, 'danger');
+        yield MenuItem::linkTo(AdminPublishedArticleCrudController::class, 'Articles publiés', 'fas fa-check');
         yield MenuItem::linkToDashboard('Statistiques', 'fas fa-chart-bar');
 
         yield MenuItem::linkToLogout('Logout', 'fa fa-sign-out');

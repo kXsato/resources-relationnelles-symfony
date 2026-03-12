@@ -1,0 +1,124 @@
+favorites:
+    - user: "user"
+      article: "introduction-communication-non-violente"
+      createdAt: "2026-01-12T10:00:00"
+
+    - user: "user"
+      article: "retrouver-calme-interieur"
+      createdAt: "2026-02-05T14:00:00"
+
+    - user: "alice"
+      article: "guide-complet-communication-bienveillante-lien-social"
+      createdAt: "2026-02-01T09:00:00"
+
+    - user: "alice"
+      article: "gerer-conflits-milieu-professionnel"
+      createdAt: "2026-01-22T11:00:00"
+
+    - user: "alice"
+      article: "retrouver-calme-interieur"
+      createdAt: "2026-02-18T10:00:00"
+
+    - user: "bob"
+      article: "introduction-communication-non-violente"
+      createdAt: "2026-01-16T15:00:00"
+
+    - user: "bob"
+      article: "construire-relations-confiance"
+      createdAt: "2026-02-08T09:00:00"
+
+    - user: "charlie"
+      article: "retrouver-calme-interieur"
+      createdAt: "2026-01-30T10:00:00"
+
+    - user: "charlie"
+      article: "introduction-communication-non-violente"
+      createdAt: "2026-02-12T14:00:00"
+
+    - user: "diane"
+      article: "meditation-pleine-conscience-debutants"
+      createdAt: "2026-01-14T10:00:00"
+
+    - user: "diane"
+      article: "respiration-reguler-emotions"
+      createdAt: "2026-02-22T11:00:00"
+
+    - user: "emma"
+      article: "guide-complet-communication-bienveillante-lien-social"
+      createdAt: "2026-02-06T09:00:00"
+
+    - user: "emma"
+      article: "developper-intelligence-emotionnelle"
+      createdAt: "2026-01-20T14:00:00"
+
+    - user: "felix"
+      article: "bienfaits-benevolat-lien-social"
+      createdAt: "2026-01-24T10:00:00"
+
+    - user: "felix"
+      article: "tisser-liens-milieu-urbain"
+      createdAt: "2026-02-16T15:00:00"
+
+    - user: "hugo"
+      article: "pratiquer-gratitude-quotidien"
+      createdAt: "2026-02-10T09:00:00"
+
+    - user: "hugo"
+      article: "nature-bien-etre-preuves-scientifiques"
+      createdAt: "2026-02-24T14:00:00"
+
+    - user: "iris"
+      article: "guide-complet-communication-bienveillante-lien-social"
+      createdAt: "2026-02-22T10:00:00"
+
+    - user: "iris"
+      article: "gerer-stress-relationnel-travail"
+      createdAt: "2026-02-15T11:00:00"
+
+    - user: "julien"
+      article: "sortir-triangle-dramatique-karpman"
+      createdAt: "2026-03-01T09:00:00"
+
+    - user: "julien"
+      article: "gerer-conflits-milieu-professionnel"
+      createdAt: "2026-02-12T14:00:00"
+
+    - user: "kevin"
+      article: "eduquer-empathie-jeune-age"
+      createdAt: "2026-02-20T10:00:00"
+
+    - user: "lea"
+      article: "respiration-reguler-emotions"
+      createdAt: "2026-02-27T11:00:00"
+
+    - user: "lea"
+      article: "retrouver-calme-interieur"
+      createdAt: "2026-03-02T09:00:00"
+
+    - user: "nicolas"
+      article: "langages-amour-chapman"
+      createdAt: "2026-03-03T14:00:00"
+
+    - user: "nicolas"
+      article: "introduction-communication-non-violente"
+      createdAt: "2026-02-28T10:00:00"
+
+    - user: "olivia"
+      article: "guide-complet-communication-bienveillante-lien-social"
+      createdAt: "2026-03-05T09:00:00"
+
+    - user: "olivia"
+      article: "tisser-liens-milieu-urbain"
+      createdAt: "2026-03-04T14:00:00"
+
+    - user: "rachel"
+      article: "nature-bien-etre-preuves-scientifiques"
+      createdAt: "2026-03-08T10:00:00"
+
+    - user: "sophie"
+      article: "langages-amour-chapman"
+      createdAt: "2026-03-09T11:00:00"
+
+    - user: "sophie"
+      article: "introduction-communication-non-violente"
+      createdAt: "2026-03-11T09:00:00"

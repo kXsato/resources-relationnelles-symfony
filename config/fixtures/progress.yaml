@@ -1,13 +1,15 @@
 progress:
+    # ── user ─────────────────────────────────────────────────────────────────
     - user: "user"
       article: "introduction-communication-non-violente"
-      status: "in_progress"
-      readPercentage: 45
+      status: "completed"
+      readPercentage: 100
+      completeAt: "2026-01-10T10:00:00"
 
     - user: "user"
       article: "nature-espace-ressourcement"
       status: "in_progress"
-      readPercentage: 10
+      readPercentage: 40
 
     - user: "user"
       article: "comprendre-emotions-video"
@@ -15,10 +17,22 @@ progress:
       readPercentage: 100
       completeAt: "2026-02-15T10:00:00"
 
+    - user: "user"
+      article: "retrouver-calme-interieur"
+      status: "in_progress"
+      readPercentage: 65
+
+    - user: "user"
+      article: "guide-complet-communication-bienveillante-lien-social"
+      status: "in_progress"
+      readPercentage: 30
+
+    # ── alice ────────────────────────────────────────────────────────────────
     - user: "alice"
       article: "gerer-conflits-milieu-professionnel"
-      status: "in_progress"
-      readPercentage: 60
+      status: "completed"
+      readPercentage: 100
+      completeAt: "2026-01-20T14:00:00"
 
     - user: "alice"
       article: "retrouver-calme-interieur"
@@ -29,8 +43,20 @@ progress:
       article: "construire-relations-confiance"
       status: "completed"
       readPercentage: 100
-      completeAt: "2026-01-20T14:00:00"
+      completeAt: "2026-02-01T14:00:00"
 
+    - user: "alice"
+      article: "mieux-vivre-emotions-quotidien"
+      status: "completed"
+      readPercentage: 100
+      completeAt: "2026-02-10T09:00:00"
+
+    - user: "alice"
+      article: "developper-intelligence-emotionnelle"
+      status: "in_progress"
+      readPercentage: 50
+
+    # ── bob ──────────────────────────────────────────────────────────────────
     - user: "bob"
       article: "reconnaitre-ses-propres-limites"
       status: "in_progress"
@@ -38,10 +64,199 @@ progress:
 
     - user: "bob"
       article: "deuil-reconstruction-de-soi"
+      status: "completed"
+      readPercentage: 100
+      completeAt: "2026-02-05T11:00:00"
+
+    - user: "bob"
+      article: "introduction-communication-non-violente"
+      status: "completed"
+      readPercentage: 100
+      completeAt: "2026-01-15T16:00:00"
+
+    - user: "bob"
+      article: "pratiquer-gratitude-quotidien"
       status: "in_progress"
       readPercentage: 20
 
+    # ── charlie ──────────────────────────────────────────────────────────────
     - user: "charlie"
       article: "introduction-communication-non-violente"
       status: "in_progress"
       readPercentage: 55
+
+    - user: "charlie"
+      article: "retrouver-calme-interieur"
+      status: "completed"
+      readPercentage: 100
+      completeAt: "2026-01-28T10:00:00"
+
+    # ── diane ────────────────────────────────────────────────────────────────
+    - user: "diane"
+      article: "meditation-pleine-conscience-debutants"
+      status: "completed"
+      readPercentage: 100
+      completeAt: "2026-01-12T09:00:00"
+
+    - user: "diane"
+      article: "introduction-communication-non-violente"
+      status: "in_progress"
+      readPercentage: 45
+
+    - user: "diane"
+      article: "respiration-reguler-emotions"
+      status: "in_progress"
+      readPercentage: 70
+
+    # ── emma ─────────────────────────────────────────────────────────────────
+    - user: "emma"
+      article: "developper-intelligence-emotionnelle"
+      status: "completed"
+      readPercentage: 100
+      completeAt: "2026-01-18T14:00:00"
+
+    - user: "emma"
+      article: "mieux-vivre-emotions-quotidien"
+      status: "in_progress"
+      readPercentage: 60
+
+    - user: "emma"
+      article: "guide-complet-communication-bienveillante-lien-social"
+      status: "in_progress"
+      readPercentage: 80
+
+    # ── felix ────────────────────────────────────────────────────────────────
+    - user: "felix"
+      article: "bienfaits-benevolat-lien-social"
+      status: "completed"
+      readPercentage: 100
+      completeAt: "2026-01-22T10:00:00"
+
+    - user: "felix"
+      article: "tisser-liens-milieu-urbain"
+      status: "in_progress"
+      readPercentage: 35
+
+    - user: "felix"
+      article: "construire-relations-confiance"
+      status: "in_progress"
+      readPercentage: 90
+
+    # ── hugo ─────────────────────────────────────────────────────────────────
+    - user: "hugo"
+      article: "pratiquer-gratitude-quotidien"
+      status: "completed"
+      readPercentage: 100
+      completeAt: "2026-02-08T15:00:00"
+
+    - user: "hugo"
+      article: "nature-bien-etre-preuves-scientifiques"
+      status: "in_progress"
+      readPercentage: 55
+
+    - user: "hugo"
+      article: "retrouver-confiance-apres-rupture"
+      status: "in_progress"
+      readPercentage: 25
+
+    # ── iris ─────────────────────────────────────────────────────────────────
+    - user: "iris"
+      article: "gerer-stress-relationnel-travail"
+      status: "completed"
+      readPercentage: 100
+      completeAt: "2026-02-14T09:00:00"
+
+    - user: "iris"
+      article: "guide-complet-communication-bienveillante-lien-social"
+      status: "completed"
+      readPercentage: 100
+      completeAt: "2026-02-20T11:00:00"
+
+    # ── julien ───────────────────────────────────────────────────────────────
+    - user: "julien"
+      article: "gerer-conflits-milieu-professionnel"
+      status: "completed"
+      readPercentage: 100
+      completeAt: "2026-02-10T10:00:00"
+
+    - user: "julien"
+      article: "sortir-triangle-dramatique-karpman"
+      status: "in_progress"
+      readPercentage: 40
+
+    # ── kevin ────────────────────────────────────────────────────────────────
+    - user: "kevin"
+      article: "eduquer-empathie-jeune-age"
+      status: "completed"
+      readPercentage: 100
+      completeAt: "2026-02-18T14:00:00"
+
+    - user: "kevin"
+      article: "introduction-communication-non-violente"
+      status: "in_progress"
+      readPercentage: 70
+
+    # ── lea ──────────────────────────────────────────────────────────────────
+    - user: "lea"
+      article: "respiration-reguler-emotions"
+      status: "completed"
+      readPercentage: 100
+      completeAt: "2026-02-25T09:00:00"
+
+    - user: "lea"
+      article: "mieux-vivre-emotions-quotidien"
+      status: "in_progress"
+      readPercentage: 85
+
+    - user: "lea"
+      article: "retrouver-calme-interieur"
+      status: "in_progress"
+      readPercentage: 50
+
+    # ── nicolas ──────────────────────────────────────────────────────────────
+    - user: "nicolas"
+      article: "langages-amour-chapman"
+      status: "completed"
+      readPercentage: 100
+      completeAt: "2026-03-01T10:00:00"
+
+    - user: "nicolas"
+      article: "construire-relations-confiance"
+      status: "in_progress"
+      readPercentage: 60
+
+    # ── olivia ───────────────────────────────────────────────────────────────
+    - user: "olivia"
+      article: "tisser-liens-milieu-urbain"
+      status: "completed"
+      readPercentage: 100
+      completeAt: "2026-03-03T14:00:00"
+
+    - user: "olivia"
+      article: "guide-complet-communication-bienveillante-lien-social"
+      status: "in_progress"
+      readPercentage: 45
+
+    # ── rachel ───────────────────────────────────────────────────────────────
+    - user: "rachel"
+      article: "nature-bien-etre-preuves-scientifiques"
+      status: "completed"
+      readPercentage: 100
+      completeAt: "2026-03-07T11:00:00"
+
+    - user: "rachel"
+      article: "nature-espace-ressourcement"
+      status: "in_progress"
+      readPercentage: 65
+
+    # ── sophie ───────────────────────────────────────────────────────────────
+    - user: "sophie"
+      article: "langages-amour-chapman"
+      status: "in_progress"
+      readPercentage: 75
+
+    - user: "sophie"
+      article: "introduction-communication-non-violente"
+      status: "completed"
+      readPercentage: 100
+      completeAt: "2026-03-10T09:00:00"

@@ -135,8 +135,8 @@ abstract class Resource
     public function initTimestamps(): void
     {
         $now = new \DateTimeImmutable();
-        $this->createdAt = $now;
-        $this->updatedAt = $now;
+        $this->createdAt = $this->createdAt ?? $now;
+        $this->updatedAt = $this->updatedAt ?? $now;
     }
 
     #[ORM\PreUpdate]
