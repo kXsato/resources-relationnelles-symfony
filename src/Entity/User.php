@@ -61,7 +61,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, UserRessourceProgress>
      */
-    #[ORM\OneToMany(targetEntity: UserRessourceProgress::class, mappedBy: 'UserRessources')]
+    #[ORM\OneToMany(targetEntity: UserRessourceProgress::class, mappedBy: 'UserRessources', cascade: ['remove'], orphanRemoval: true)]
     private Collection $userRessourceProgress;
 
     public function __construct()
