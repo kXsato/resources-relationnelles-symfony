@@ -3,6 +3,8 @@
 namespace App\Controller\Dashboard\Moderator;
 
 use App\Entity\User;
+use App\Controller\Dashboard\Moderator\ModeratorProgressCrudController;
+use App\Controller\Dashboard\Moderator\ModeratorCompletedProgressCrudController;
 use App\Enum\ResourceStatus;
 use App\Repository\ArticleRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
@@ -61,6 +63,8 @@ class ModeratorDashboardController extends AbstractDashboardController
         yield MenuItem::subMenu('Mes ressources')->setSubItems([
             MenuItem::linkTo(ModeratorOwnArticleCrudController::class, 'Mes articles', 'fas fa-newspaper'),
             MenuItem::linkTo(ModeratorFavoriteCrudController::class, 'Mes favoris', 'fas fa-star'),
+            MenuItem::linkTo(ModeratorProgressCrudController::class, 'Mes lectures en cours', 'fas fa-book-open'),
+            MenuItem::linkTo(ModeratorCompletedProgressCrudController::class, 'Mes lectures terminées', 'fas fa-check-circle'),
             ]);
         yield MenuItem::subMenu('Modération')->setSubItems([
             MenuItem::linkTo(ModeratorArticleCrudController::class, 'Articles en attente', 'fas fa-clock')
