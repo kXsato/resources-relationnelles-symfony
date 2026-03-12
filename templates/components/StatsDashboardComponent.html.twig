@@ -44,6 +44,29 @@
                 style="padding:0.3rem 0.5rem;border-radius:0.375rem;font-size:0.8rem;color:#374151;outline:none;
                        border:1px solid {{ activeDays is null ? '#4F46E5' : '#D1D5DB' }};">
         </div>
+
+        <span style="color:#D1D5DB;">|</span>
+
+        {# ── Exports CSV ─────────────────────────────────────────────────────── #}
+        <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;">
+            <span style="font-size:0.8rem;font-weight:600;color:#374151;">Export :</span>
+            {% set exportBase = path('admin_stats_export') %}
+            {% set exportParams = '?startDate=' ~ startDate ~ '&endDate=' ~ endDate %}
+            {% for export in [
+                {type: 'users',                 label: 'Utilisateurs'},
+                {type: 'resources_per_day',     label: 'Ressources / jour'},
+                {type: 'resources_by_category', label: 'Par catégorie'},
+                {type: 'popularity',            label: 'Popularité'},
+            ] %}
+                <a href="{{ exportBase ~ exportParams ~ '&type=' ~ export.type }}"
+                   style="padding:0.375rem 0.75rem;border-radius:0.375rem;border:1px solid #D1D5DB;
+                          background:#F9FAFB;color:#374151;font-size:0.75rem;font-weight:500;
+                          text-decoration:none;display:inline-flex;align-items:center;gap:0.3rem;"
+                   title="Exporter en CSV">
+                    ↓ {{ export.label }}
+                </a>
+            {% endfor %}
+        </div>
     </div>
 
     {# ══ SECTION 1 — Utilisateurs ════════════════════════════════════════════ #}
