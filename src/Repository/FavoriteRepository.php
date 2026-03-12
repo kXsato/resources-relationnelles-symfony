@@ -16,28 +16,30 @@ class FavoriteRepository extends ServiceEntityRepository
         parent::__construct($registry, Favorite::class);
     }
 
-    //    /**
-    //     * @return Favorite[] Returns an array of Favorite objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('f')
-    //            ->andWhere('f.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('f.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    /**
+     * Articles les plus mis en favoris, triés par popularité.
+     * Retourne [['articleId' => N, 'title' => '...', 'total' => N], ...]
+     */
+    public function countFavoritesPerArticle(int $limit = 10): array
+    {
+        return $this->createQueryBuilder('f')
+            ->select('IDENTITY(f.article) AS articleId, a.title, COUNT(f.id) AS total')
+            ->join('f.article', 'a')
+            ->groupBy('f.article')
+            ->orderBy('total', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
 
-    //    public function findOneBySomeField($value): ?Favorite
-    //    {
-    //        return $this->createQueryBuilder('f')
-    //            ->andWhere('f.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    /**
+     * Nombre total de favoris.
+     */
+    public function countTotal(): int
+    {
+        return (int) $this->createQueryBuilder('f')
+            ->select('COUNT(f.id)')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }

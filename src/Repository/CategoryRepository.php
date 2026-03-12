@@ -16,28 +16,19 @@ class CategoryRepository extends ServiceEntityRepository
         parent::__construct($registry, Category::class);
     }
 
-//    /**
-//     * @return Category[] Returns an array of Category objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('c')
-//            ->andWhere('c.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('c.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
-//    public function findOneBySomeField($value): ?Category
-//    {
-//        return $this->createQueryBuilder('c')
-//            ->andWhere('c.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    /**
+     * Catégories avec leur nombre de ressources publiées associées.
+     * Retourne [['id' => N, 'name' => '...', 'total' => N], ...]
+     */
+    public function findWithPublishedResourceCount(): array
+    {
+        return $this->createQueryBuilder('c')
+            ->select('c.id, c.name, COUNT(r.id) AS total')
+            ->leftJoin('c.resources', 'r', 'WITH', 'r.status = :status')
+            ->setParameter('status', 'published')
+            ->groupBy('c.id')
+            ->orderBy('total', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
 }

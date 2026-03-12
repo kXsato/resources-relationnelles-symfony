@@ -45,4 +45,48 @@ class UserRessourceProgressRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    /**
+     * Pourcentage de lecture moyen par ressource.
+     * Retourne [['resourceId' => N, 'title' => '...', 'avgPercentage' => N], ...]
+     */
+    public function averageReadPercentagePerResource(): array
+    {
+        return $this->createQueryBuilder('p')
+            ->select('IDENTITY(p.resource) AS resourceId, r.title, AVG(p.readPercentage) AS avgPercentage')
+            ->join('p.resource', 'r')
+            ->groupBy('p.resource')
+            ->orderBy('avgPercentage', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * Répartition des progressions par statut (in_progress / completed).
+     * Retourne [['status' => '...', 'total' => N], ...]
+     */
+    public function countByStatus(): array
+    {
+        return $this->createQueryBuilder('p')
+            ->select('p.status, COUNT(p.id) AS total')
+            ->groupBy('p.status')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * Ressources les plus lues, triées par nombre de lecteurs uniques.
+     * Retourne [['resourceId' => N, 'title' => '...', 'readers' => N], ...]
+     */
+    public function findMostReadResources(int $limit = 10): array
+    {
+        return $this->createQueryBuilder('p')
+            ->select('IDENTITY(p.resource) AS resourceId, r.title, COUNT(DISTINCT p.UserRessources) AS readers')
+            ->join('p.resource', 'r')
+            ->groupBy('p.resource')
+            ->orderBy('readers', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
 }
