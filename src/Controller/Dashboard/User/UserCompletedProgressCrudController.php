@@ -16,7 +16,7 @@ class UserCompletedProgressCrudController extends BaseProgressCrudController
 
     public function configureCrud(Crud $crud): Crud
     {
-        return $crud->setPageTitle('index', 'Ressources terminées');
+        return $crud->setPageTitle('index', 'Mes lectures terminées');
     }
 
     public function configureFields(string $pageName): iterable

@@ -14,6 +14,6 @@ class UserProgressCrudController extends BaseProgressCrudController
 
     public function configureCrud(Crud $crud): Crud
     {
-        return $crud->setPageTitle('index', 'En cours de lecture');
+        return $crud->setPageTitle('index', 'Mes lectures en cours');
     }
 }

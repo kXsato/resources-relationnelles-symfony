@@ -13,8 +13,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use Symfony\Bundle\SecurityBundle\Security;
+use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 
 abstract class BaseProgressCrudController extends AbstractCrudController
 {
@@ -52,6 +52,7 @@ abstract class BaseProgressCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         yield AssociationField::new('resource', 'Ressource');
-        yield IntegerField::new('readPercentage', 'Progression (%)')->setTemplatePath('admin/field/percentage.html.twig');
+        yield IntegerField::new('readPercentage', 'Progression (%)')
+            ->setTemplatePath('admin/field/integer_plain.html.twig');
     }
 }

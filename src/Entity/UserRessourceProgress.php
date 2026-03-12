@@ -45,12 +45,12 @@ class UserRessourceProgress
         return $this;
     }
 
-    public function getReadPrecentage(): ?int
+    public function getReadPercentage(): ?int
     {
         return $this->readPercentage;
     }
 
-    public function setReadPrecentage(int $readPercentage): static
+    public function setReadPercentage(int $readPercentage): static
     {
         $this->readPercentage = $readPercentage;
 

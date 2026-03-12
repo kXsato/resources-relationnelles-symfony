@@ -38,7 +38,7 @@ class UserRessourceProgressFixtures extends Fixture implements DependentFixtureI
             $progress->setUserRessources($user);
             $progress->setResource($article);
             $progress->setStatus($item['status']);
-            $progress->setReadPrecentage($item['readPercentage']);
+            $progress->setReadPercentage($item['readPercentage']);
 
             if (!empty($item['completeAt'])) {
                 $progress->setCompleteAt(new \DateTime($item['completeAt']));
