@@ -3,12 +3,11 @@
 {% block title %}{{ article.title }}{% endblock %}
 
 {% block body %}
-    <article class="container mt-5">
-        <header class="mb-4">
-            {# <span class="badge bg-primary">{{ article.category ? article.category.name : 'Général' }}</span> #}
-            <h1 class="display-4">{{ article.title }}</h1>
-            <p class="text-muted">Publié le {{ article.createdAt|date('d/m/Y') }} par {{ article.displayAuthor }}</p>
-        </header>
+<article class="container mt-5">
+    <header class="mb-4">
+        <h1 class="display-4">{{ article.title }}</h1>
+        <p class="text-muted">Publié le {{ article.createdAt|date('d/m/Y') }} par {{ article.displayAuthor }}</p>
+    </header>
 
     <hr>
 
@@ -22,32 +21,158 @@
         </a>
 
         {% if app.user %}
-        <button id="btn-favorite"
-                class="btn btn-outline-warning"
-                data-article-id="{{ article.id }}">
+        <button id="btn-favorite" class="btn btn-outline-warning" data-article-id="{{ article.id }}">
             Mettre en favori
         </button>
         {% endif %}
     </footer>
 </article>
 
+<div class="container mt-5">
+    <h2 class="fw-bold mb-4">💬 Commentaires</h2>
+
+    {% if app.user %}
+    <div class="mb-4">
+        <textarea id="comment-input" class="form-control mb-2" rows="3" placeholder="Écrire un commentaire..."></textarea>
+        <button id="btn-comment" class="btn btn-primary">Publier</button>
+    </div>
+    {% else %}
+    <p class="text-muted"><a href="{{ path('app_login') }}">Connectez-vous</a> pour commenter.</p>
+    {% endif %}
+
+    <div id="flash-comment" class="mb-3"></div>
+    <div id="comments-list"></div>
+</div>
+
 <script>
+const articleId = {{ article.id|json_encode|raw }};
+const isLoggedIn = {{ app.user ? 'true' : 'false' }};
+const isModerator = {{ is_granted('ROLE_MODERATOR') ? 'true' : 'false' }};
+
+function renderComment(comment, depth = 0) {
+    const margin = depth * 20;
+    const deleteBtn = (comment.isOwner || isModerator)
+        ? `<button onclick="deleteComment(${comment.id})" class="btn btn-sm btn-outline-danger ms-2">🗑 Supprimer</button>`
+        : '';
+    const replyBtn = isLoggedIn
+        ? `<button onclick="showReplyForm(${comment.id})" class="btn btn-sm btn-outline-secondary ms-2">↩ Répondre</button>`
+        : '';
+
+    let html = `
+        <div class="card mb-2" style="margin-left: ${margin}px" id="comment-${comment.id}">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <strong>${comment.author}</strong>
+                    <small class="text-muted">${comment.createdAt}</small>
+                </div>
+                <p class="mt-2 mb-1">${comment.content}</p>
+                <div>
+                    ${replyBtn}
+                    ${deleteBtn}
+                </div>
+                <div id="reply-form-${comment.id}" class="mt-2" style="display:none">
+                    <textarea class="form-control mb-1" rows="2" placeholder="Votre réponse..."></textarea>
+                    <button onclick="submitReply(${comment.id})" class="btn btn-sm btn-primary">Répondre</button>
+                    <button onclick="hideReplyForm(${comment.id})" class="btn btn-sm btn-secondary ms-1">Annuler</button>
+                </div>
+            </div>
+        </div>
+    `;
+
+    comment.children.forEach(child => {
+        html += renderComment(child, depth + 1);
+    });
+
+    return html;
+}
+
+function loadComments() {
+    fetch(`/comments/resource/${articleId}`)
+        .then(r => r.json())
+        .then(comments => {
+            const container = document.getElementById('comments-list');
+            if (comments.length === 0) {
+                container.innerHTML = '<p class="text-muted">Aucun commentaire pour le moment.</p>';
+                return;
+            }
+            container.innerHTML = comments.map(c => renderComment(c)).join('');
+        });
+}
+
+function showReplyForm(commentId) {
+    document.getElementById(`reply-form-${commentId}`).style.display = 'block';
+}
+
+function hideReplyForm(commentId) {
+    document.getElementById(`reply-form-${commentId}`).style.display = 'none';
+}
+
+function submitReply(parentId) {
+    const form = document.getElementById(`reply-form-${parentId}`);
+    const content = form.querySelector('textarea').value.trim();
+    if (!content) return;
+
+    fetch('/comments/add', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content, resourceId: articleId, parentId })
+    })
+    .then(r => r.json())
+    .then(() => {
+        hideReplyForm(parentId);
+        loadComments();
+    });
+}
+
+function deleteComment(commentId) {
+    if (!confirm('Supprimer ce commentaire ?')) return;
+
+    fetch(`/comments/delete/${commentId}`, { method: 'DELETE' })
+        .then(r => r.json())
+        .then(data => {
+            if (data.status === 'deleted') {
+                document.getElementById(`comment-${commentId}`)?.remove();
+                const flash = document.getElementById('flash-comment');
+                flash.innerHTML = '<div class="alert alert-success">✅ Commentaire supprimé.</div>';
+                setTimeout(() => flash.innerHTML = '', 3000);
+            }
+        });
+}
+
+const btnComment = document.getElementById('btn-comment');
+if (btnComment) {
+    btnComment.addEventListener('click', function () {
+        const content = document.getElementById('comment-input').value.trim();
+        if (!content) return;
+
+        fetch('/comments/add', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ content, resourceId: articleId })
+        })
+        .then(r => r.json())
+        .then(() => {
+            document.getElementById('comment-input').value = '';
+            loadComments();
+        });
+    });
+}
+
+// Favoris
 const btn = document.getElementById('btn-favorite');
-
 if (btn) {
-    const articleId = btn.dataset.articleId;
-
+    const articleId2 = btn.dataset.articleId;
     fetch('/favorites/list')
         .then(r => r.json())
         .then(favorites => {
-            const isFav = favorites.some(f => f.id == articleId);
+            const isFav = favorites.some(f => f.id == articleId2);
             btn.textContent = isFav ? '★ Retirer des favoris' : 'Mettre en favori';
             btn.classList.toggle('btn-warning', isFav);
             btn.classList.toggle('btn-outline-warning', !isFav);
         });
 
     btn.addEventListener('click', function () {
-        fetch(`/favorites/toggle/${articleId}`, {
+        fetch(`/favorites/toggle/${articleId2}`, {
             method: 'POST',
             headers: { 'X-Requested-With': 'XMLHttpRequest' }
         })
@@ -63,5 +188,7 @@ if (btn) {
         });
     });
 }
+
+loadComments();
 </script>
 {% endblock %}
