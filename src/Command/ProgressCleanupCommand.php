@@ -10,6 +10,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 /**
  * Supprime les entrées UserRessourceProgress dont le statut est "completed"
@@ -28,7 +29,7 @@ class ProgressCleanupCommand extends Command
     public function __construct(
         private readonly UserRessourceProgressRepository $progressRepository,
         private readonly EntityManagerInterface $entityManager,
-        private readonly int $purgeDelayDays,
+        private readonly ParameterBagInterface $params,
     ) {
         parent::__construct();
     }
@@ -46,7 +47,7 @@ class ProgressCleanupCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $days = (int) ($input->getOption('days') ?? $this->purgeDelayDays);
+        $days = (int) ($input->getOption('days') ?? $this->params->get('app.progress.purge_delay_days'));
 
         $threshold = new \DateTimeImmutable(sprintf('-%d days', $days));
         $entries = $this->progressRepository->findCompletedBefore($threshold);

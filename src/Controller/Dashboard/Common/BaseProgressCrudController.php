@@ -13,8 +13,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
-use Symfony\Bundle\SecurityBundle\Security;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
+use Symfony\Bundle\SecurityBundle\Security;
 
 abstract class BaseProgressCrudController extends AbstractCrudController
 {
@@ -34,7 +34,16 @@ abstract class BaseProgressCrudController extends AbstractCrudController
 
     public function configureActions(Actions $actions): Actions
     {
-        return $actions->disable(Action::NEW, Action::EDIT, Action::DELETE);
+        $readAction = Action::new('lireRessource', 'Lire', 'fas fa-book-open')
+            ->linkToUrl(fn(UserRessourceProgress $progress) => $this->generateUrl(
+                'app_resource_show',
+                ['id' => $progress->getResource()?->getId()]
+            ))
+            ->setHtmlAttributes(['target' => '_blank']);
+
+        return $actions
+            ->disable(Action::NEW, Action::EDIT, Action::DELETE)
+            ->add(Crud::PAGE_INDEX, $readAction);
     }
 
     public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
