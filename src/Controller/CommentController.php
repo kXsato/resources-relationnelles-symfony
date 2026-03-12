@@ -66,6 +66,10 @@ class CommentController extends AbstractController
             return $this->json(['error' => 'Non autorisé'], 403);
         }
 
+        foreach ($comment->getChildren() as $child) {
+            $em->remove($child);
+        }
+
         $em->remove($comment);
         $em->flush();
 

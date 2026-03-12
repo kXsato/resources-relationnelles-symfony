@@ -131,14 +131,19 @@ function deleteComment(commentId) {
         .then(r => r.json())
         .then(data => {
             if (data.status === 'deleted') {
-                document.getElementById(`comment-${commentId}`)?.remove();
+                // Supprimer le commentaire et tous ses enfants visuellement
+                const card = document.getElementById(`comment-${commentId}`);
+                if (card) card.remove();
+
                 const flash = document.getElementById('flash-comment');
                 flash.innerHTML = '<div class="alert alert-success">✅ Commentaire supprimé.</div>';
                 setTimeout(() => flash.innerHTML = '', 3000);
+                
+                // Recharger pour être sûr
+                loadComments();
             }
         });
 }
-
 const btnComment = document.getElementById('btn-comment');
 if (btnComment) {
     btnComment.addEventListener('click', function () {
