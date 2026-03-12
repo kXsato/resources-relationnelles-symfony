@@ -1,27 +1,61 @@
 {% set stats = this.globalStats %}
+{% set activeDays = this.activeDays %}
 
 <div {{ attributes }}>
 
-    {# ── Sélecteur de période ─────────────────────────────────────────── #}
-    <div style="display:flex;gap:0.5rem;margin-bottom:1.5rem;">
-        {% for period in [7, 30, 90] %}
-            <button
-                type="button"
-                data-action="live#action"
-                data-live-action-param="setPeriod"
-                data-live-action-days-param="{{ period }}"
+    {# ── Filtres de période ───────────────────────────────────────────── #}
+    <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;margin-bottom:1.5rem;">
+
+        <div style="display:flex;gap:0.5rem;">
+            {% for period in [7, 30, 90] %}
+                <button
+                    type="button"
+                    data-action="live#action"
+                    data-live-action-param="setPeriod"
+                    data-live-action-days-param="{{ period }}"
+                    style="
+                        padding:0.375rem 0.875rem;
+                        border-radius:0.375rem;
+                        border:1px solid #D1D5DB;
+                        cursor:pointer;
+                        font-size:0.8rem;
+                        font-weight:500;
+                        background:{{ activeDays == period ? '#4F46E5' : '#fff' }};
+                        color:{{ activeDays == period ? '#fff' : '#374151' }};
+                    "
+                >{{ period }}j</button>
+            {% endfor %}
+        </div>
+
+        <span style="color:#D1D5DB;">|</span>
+
+        <div style="display:flex;align-items:center;gap:0.5rem;">
+            <label style="font-size:0.8rem;color:#6B7280;">Du</label>
+            <input
+                type="date"
+                data-model="on(change)|startDate"
+                value="{{ startDate }}"
                 style="
-                    padding:0.375rem 0.875rem;
+                    padding:0.3rem 0.5rem;
+                    border:1px solid {{ activeDays is null ? '#4F46E5' : '#D1D5DB' }};
                     border-radius:0.375rem;
-                    border:1px solid #D1D5DB;
-                    cursor:pointer;
-                    font-size:0.8rem;
-                    font-weight:500;
-                    background:{{ days == period ? '#4F46E5' : '#fff' }};
-                    color:{{ days == period ? '#fff' : '#374151' }};
+                    font-size:0.8rem;color:#374151;outline:none;
                 "
-            >{{ period }}j</button>
-        {% endfor %}
+            >
+            <label style="font-size:0.8rem;color:#6B7280;">au</label>
+            <input
+                type="date"
+                data-model="on(change)|endDate"
+                value="{{ endDate }}"
+                style="
+                    padding:0.3rem 0.5rem;
+                    border:1px solid {{ activeDays is null ? '#4F46E5' : '#D1D5DB' }};
+                    border-radius:0.375rem;
+                    font-size:0.8rem;color:#374151;outline:none;
+                "
+            >
+        </div>
+
     </div>
 
     {# ── Cartes globales ──────────────────────────────────────────────── #}
@@ -67,10 +101,40 @@
 
     </div>
 
+    {# ── Graphiques — activité sur la période ─────────────────────────── #}
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem;">
+
+        <div style="background:#fff;border-radius:0.75rem;padding:1.25rem;box-shadow:0 1px 4px rgba(0,0,0,0.08);">
+            <h4 style="margin:0 0 1rem;font-size:0.875rem;font-weight:600;color:#374151;">
+                Nouveaux inscrits
+                <span style="font-weight:400;color:#9CA3AF;font-size:0.75rem;">({{ startDate }} → {{ endDate }})</span>
+            </h4>
+            {{ render_chart(this.newUsersChart, {'style': 'max-height:220px'}) }}
+        </div>
+
+        <div style="background:#fff;border-radius:0.75rem;padding:1.25rem;box-shadow:0 1px 4px rgba(0,0,0,0.08);">
+            <h4 style="margin:0 0 1rem;font-size:0.875rem;font-weight:600;color:#374151;">
+                Ressources publiées
+                <span style="font-weight:400;color:#9CA3AF;font-size:0.75rem;">({{ startDate }} → {{ endDate }})</span>
+            </h4>
+            {{ render_chart(this.publishedResourcesChart, {'style': 'max-height:220px'}) }}
+        </div>
+
+        <div style="background:#fff;border-radius:0.75rem;padding:1.25rem;box-shadow:0 1px 4px rgba(0,0,0,0.08);">
+            <h4 style="margin:0 0 1rem;font-size:0.875rem;font-weight:600;color:#374151;">Ressources par catégorie</h4>
+            {{ render_chart(this.resourcesByCategoryChart, {'style': 'max-height:220px'}) }}
+        </div>
+
+        <div style="background:#fff;border-radius:0.75rem;padding:1.25rem;box-shadow:0 1px 4px rgba(0,0,0,0.08);">
+            <h4 style="margin:0 0 1rem;font-size:0.875rem;font-weight:600;color:#374151;">Top articles favoris</h4>
+            {{ render_chart(this.topFavoritedArticlesChart, {'style': 'max-height:220px'}) }}
+        </div>
+
+    </div>
+
     {# ── Tableaux détaillés ───────────────────────────────────────────── #}
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;">
 
-        {# Top ressources lues #}
         <div style="background:#fff;border-radius:0.75rem;padding:1.25rem;box-shadow:0 1px 4px rgba(0,0,0,0.08);">
             <h4 style="margin:0 0 1rem;font-size:0.875rem;font-weight:600;color:#374151;">Top ressources lues</h4>
             <table style="width:100%;border-collapse:collapse;font-size:0.8rem;">
@@ -93,7 +157,6 @@
             </table>
         </div>
 
-        {# Progression moyenne par ressource #}
         <div style="background:#fff;border-radius:0.75rem;padding:1.25rem;box-shadow:0 1px 4px rgba(0,0,0,0.08);">
             <h4 style="margin:0 0 1rem;font-size:0.875rem;font-weight:600;color:#374151;">Progression moyenne par ressource</h4>
             <table style="width:100%;border-collapse:collapse;font-size:0.8rem;">
@@ -114,87 +177,6 @@
                     {% endfor %}
                 </tbody>
             </table>
-        </div>
-
-        {# Top articles favoris #}
-        <div style="background:#fff;border-radius:0.75rem;padding:1.25rem;box-shadow:0 1px 4px rgba(0,0,0,0.08);">
-            <h4 style="margin:0 0 1rem;font-size:0.875rem;font-weight:600;color:#374151;">Articles les plus mis en favoris</h4>
-            <table style="width:100%;border-collapse:collapse;font-size:0.8rem;">
-                <thead>
-                    <tr style="color:#6B7280;text-align:left;">
-                        <th style="padding-bottom:0.5rem;">Article</th>
-                        <th style="padding-bottom:0.5rem;text-align:right;">Favoris</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for row in this.topFavoritedArticles %}
-                        <tr style="border-top:1px solid #F3F4F6;">
-                            <td style="padding:0.4rem 0;color:#374151;">{{ row.title }}</td>
-                            <td style="padding:0.4rem 0;text-align:right;font-weight:600;color:#D97706;">{{ row.total }}</td>
-                        </tr>
-                    {% else %}
-                        <tr><td colspan="2" style="color:#9CA3AF;padding-top:0.5rem;">Aucune donnée</td></tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-
-        {# Ressources par catégorie #}
-        <div style="background:#fff;border-radius:0.75rem;padding:1.25rem;box-shadow:0 1px 4px rgba(0,0,0,0.08);">
-            <h4 style="margin:0 0 1rem;font-size:0.875rem;font-weight:600;color:#374151;">Ressources publiées par catégorie</h4>
-            <table style="width:100%;border-collapse:collapse;font-size:0.8rem;">
-                <thead>
-                    <tr style="color:#6B7280;text-align:left;">
-                        <th style="padding-bottom:0.5rem;">Catégorie</th>
-                        <th style="padding-bottom:0.5rem;text-align:right;">Ressources</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for row in this.resourcesByCategoryStats %}
-                        <tr style="border-top:1px solid #F3F4F6;">
-                            <td style="padding:0.4rem 0;color:#374151;">{{ row.categoryName }}</td>
-                            <td style="padding:0.4rem 0;text-align:right;font-weight:600;color:#374151;">{{ row.total }}</td>
-                        </tr>
-                    {% else %}
-                        <tr><td colspan="2" style="color:#9CA3AF;padding-top:0.5rem;">Aucune donnée</td></tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-
-    </div>
-
-    {# ── Activité sur la période sélectionnée ─────────────────────────── #}
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:1.5rem;">
-
-        <div style="background:#fff;border-radius:0.75rem;padding:1.25rem;box-shadow:0 1px 4px rgba(0,0,0,0.08);">
-            <h4 style="margin:0 0 1rem;font-size:0.875rem;font-weight:600;color:#374151;">
-                Nouveaux inscrits ({{ days }}j)
-            </h4>
-            {% set newUsers = this.newUsersPerDay %}
-            {% if newUsers is empty %}
-                <p style="color:#9CA3AF;font-size:0.8rem;">Aucune inscription sur cette période.</p>
-            {% else %}
-                <p style="font-size:1.5rem;font-weight:700;color:#4F46E5;">
-                    {{ newUsers|reduce((carry, row) => carry + row.total, 0) }}
-                </p>
-                <p style="font-size:0.75rem;color:#6B7280;margin-top:0.25rem;">inscriptions en {{ days }} jours</p>
-            {% endif %}
-        </div>
-
-        <div style="background:#fff;border-radius:0.75rem;padding:1.25rem;box-shadow:0 1px 4px rgba(0,0,0,0.08);">
-            <h4 style="margin:0 0 1rem;font-size:0.875rem;font-weight:600;color:#374151;">
-                Ressources publiées ({{ days }}j)
-            </h4>
-            {% set newResources = this.publishedResourcesPerDay %}
-            {% if newResources is empty %}
-                <p style="color:#9CA3AF;font-size:0.8rem;">Aucune publication sur cette période.</p>
-            {% else %}
-                <p style="font-size:1.5rem;font-weight:700;color:#059669;">
-                    {{ newResources|reduce((carry, row) => carry + row.total, 0) }}
-                </p>
-                <p style="font-size:0.75rem;color:#6B7280;margin-top:0.25rem;">ressources publiées en {{ days }} jours</p>
-            {% endif %}
         </div>
 
     </div>

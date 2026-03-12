@@ -13,6 +13,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
 
 #[AdminDashboard(routePath: '/super-admin', routeName: 'super_admin')]
 class SuperAdminDashboardController extends AbstractDashboardController
@@ -36,6 +37,12 @@ class SuperAdminDashboardController extends AbstractDashboardController
                 ->setEntityId($user->getId())
                 ->generateUrl()
         );
+    }
+
+    #[Route('/super-admin/statistiques', name: 'super_admin_stats_dashboard')]
+    public function statsDashboard(): Response
+    {
+        return $this->render('admin/common/dashboard.html.twig');
     }
 
     public function configureDashboard(): Dashboard
@@ -67,6 +74,8 @@ class SuperAdminDashboardController extends AbstractDashboardController
                 ->setBadge($pendingCount > 0 ? $pendingCount : null, 'danger'),
             MenuItem::linkTo(SuperAdminPublishedArticleCrudController::class, 'Articles publiés', 'fas fa-check'),
         ]);
+
+        yield MenuItem::linkToRoute('Statistiques', 'fas fa-chart-bar', 'super_admin_stats_dashboard');
 
         yield MenuItem::linkToLogout('Logout', 'fa fa-sign-out');
     }
