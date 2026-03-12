@@ -57,6 +57,8 @@ class UserRessourceProgress
         if ($readPercentage >= 100) {
             $this->status = 'completed';
             $this->completeAt = $this->completeAt ?? new \DateTime();
+        } else {
+            $this->status = 'in_progress';
         }
 
         return $this;

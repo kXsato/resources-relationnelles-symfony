@@ -12,11 +12,11 @@
 
     <hr>
 
-    <div class="article-content mt-4">
+    <div id="article-content" class="article-content mt-4">
         {{ article.content|raw }}
     </div>
 
-    <footer class="mt-5 d-flex gap-3">
+    <footer class="mt-5 d-flex gap-3 align-items-center">
         <a href="{{ path('app_resource_list') }}" class="btn btn-outline-secondary">
             ← Retour aux ressources
         </a>
@@ -28,6 +28,16 @@
             Mettre en favori
         </button>
         {% endif %}
+
+        <div id="reading-progress-widget" style="position:fixed; bottom:1.5rem; right:1.5rem; z-index:1000;">
+            <div id="radial-progress"
+                 class="radial-progress text-primary"
+                 style="--value:{{ progress ? progress.readPercentage : 0 }};"
+                 aria-valuenow="{{ progress ? progress.readPercentage : 0 }}"
+                 role="progressbar">
+                {{ progress ? progress.readPercentage : 0 }}%
+            </div>
+        </div>
     </footer>
 </article>
 
@@ -63,5 +73,77 @@ if (btn) {
         });
     });
 }
+
+{% if app.user %}
+(function () {
+    const PROGRESS_ID = {{ progress.id }};
+
+    let lastSavedPct = {{ progress.readPercentage }};
+    let saveTimer = null;
+
+    const radial = document.getElementById('radial-progress');
+
+    function updateRadial(pct) {
+        pct = Math.min(100, Math.max(0, Math.round(pct)));
+        radial.style.setProperty('--value', pct);
+        radial.setAttribute('aria-valuenow', pct);
+        radial.textContent = pct + '%';
+    }
+
+    function getScrollPct() {
+        const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+        if (scrollable <= 50) return null; // article trop court pour le scroll
+        return Math.min(100, Math.round((window.scrollY / scrollable) * 100));
+    }
+
+    async function saveProgress(pct) {
+        if (pct === lastSavedPct) return;
+        try {
+            const res = await fetch('/api/progress/' + PROGRESS_ID, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ readPercentage: pct }),
+            });
+            if (res.ok) { lastSavedPct = pct; }
+        } catch (e) { console.error('Erreur sauvegarde progression:', e); }
+    }
+
+    function scheduleSave(pct) {
+        clearTimeout(saveTimer);
+        saveTimer = setTimeout(() => saveProgress(pct), 1000);
+    }
+
+    // --- Scroll-based tracking ---
+    window.addEventListener('scroll', function () {
+        const pct = getScrollPct();
+        if (pct === null) return;
+        updateRadial(pct);
+        scheduleSave(pct);
+    }, { passive: true });
+
+    // --- Time-based tracking pour articles courts ---
+    const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+    if (scrollable <= 50) {
+        const WORDS = document.getElementById('article-content').innerText.trim().split(/\s+/).length;
+        const READING_TIME_MS = Math.max(10000, Math.round((WORDS / 200) * 60 * 1000));
+        let elapsed = Math.round((lastSavedPct / 100) * READING_TIME_MS);
+        let lastTick = Date.now();
+
+        const timer = setInterval(function () {
+            if (!document.hidden) {
+                elapsed += Date.now() - lastTick;
+            }
+            lastTick = Date.now();
+            const pct = Math.min(100, Math.round((elapsed / READING_TIME_MS) * 100));
+            updateRadial(pct);
+            scheduleSave(pct);
+            if (pct >= 100) clearInterval(timer);
+        }, 1000);
+    }
+
+    // Init
+    updateRadial(Math.max(lastSavedPct, getScrollPct() ?? 0));
+})();
+{% endif %}
 </script>
 {% endblock %}
