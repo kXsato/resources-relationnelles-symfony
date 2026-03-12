@@ -16,28 +16,33 @@ class UserRessourceProgressRepository extends ServiceEntityRepository
         parent::__construct($registry, UserRessourceProgress::class);
     }
 
-    //    /**
-    //     * @return UserRessourceProgress[] Returns an array of UserRessourceProgress objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('u')
-    //            ->andWhere('u.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('u.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    /**
+     * Retourne les entrées complétées dont la date de complétion est antérieure au seuil donné.
+     *
+     * @return UserRessourceProgress[]
+     */
+    public function findCompletedBefore(\DateTimeInterface $threshold): array
+    {
+        return $this->createQueryBuilder('p')
+            ->where('p.status = :status')
+            ->andWhere('p.completeAt < :threshold')
+            ->setParameter('status', 'completed')
+            ->setParameter('threshold', $threshold)
+            ->getQuery()
+            ->getResult();
+    }
 
-    //    public function findOneBySomeField($value): ?UserRessourceProgress
-    //    {
-    //        return $this->createQueryBuilder('u')
-    //            ->andWhere('u.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    /**
+     * Retourne les entrées orphelines : sans utilisateur ou sans ressource.
+     *
+     * @return UserRessourceProgress[]
+     */
+    public function findOrphaned(): array
+    {
+        return $this->createQueryBuilder('p')
+            ->where('p.UserRessources IS NULL')
+            ->orWhere('p.resource IS NULL')
+            ->getQuery()
+            ->getResult();
+    }
 }
