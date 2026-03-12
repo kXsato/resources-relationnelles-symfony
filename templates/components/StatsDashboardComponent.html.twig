@@ -50,7 +50,7 @@
         {# ── Exports CSV ─────────────────────────────────────────────────────── #}
         <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;">
             <span style="font-size:0.8rem;font-weight:600;color:#374151;">Export :</span>
-            {% set exportBase = path('admin_stats_export') %}
+            {% set exportBase = path(is_granted('ROLE_SUPER_ADMIN') ? 'super_admin_stats_export' : 'admin_stats_export') %}
             {% set exportParams = '?startDate=' ~ startDate ~ '&endDate=' ~ endDate %}
             {% for export in [
                 {type: 'users',                 label: 'Utilisateurs'},

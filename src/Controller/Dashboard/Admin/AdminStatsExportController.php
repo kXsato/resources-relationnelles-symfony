@@ -8,12 +8,11 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Serializer\Encoder\CsvEncoder;
 use Symfony\Component\Serializer\SerializerInterface;
 
 #[Route('/admin/stats/export', name: 'admin_stats_export')]
-#[IsGranted('ROLE_ADMIN')]
+#[Route('/super-admin/stats/export', name: 'super_admin_stats_export')]
 class AdminStatsExportController extends AbstractController
 {
     public function __construct(
