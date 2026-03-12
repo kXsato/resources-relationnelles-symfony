@@ -11,36 +11,17 @@ use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
-use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
 
 #[AdminDashboard(routePath: '/super-admin', routeName: 'super_admin')]
 class SuperAdminDashboardController extends AbstractDashboardController
 {
     public function __construct(
-        private AdminUrlGenerator $adminUrlGenerator,
         private ArticleRepository $articleRepository,
         private UserRepository $userRepository,
     ) {}
 
     public function index(): Response
-    {
-        /** @var User $user */
-        $user = $this->getUser();
-
-        return $this->redirect(
-            $this->adminUrlGenerator
-                ->setDashboard(self::class)
-                ->setController(SuperAdminProfileCrudController::class)
-                ->setAction('edit')
-                ->setEntityId($user->getId())
-                ->generateUrl()
-        );
-    }
-
-    #[Route('/super-admin/statistiques', name: 'super_admin_stats_dashboard')]
-    public function statsDashboard(): Response
     {
         return $this->render('admin/common/dashboard.html.twig');
     }
@@ -59,7 +40,7 @@ class SuperAdminDashboardController extends AbstractDashboardController
         $reactivationCount = $this->userRepository->countReactivationRequests();
 
         yield MenuItem::subMenu('Mon espace personnelle')->setSubItems([
-            MenuItem::linkToDashboard('Mon compte', 'fas fa-user'),
+            MenuItem::linkToCrud('Mon compte', 'fas fa-user', \App\Entity\User::class)->setController(SuperAdminProfileCrudController::class)->setAction('edit')->setEntityId($this->getUser()->getId()),
             MenuItem::linkTo(SuperAdminOwnArticleCrudController::class, 'Mes articles', 'fas fa-book'),
             MenuItem::linkTo(SuperAdminFavoriteCrudController::class, 'Mes favoris', 'fas fa-star'),
             MenuItem::linkTo(SuperAdminProgressCrudController::class, 'Mes lectures en cours', 'fas fa-book-open'),
@@ -75,7 +56,7 @@ class SuperAdminDashboardController extends AbstractDashboardController
             MenuItem::linkTo(SuperAdminPublishedArticleCrudController::class, 'Articles publiés', 'fas fa-check'),
         ]);
 
-        yield MenuItem::linkToRoute('Statistiques', 'fas fa-chart-bar', 'super_admin_stats_dashboard');
+        yield MenuItem::linkToDashboard('Statistiques', 'fas fa-chart-bar');
 
         yield MenuItem::linkToLogout('Logout', 'fa fa-sign-out');
     }

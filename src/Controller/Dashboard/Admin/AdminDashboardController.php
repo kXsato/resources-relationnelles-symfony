@@ -10,36 +10,17 @@ use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
-use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
 
 #[AdminDashboard(routePath: '/admin', routeName: 'admin')]
 class AdminDashboardController extends AbstractDashboardController
 {
     public function __construct(
-        private AdminUrlGenerator $adminUrlGenerator,
         private ArticleRepository $articleRepository,
         private UserRepository $userRepository,
     ) {}
 
     public function index(): Response
-    {
-        /** @var \App\Entity\User $user */
-        $user = $this->getUser();
-
-        return $this->redirect(
-            $this->adminUrlGenerator
-                ->setDashboard(self::class)
-                ->setController(AdminProfileCrudController::class)
-                ->setAction('edit')
-                ->setEntityId($user->getId())
-                ->generateUrl()
-        );
-    }
-
-    #[Route('/admin/statistiques', name: 'admin_stats_dashboard')]
-    public function statsDashboard(): Response
     {
         return $this->render('admin/common/dashboard.html.twig');
     }
@@ -58,7 +39,7 @@ class AdminDashboardController extends AbstractDashboardController
         $reactivationCount = $this->userRepository->countReactivationRequests();
 
         yield MenuItem::subMenu('Mon espace personnelle')->setSubItems([
-            MenuItem::linkToDashboard('Mon compte', 'fas fa-user'),
+            MenuItem::linkToCrud('Mon compte', 'fas fa-user', \App\Entity\User::class)->setController(AdminProfileCrudController::class)->setAction('edit')->setEntityId($this->getUser()->getId()),
             MenuItem::linkTo(AdminOwnArticleCrudController::class, 'Mes articles', 'fas fa-book'),
             MenuItem::linkTo(AdminFavoriteCrudController::class, 'Mes favoris', 'fas fa-star'),
             MenuItem::linkTo(AdminProgressCrudController::class, 'Mes lectures en cours', 'fas fa-book-open'),
@@ -74,7 +55,7 @@ class AdminDashboardController extends AbstractDashboardController
             MenuItem::linkTo(AdminPublishedArticleCrudController::class, 'Articles publiés', 'fas fa-check'),
         ]);
 
-        yield MenuItem::linkToRoute('Statistiques', 'fas fa-chart-bar', 'admin_stats_dashboard');
+        yield MenuItem::linkToDashboard('Statistiques', 'fas fa-chart-bar');
 
         yield MenuItem::linkToLogout('Logout', 'fa fa-sign-out');
     }
