@@ -28,6 +28,10 @@ class UserFixtures extends Fixture
             $user->setPassword($this->hasher->hashPassword($user, $userData['password']));
             $user->setIsAccountActivated($userData['isAccountActivated'] ?? true);
 
+            if (!empty($userData['lastLogin'])) {
+                $user->setLastLogin(new \DateTime($userData['lastLogin']));
+            }
+
             $manager->persist($user);
             $this->addReference('user_' . $userData['userName'], $user);
         }

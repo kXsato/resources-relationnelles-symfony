@@ -1,0 +1,208 @@
+{% set stats = this.globalStats %}
+{% set activeDays = this.activeDays %}
+
+{# ── styles partagés ─────────────────────────────────────────────────────── #}
+{% set card = 'background:#fff;border-radius:0.75rem;padding:1.25rem;box-shadow:0 1px 4px rgba(0,0,0,0.08);' %}
+{% set sectionTitle = 'margin:0 0 1rem;font-size:1rem;font-weight:700;color:#111827;padding-bottom:0.5rem;border-bottom:2px solid #E5E7EB;' %}
+{% set kpiLabel = 'margin:0;font-size:0.75rem;color:#6B7280;text-transform:uppercase;letter-spacing:.05em;' %}
+{% set kpiValue = 'margin:0.25rem 0 0;font-size:1.75rem;font-weight:700;color:#111827;' %}
+{% set kpiSub = 'margin:0.25rem 0 0;font-size:0.75rem;color:#6B7280;' %}
+
+<div {{ attributes }}>
+
+    {# ══ Filtre de période ═══════════════════════════════════════════════════ #}
+    <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;margin-bottom:2rem;
+                background:#fff;border-radius:0.75rem;padding:1rem 1.25rem;
+                box-shadow:0 1px 4px rgba(0,0,0,0.08);">
+
+        <span style="font-size:0.8rem;font-weight:600;color:#374151;">Période :</span>
+
+        <div style="display:flex;gap:0.5rem;">
+            {% for period in [7, 30, 90] %}
+                <button
+                    type="button"
+                    data-action="live#action"
+                    data-live-action-param="setPeriod"
+                    data-live-days-param="{{ period }}"
+                    style="padding:0.375rem 0.875rem;border-radius:0.375rem;border:1px solid #D1D5DB;
+                           cursor:pointer;font-size:0.8rem;font-weight:500;
+                           background:{{ activeDays == period ? '#4F46E5' : '#fff' }};
+                           color:{{ activeDays == period ? '#fff' : '#374151' }};"
+                >{{ period }}j</button>
+            {% endfor %}
+        </div>
+
+        <span style="color:#D1D5DB;">|</span>
+
+        <div style="display:flex;align-items:center;gap:0.5rem;">
+            <label style="font-size:0.8rem;color:#6B7280;">Du</label>
+            <input type="date" data-model="on(change)|startDate" value="{{ startDate }}"
+                style="padding:0.3rem 0.5rem;border-radius:0.375rem;font-size:0.8rem;color:#374151;outline:none;
+                       border:1px solid {{ activeDays is null ? '#4F46E5' : '#D1D5DB' }};">
+            <label style="font-size:0.8rem;color:#6B7280;">au</label>
+            <input type="date" data-model="on(change)|endDate" value="{{ endDate }}"
+                style="padding:0.3rem 0.5rem;border-radius:0.375rem;font-size:0.8rem;color:#374151;outline:none;
+                       border:1px solid {{ activeDays is null ? '#4F46E5' : '#D1D5DB' }};">
+        </div>
+
+        <span style="color:#D1D5DB;">|</span>
+
+        {# ── Exports CSV ─────────────────────────────────────────────────────── #}
+        <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;">
+            <span style="font-size:0.8rem;font-weight:600;color:#374151;">Export :</span>
+            {% set exportBase = path(is_granted('ROLE_SUPER_ADMIN') ? 'super_admin_stats_export' : 'admin_stats_export') %}
+            {% set exportParams = '?startDate=' ~ startDate ~ '&endDate=' ~ endDate %}
+            {% for export in [
+                {type: 'users',                 label: 'Utilisateurs'},
+                {type: 'resources_per_day',     label: 'Ressources / jour'},
+                {type: 'resources_by_category', label: 'Par catégorie'},
+                {type: 'popularity',            label: 'Popularité'},
+            ] %}
+                <a href="{{ exportBase ~ exportParams ~ '&type=' ~ export.type }}"
+                   style="padding:0.375rem 0.75rem;border-radius:0.375rem;border:1px solid #D1D5DB;
+                          background:#F9FAFB;color:#374151;font-size:0.75rem;font-weight:500;
+                          text-decoration:none;display:inline-flex;align-items:center;gap:0.3rem;"
+                   title="Exporter en CSV">
+                    ↓ {{ export.label }}
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+
+    {# ══ SECTION 1 — Utilisateurs ════════════════════════════════════════════ #}
+    <h3 style="{{ sectionTitle }}">Utilisateurs</h3>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-bottom:2rem;">
+
+        {# KPI total #}
+        <div style="{{ card }}">
+            <p style="{{ kpiLabel }}">Total comptes</p>
+            <p style="{{ kpiValue }}">{{ stats.users.total }}</p>
+            <p style="{{ kpiSub }}">{{ stats.users.active }} actifs · {{ stats.users.inactive }} inactifs</p>
+            {% if stats.users.reactivationRequests > 0 %}
+                <p style="margin:0.5rem 0 0;font-size:0.75rem;color:#D97706;font-weight:500;">
+                    ⚠ {{ stats.users.reactivationRequests }} demande(s) de réactivation
+                </p>
+            {% endif %}
+        </div>
+
+        {# KPI % actifs #}
+        <div style="{{ card }}">
+            <p style="{{ kpiLabel }}">Utilisateurs actifs</p>
+            <p style="margin:0.25rem 0 0;font-size:1.75rem;font-weight:700;color:#4F46E5;">{{ this.activeUsersPercentage }}%</p>
+            <p style="{{ kpiSub }}">des comptes sont actifs</p>
+        </div>
+
+        {# KPI rétention #}
+        <div style="{{ card }}">
+            <p style="{{ kpiLabel }}">Taux de rétention</p>
+            <p style="margin:0.25rem 0 0;font-size:1.75rem;font-weight:700;color:#059669;">{{ this.retentionRate }}%</p>
+            <p style="{{ kpiSub }}">reviennent après inscription</p>
+        </div>
+
+        {# Doughnut actifs/inactifs #}
+        <div style="{{ card }}">
+            <p style="{{ kpiLabel }}margin-bottom:0.75rem;">Répartition</p>
+            {{ render_chart(this.activeUsersChart, {'style': 'max-height:140px'}) }}
+        </div>
+
+    </div>
+
+    {# ══ SECTION 2 — Contenu ═════════════════════════════════════════════════ #}
+    <h3 style="{{ sectionTitle }}">Contenu</h3>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-bottom:1.5rem;">
+
+        {# KPI total ressources #}
+        <div style="{{ card }}">
+            <p style="{{ kpiLabel }}">Total ressources</p>
+            <p style="{{ kpiValue }}">{{ stats.resources.total }}</p>
+            <div style="margin-top:0.25rem;">
+                {% for status, count in stats.resources.byStatus %}
+                    <span style="font-size:0.7rem;color:#6B7280;">{{ status }}: {{ count }}</span><br>
+                {% endfor %}
+            </div>
+        </div>
+
+        {# KPI moy. par utilisateur actif #}
+        <div style="{{ card }}">
+            <p style="{{ kpiLabel }}">Moy. ressources / actif</p>
+            <p style="margin:0.25rem 0 0;font-size:1.75rem;font-weight:700;color:#D97706;">{{ this.avgResourcesPerActiveUser }}</p>
+            <p style="{{ kpiSub }}">ressources par utilisateur actif</p>
+        </div>
+
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:2rem;">
+
+        {# Courbe ressources créées (période filtrée) #}
+        <div style="{{ card }}">
+            <h4 style="margin:0 0 1rem;font-size:0.875rem;font-weight:600;color:#374151;">
+                Ressources créées
+                <span style="font-weight:400;color:#9CA3AF;font-size:0.75rem;">({{ startDate }} → {{ endDate }})</span>
+            </h4>
+            {{ render_chart(this.resourcesCreatedChart, {'style': 'max-height:220px'}) }}
+        </div>
+
+        {# Doughnut validées vs rejetées #}
+        <div style="{{ card }}">
+            <h4 style="margin:0 0 1rem;font-size:0.875rem;font-weight:600;color:#374151;">Validées vs Rejetées</h4>
+            {{ render_chart(this.validatedVsRejectedChart, {'style': 'max-height:220px'}) }}
+        </div>
+
+        {# Barres horizontales — volume par catégorie #}
+        <div style="{{ card }}grid-column:span 2;">
+            <h4 style="margin:0 0 1rem;font-size:0.875rem;font-weight:600;color:#374151;">Volume par catégorie</h4>
+            {{ render_chart(this.resourcesByCategoryChart, {'style': 'max-height:240px'}) }}
+        </div>
+
+    </div>
+
+    {# ══ SECTION 3 — Communauté ══════════════════════════════════════════════ #}
+    <h3 style="{{ sectionTitle }}">Communauté</h3>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-bottom:1.5rem;">
+
+        <div style="{{ card }}">
+            <p style="{{ kpiLabel }}">Favoris (total)</p>
+            <p style="{{ kpiValue }}">{{ stats.favorites.total }}</p>
+        </div>
+
+        <div style="{{ card }}">
+            <p style="{{ kpiLabel }}">Lectures (total)</p>
+            <p style="{{ kpiValue }}">{{ stats.progress.total }}</p>
+            <div style="margin-top:0.25rem;">
+                {% for status, count in stats.progress.byStatus %}
+                    <span style="font-size:0.7rem;color:#6B7280;">{{ status }}: {{ count }}</span><br>
+                {% endfor %}
+            </div>
+        </div>
+
+    </div>
+
+    {# Table popularité #}
+    <div style="{{ card }}">
+        <h4 style="margin:0 0 1rem;font-size:0.875rem;font-weight:600;color:#374151;">
+            Popularité par ressource
+            <span style="font-weight:400;color:#9CA3AF;font-size:0.75rem;">(ressources publiées)</span>
+        </h4>
+        <table style="width:100%;border-collapse:collapse;font-size:0.8rem;">
+            <thead>
+                <tr style="color:#6B7280;text-align:left;">
+                    <th style="padding-bottom:0.5rem;">Ressource</th>
+                    <th style="padding-bottom:0.5rem;text-align:right;">Vues</th>
+                    <th style="padding-bottom:0.5rem;text-align:right;">Favoris</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in this.resourcePopularity %}
+                    <tr style="border-top:1px solid #F3F4F6;">
+                        <td style="padding:0.4rem 0;color:#374151;">{{ row.title }}</td>
+                        <td style="padding:0.4rem 0;text-align:right;font-weight:600;color:#4F46E5;">{{ row.views }}</td>
+                        <td style="padding:0.4rem 0;text-align:right;font-weight:600;color:#D97706;">{{ row.favorites }}</td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="3" style="color:#9CA3AF;padding-top:0.5rem;">Aucune donnée</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>

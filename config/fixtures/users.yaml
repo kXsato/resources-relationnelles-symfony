@@ -1,38 +1,45 @@
 users:
+    # ── Comptes techniques ──────────────────────────────────────────────────
     - email: "user@gmail.com"
       password: "admin123"
       roles: [ROLE_USER]
       userName: "user"
       birthDate: "2000-01-01T00:00:00"
-      registrationDate: "2024-01-01T10:00:00"
+      registrationDate: "2025-06-01T10:00:00"
+      lastLogin: "2026-03-10T09:00:00"
 
     - email: "admin@gmail.com"
       password: "admin123"
       roles: [ROLE_ADMIN]
       userName: admin
       birthDate: "2000-01-01T00:00:00"
-      registrationDate: "2024-01-01T10:00:00"
+      registrationDate: "2025-06-01T10:00:00"
+      lastLogin: "2026-03-12T08:00:00"
 
     - email: "super.admin@gmail.com"
       password: "admin123"
       roles: [ROLE_SUPER_ADMIN]
       userName: "super_admin"
       birthDate: "2000-01-01T00:00:00"
-      registrationDate: "2024-01-01T10:00:00"
+      registrationDate: "2025-06-01T10:00:00"
+      lastLogin: "2026-03-12T08:30:00"
 
     - email: "moderator@gmail.com"
       password: "modo123"
       roles: [ROLE_MODERATOR]
       userName: "moderator"
       birthDate: "2000-01-01T00:00:00"
-      registrationDate: "2024-01-01T10:00:00"
+      registrationDate: "2025-06-01T10:00:00"
+      lastLogin: "2026-03-11T14:00:00"
 
+    # ── Utilisateurs existants ───────────────────────────────────────────────
     - email: "alice@gmail.com"
       password: "user123"
       roles: [ROLE_USER]
       userName: "alice"
       birthDate: "1995-06-15T00:00:00"
-      registrationDate: "2024-03-01T10:00:00"
+      registrationDate: "2025-07-10T10:00:00"
+      lastLogin: "2026-03-08T11:00:00"
       isAccountActivated: true
 
     - email: "bob@gmail.com"
@@ -40,7 +47,8 @@ users:
       roles: [ROLE_USER]
       userName: "bob"
       birthDate: "1990-11-22T00:00:00"
-      registrationDate: "2024-04-10T10:00:00"
+      registrationDate: "2025-08-20T10:00:00"
+      lastLogin: "2026-02-28T16:00:00"
       isAccountActivated: true
 
     - email: "charlie@gmail.com"
@@ -48,5 +56,146 @@ users:
       roles: [ROLE_USER]
       userName: "charlie"
       birthDate: "1988-03-10T00:00:00"
-      registrationDate: "2024-05-20T10:00:00"
+      registrationDate: "2025-09-05T10:00:00"
       isAccountActivated: false
+
+    # ── Nouveaux utilisateurs (90 derniers jours) ────────────────────────────
+    - email: "diane@gmail.com"
+      password: "user123"
+      roles: [ROLE_USER]
+      userName: "diane"
+      birthDate: "1993-04-22T00:00:00"
+      registrationDate: "2025-12-14T09:00:00"
+      lastLogin: "2026-01-10T10:00:00"
+      isAccountActivated: true
+
+    - email: "emma@gmail.com"
+      password: "user123"
+      roles: [ROLE_USER]
+      userName: "emma"
+      birthDate: "1997-09-30T00:00:00"
+      registrationDate: "2025-12-22T14:00:00"
+      lastLogin: "2026-02-05T09:30:00"
+      isAccountActivated: true
+
+    - email: "felix@gmail.com"
+      password: "user123"
+      roles: [ROLE_USER]
+      userName: "felix"
+      birthDate: "1991-01-18T00:00:00"
+      registrationDate: "2026-01-03T11:00:00"
+      lastLogin: "2026-01-20T15:00:00"
+      isAccountActivated: true
+
+    - email: "gabriel@gmail.com"
+      password: "user123"
+      roles: [ROLE_USER]
+      userName: "gabriel"
+      birthDate: "1985-07-07T00:00:00"
+      registrationDate: "2026-01-08T08:00:00"
+      isAccountActivated: false
+
+    - email: "hugo@gmail.com"
+      password: "user123"
+      roles: [ROLE_USER]
+      userName: "hugo"
+      birthDate: "1999-12-01T00:00:00"
+      registrationDate: "2026-01-15T10:00:00"
+      lastLogin: "2026-02-12T13:00:00"
+      isAccountActivated: true
+
+    - email: "iris@gmail.com"
+      password: "user123"
+      roles: [ROLE_USER]
+      userName: "iris"
+      birthDate: "1996-03-14T00:00:00"
+      registrationDate: "2026-01-20T16:00:00"
+      lastLogin: "2026-03-01T10:00:00"
+      isAccountActivated: true
+
+    - email: "julien@gmail.com"
+      password: "user123"
+      roles: [ROLE_USER]
+      userName: "julien"
+      birthDate: "1989-08-25T00:00:00"
+      registrationDate: "2026-01-28T09:00:00"
+      lastLogin: "2026-02-20T14:00:00"
+      isAccountActivated: true
+
+    - email: "kevin@gmail.com"
+      password: "user123"
+      roles: [ROLE_USER]
+      userName: "kevin"
+      birthDate: "2001-05-11T00:00:00"
+      registrationDate: "2026-02-03T11:00:00"
+      lastLogin: "2026-02-18T09:00:00"
+      isAccountActivated: true
+
+    - email: "lea@gmail.com"
+      password: "user123"
+      roles: [ROLE_USER]
+      userName: "lea"
+      birthDate: "1994-11-02T00:00:00"
+      registrationDate: "2026-02-07T14:00:00"
+      lastLogin: "2026-03-05T10:30:00"
+      isAccountActivated: true
+
+    - email: "marie@gmail.com"
+      password: "user123"
+      roles: [ROLE_USER]
+      userName: "marie"
+      birthDate: "1987-06-19T00:00:00"
+      registrationDate: "2026-02-12T08:00:00"
+      isAccountActivated: false
+
+    - email: "nicolas@gmail.com"
+      password: "user123"
+      roles: [ROLE_USER]
+      userName: "nicolas"
+      birthDate: "1992-02-28T00:00:00"
+      registrationDate: "2026-02-17T15:00:00"
+      lastLogin: "2026-03-03T11:00:00"
+      isAccountActivated: true
+
+    - email: "olivia@gmail.com"
+      password: "user123"
+      roles: [ROLE_USER]
+      userName: "olivia"
+      birthDate: "1998-10-05T00:00:00"
+      registrationDate: "2026-02-22T10:00:00"
+      lastLogin: "2026-03-08T16:00:00"
+      isAccountActivated: true
+
+    - email: "paul@gmail.com"
+      password: "user123"
+      roles: [ROLE_USER]
+      userName: "paul"
+      birthDate: "1986-04-30T00:00:00"
+      registrationDate: "2026-02-25T09:00:00"
+      isAccountActivated: true
+
+    - email: "rachel@gmail.com"
+      password: "user123"
+      roles: [ROLE_USER]
+      userName: "rachel"
+      birthDate: "2000-08-14T00:00:00"
+      registrationDate: "2026-03-01T11:00:00"
+      lastLogin: "2026-03-09T14:00:00"
+      isAccountActivated: true
+
+    - email: "sophie@gmail.com"
+      password: "user123"
+      roles: [ROLE_USER]
+      userName: "sophie"
+      birthDate: "1995-01-07T00:00:00"
+      registrationDate: "2026-03-05T08:00:00"
+      lastLogin: "2026-03-11T10:00:00"
+      isAccountActivated: true
+
+    - email: "thomas@gmail.com"
+      password: "user123"
+      roles: [ROLE_USER]
+      userName: "thomas"
+      birthDate: "1993-07-21T00:00:00"
+      registrationDate: "2026-03-08T14:00:00"
+      isAccountActivated: true

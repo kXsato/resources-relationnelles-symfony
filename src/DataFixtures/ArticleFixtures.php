@@ -39,7 +39,12 @@ class ArticleFixtures extends Fixture implements DependentFixtureInterface
                 $article->setAuthor($user);
             }
 
+            if (!empty($articleData['createdAt'])) {
+                $article->setCreatedAt(new \DateTimeImmutable($articleData['createdAt']));
+            }
+
             $manager->persist($article);
+            $this->addReference('article_' . $articleData['slug'], $article);
         }
 
         $manager->flush();

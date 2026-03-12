@@ -1,0 +1,12 @@
+{% extends '@EasyAdmin/layout.html.twig' %}
+
+{% block head_javascript %}
+    {{ parent() }}
+    {{ importmap('app') }}
+{% endblock %}
+
+{% block content_title %}Tableau de bord{% endblock %}
+
+{% block main %}
+    {{ component('StatsDashboardComponent') }}
+{% endblock %}
