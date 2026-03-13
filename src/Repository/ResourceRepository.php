@@ -39,6 +39,22 @@ class ResourceRepository extends ServiceEntityRepository
      * Nombre de ressources par statut.
      * Retourne [['status' => '...', 'total' => N], ...]
      */
+    /**
+     * @return Resource[]
+     */
+    public function findRelated(int $excludeId, int $limit = 3): array
+    {
+        return $this->createQueryBuilder('r')
+            ->where('r.status = :status')
+            ->andWhere('r.id != :id')
+            ->setParameter('status', 'published')
+            ->setParameter('id', $excludeId)
+            ->orderBy('r.id', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
+
     public function countByStatus(): array
     {
         return $this->createQueryBuilder('r')
