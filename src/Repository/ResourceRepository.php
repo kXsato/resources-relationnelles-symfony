@@ -19,7 +19,7 @@ class ResourceRepository extends ServiceEntityRepository
     /**
      * @return Resource[]
      */
-    public function findPublished(?int $categoryId = null): array
+    public function findPublished(?int $categoryId = null, ?int $limit = null): array
     {
         $qb = $this->createQueryBuilder('r')
             ->where('r.status = :status')
@@ -30,6 +30,10 @@ class ResourceRepository extends ServiceEntityRepository
             $qb->join('r.categories', 'c')
                ->andWhere('c.id = :categoryId')
                ->setParameter('categoryId', $categoryId);
+        }
+
+        if ($limit !== null) {
+            $qb->setMaxResults($limit);
         }
 
         return $qb->getQuery()->getResult();

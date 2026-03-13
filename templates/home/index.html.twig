@@ -1,0 +1,219 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ressources Relationnelles — Accueil{% endblock %}
+
+{% block body %}
+<div class="flex flex-col w-full">
+
+{# ── Hero ─────────────────────────────────────────────────────────────────── #}
+<section class="hero min-h-[60vh] bg-base-200" aria-labelledby="hero-heading">
+    <div class="hero-content text-center max-w-2xl px-4">
+        <div>
+            <h1 id="hero-heading" class="text-3xl sm:text-5xl font-bold mb-4 leading-tight">
+                Des ressources pour mieux vivre vos relations
+            </h1>
+            <p class="text-base sm:text-lg text-base-content/70 mb-8">
+                Articles, guides et outils pour développer votre intelligence émotionnelle,
+                améliorer votre communication et renforcer vos liens.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                <a href="{{ path('app_resource_list') }}" class="btn btn-primary btn-lg">
+                    Explorer les articles
+                </a>
+                {% if not app.user %}
+                <a href="{{ path('app_register') }}" class="btn btn-outline btn-lg">
+                    Créer un compte gratuit
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+{# ── Carousel auto-défilant ───────────────────────────────────────────────── #}
+{% if latestArticles is not empty %}
+<section class="py-12 overflow-hidden" aria-labelledby="carousel-heading">
+    <div class="container mx-auto px-4 mb-6">
+        <h2 id="carousel-heading" class="text-2xl font-bold">Les derniers articles</h2>
+    </div>
+
+    <div class="relative overflow-hidden" aria-label="Défilement des articles récents">
+        <div id="carousel-track" class="flex gap-4 w-max" style="will-change: transform;">
+            {% for article in latestArticles %}
+            <a href="{{ path('app_resource_show', { id: article.id }) }}"
+               class="card bg-base-100 shadow-sm hover:shadow-md transition-shadow w-72 shrink-0"
+               aria-label="Lire : {{ article.title }}">
+                <div class="card-body">
+                    {% if article.categories is not empty %}
+                    <div class="flex flex-wrap gap-1 mb-1">
+                        {% for cat in article.categories %}
+                            <span class="badge badge-ghost badge-sm">{{ cat.name }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <h3 class="font-semibold text-sm leading-snug line-clamp-2">
+                        {{ article.title }}
+                    </h3>
+
+                    {% if article.description %}
+                    <p class="text-xs text-base-content/60 line-clamp-2">
+                        {{ article.description }}
+                    </p>
+                    {% endif %}
+
+                    <p class="text-xs text-base-content/40 mt-auto pt-2">
+                        <time datetime="{{ article.createdAt|date('Y-m-d') }}">
+                            {{ article.createdAt|date('d/m/Y') }}
+                        </time>
+                        · {{ article.displayAuthor }}
+                    </p>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{# ── Renvoi vers la liste des ressources ──────────────────────────────────── #}
+<section class="bg-base-100 py-16 px-4 text-center" aria-labelledby="explore-heading">
+    <div class="max-w-2xl mx-auto">
+        <h2 id="explore-heading" class="text-2xl sm:text-3xl font-bold mb-3">
+            Prêt à explorer ?
+        </h2>
+        <p class="text-base-content/60 mb-8">
+            Des dizaines d'articles vous attendent sur la communication bienveillante,
+            l'empathie, la gestion des conflits et bien plus encore.
+        </p>
+        <a href="{{ path('app_resource_list') }}" class="btn btn-primary btn-lg">
+            Voir tous les articles
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+        </a>
+    </div>
+</section>
+
+{# ── Comment ça marche ────────────────────────────────────────────────────── #}
+<section class="bg-base-200 py-16 px-4" aria-labelledby="how-heading">
+    <div class="max-w-4xl mx-auto">
+
+        <div class="text-center mb-12">
+            <h2 id="how-heading" class="text-2xl sm:text-3xl font-bold mb-3">Comment ça marche ?</h2>
+            <p class="text-base-content/60">En trois étapes, accédez à des ressources qui changent vraiment les choses.</p>
+        </div>
+
+        <ol class="grid grid-cols-1 sm:grid-cols-3 gap-8" aria-label="Étapes">
+
+            <li class="flex flex-col items-center text-center gap-3">
+                <div class="badge badge-primary badge-lg text-lg font-bold w-12 h-12 rounded-full flex items-center justify-center" aria-hidden="true">1</div>
+                <h3 class="font-semibold text-lg">Parcourez les articles</h3>
+                <p class="text-sm text-base-content/60">
+                    Explorez notre bibliothèque de ressources classées par thématiques :
+                    communication, empathie, gestion des conflits et bien-être.
+                </p>
+            </li>
+
+            <li class="flex flex-col items-center text-center gap-3">
+                <div class="badge badge-primary badge-lg text-lg font-bold w-12 h-12 rounded-full flex items-center justify-center" aria-hidden="true">2</div>
+                <h3 class="font-semibold text-lg">Lisez à votre rythme</h3>
+                <p class="text-sm text-base-content/60">
+                    Votre progression est sauvegardée automatiquement.
+                    Reprenez une lecture là où vous l'avez laissée, quand vous voulez.
+                </p>
+            </li>
+
+            <li class="flex flex-col items-center text-center gap-3">
+                <div class="badge badge-primary badge-lg text-lg font-bold w-12 h-12 rounded-full flex items-center justify-center" aria-hidden="true">3</div>
+                <h3 class="font-semibold text-lg">Construisez votre bibliothèque</h3>
+                <p class="text-sm text-base-content/60">
+                    Ajoutez vos articles préférés en favoris pour les retrouver facilement
+                    et constituer votre propre collection de ressources.
+                </p>
+            </li>
+
+        </ol>
+
+        <div class="text-center mt-10">
+            <a href="{{ path('app_resource_list') }}" class="btn btn-primary">
+                Commencer maintenant
+            </a>
+        </div>
+
+    </div>
+</section>
+
+{# ── Présentation du site ─────────────────────────────────────────────────── #}
+<section class="bg-base-100 py-16 px-4" aria-labelledby="about-heading">
+    <div class="max-w-4xl mx-auto">
+
+        <div class="text-center mb-12">
+            <h2 id="about-heading" class="text-2xl sm:text-3xl font-bold mb-3">
+                Qu'est-ce que Ressources Relationnelles ?
+            </h2>
+            <p class="text-base-content/60 max-w-2xl mx-auto">
+                Une plateforme pensée pour ceux qui souhaitent prendre soin de leurs relations,
+                développer leur empathie et mieux se comprendre eux-mêmes.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-8 text-center">
+            <div class="flex flex-col items-center gap-3">
+                <div class="bg-primary/10 text-primary rounded-full w-14 h-14 flex items-center justify-center text-2xl" aria-hidden="true">
+                    📚
+                </div>
+                <h3 class="font-semibold text-lg">Des contenus de qualité</h3>
+                <p class="text-sm text-base-content/60">
+                    Articles rédigés par des contributeurs engagés, vérifiés et accessibles à tous,
+                    quel que soit votre niveau de départ.
+                </p>
+            </div>
+
+            <div class="flex flex-col items-center gap-3">
+                <div class="bg-primary/10 text-primary rounded-full w-14 h-14 flex items-center justify-center text-2xl" aria-hidden="true">
+                    🤝
+                </div>
+                <h3 class="font-semibold text-lg">Une communauté bienveillante</h3>
+                <p class="text-sm text-base-content/60">
+                    Rejoignez des personnes qui partagent le même désir de mieux communiquer,
+                    de créer du lien et de grandir ensemble.
+                </p>
+            </div>
+
+            <div class="flex flex-col items-center gap-3">
+                <div class="bg-primary/10 text-primary rounded-full w-14 h-14 flex items-center justify-center text-2xl" aria-hidden="true">
+                    📈
+                </div>
+                <h3 class="font-semibold text-lg">Suivez votre progression</h3>
+                <p class="text-sm text-base-content/60">
+                    Créez un compte pour sauvegarder vos favoris, reprendre vos lectures
+                    là où vous les avez laissées et mesurer votre avancement.
+                </p>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+{# ── CTA inscription ──────────────────────────────────────────────────────── #}
+{% if not app.user %}
+<section class="bg-primary text-primary-content py-16 px-4 text-center" aria-labelledby="cta-heading">
+    <div class="max-w-xl mx-auto">
+        <h2 id="cta-heading" class="text-2xl sm:text-3xl font-bold mb-3">
+            Rejoignez notre communauté
+        </h2>
+        <p class="text-primary-content/80 mb-6 text-sm sm:text-base">
+            Créez un compte gratuit pour sauvegarder vos favoris, suivre votre progression
+            de lecture et accéder à toutes nos ressources sans limite.
+        </p>
+        <a href="{{ path('app_register') }}" class="btn btn-neutral btn-lg">
+            Créer mon compte — c'est gratuit
+        </a>
+    </div>
+</section>
+{% endif %}
+
+</div>
+<script src="{{ asset('js/home_carousel.js') }}"></script>
+{% endblock %}
