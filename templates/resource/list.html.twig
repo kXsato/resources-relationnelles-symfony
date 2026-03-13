@@ -1,76 +1,108 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Ressources{% endblock %}
+{% block title %}Articles{% endblock %}
 
 {% block body %}
-<div class="container mt-5">
+<div class="flex flex-col w-full">
 
-    <header class="mb-5 text-center">
-        <h1 class="display-5 fw-bold">Découvrez nos ressources</h1>
-        <p class="text-muted fs-5">Articles et contenus pour enrichir vos relations</p>
-    </header>
+{# ── Breadcrumbs ──────────────────────────────────────────────────────────── #}
+<nav aria-label="Fil d'Ariane" class="container mx-auto px-4 pt-4">
+    <div class="breadcrumbs text-sm">
+        <ul>
+            <li><a href="/">Accueil</a></li>
+            <li aria-current="page">Articles</li>
+        </ul>
+    </div>
+</nav>
 
-    <div class="d-flex flex-wrap gap-2 justify-content-center mb-4">
+{# ── Header ───────────────────────────────────────────────────────────────── #}
+<header class="bg-base-200 py-10 text-center">
+    <h1 class="text-3xl sm:text-4xl font-bold mb-2">Découvrez nos ressources</h1>
+    <p class="text-base-content/60 text-sm sm:text-base">Articles et contenus pour enrichir vos relations</p>
+</header>
+
+<div class="container mx-auto px-4 py-6">
+
+    {# ── Filtres par catégorie ─────────────────────────────────────────────── #}
+    <nav aria-label="Filtrer par catégorie" class="flex flex-wrap gap-2 justify-center mb-8">
         <a href="{{ path('app_resource_list') }}"
-           class="btn btn-sm {{ currentCategoryId is null ? 'btn-primary' : 'btn-outline-primary' }}">
+           class="badge badge-lg {{ currentCategoryId is null ? 'badge-primary' : 'badge-neutral badge-outline' }}"
+           {% if currentCategoryId is null %}aria-current="true"{% endif %}>
             Toutes
         </a>
         {% for category in categories %}
             <a href="{{ path('app_resource_list', { category: category.id }) }}"
-               class="btn btn-sm {{ currentCategoryId == category.id ? 'btn-primary' : 'btn-outline-primary' }}">
+               class="badge badge-lg {{ currentCategoryId == category.id ? 'badge-primary' : 'badge-neutral badge-outline' }}"
+               {% if currentCategoryId == category.id %}aria-current="true"{% endif %}>
                 {{ category.name }}
             </a>
         {% endfor %}
-    </div>
+    </nav>
 
+    {# ── Grille de cards ───────────────────────────────────────────────────── #}
     {% if resources is empty %}
-        <div class="text-center py-5">
-            <p class="text-muted fs-5">Aucune ressource n'est disponible pour le moment.</p>
+        <div class="text-center py-16">
+            <p class="text-base-content/50 text-lg">Aucune ressource n'est disponible pour le moment.</p>
         </div>
     {% else %}
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {% for resource in resources %}
-                <div class="col">
-                    <div class="card h-100 shadow-sm border-0">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                {% set type = resource.resourceType %}
-                                {% if type == 'article' %}
-                                    <span class="badge bg-primary">📄 Article</span>
-                                {% elseif type == 'video' %}
-                                    <span class="badge bg-danger">🎬 Vidéo</span>
-                                {% elseif type == 'game' %}
-                                    <span class="badge bg-success">🎮 Jeu</span>
-                                {% else %}
-                                    <span class="badge bg-secondary">{{ type|capitalize }}</span>
-                                {% endif %}
-                                <small class="text-muted">{{ resource.createdAt|date('d/m/Y') }}</small>
-                            </div>
+                <article class="card bg-base-100 shadow-sm hover:shadow-md transition-shadow h-full">
+                    <div class="card-body flex flex-col">
 
-                            <h5 class="card-title fw-semibold">{{ resource.title }}</h5>
-                            {% set desc = resource.description|default('Découvrez cette ressource !') %}
-                            <p class="card-text text-muted">
-                                {{ desc|length > 100 ? desc|slice(0, 100) ~ '...' : desc }}
-                            </p>
+                        <div class="flex items-center justify-between mb-2">
+                            {% set type = resource.resourceType %}
+                            {% if type == 'article' %}
+                                <span class="badge badge-primary badge-sm">📄 Article</span>
+                            {% elseif type == 'video' %}
+                                <span class="badge badge-error badge-sm">🎬 Vidéo</span>
+                            {% elseif type == 'game' %}
+                                <span class="badge badge-success badge-sm">🎮 Jeu</span>
+                            {% else %}
+                                <span class="badge badge-neutral badge-sm">{{ type|capitalize }}</span>
+                            {% endif %}
+                            <time class="text-xs text-base-content/40" datetime="{{ resource.createdAt|date('Y-m-d') }}">
+                                {{ resource.createdAt|date('d/m/Y') }}
+                            </time>
                         </div>
 
-                        <div class="card-footer bg-transparent border-top-0 pb-3">
-                            <a href="{{ path('app_resource_show', { id: resource.id }) }}" class="btn btn-primary w-100">
+                        <h2 class="font-semibold leading-snug line-clamp-2 mb-2">
+                            {{ resource.title }}
+                        </h2>
+
+                        {% set desc = resource.description|default('Découvrez cette ressource !') %}
+                        <p class="text-sm text-base-content/60 line-clamp-3 grow">
+                            {{ desc|length > 120 ? desc|slice(0, 120) ~ '...' : desc }}
+                        </p>
+
+                        {% if resource.categories is not empty %}
+                        <div class="flex flex-wrap gap-1 mt-3">
+                            {% for cat in resource.categories %}
+                                <span class="badge badge-ghost badge-sm">{{ cat.name }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+                        <div class="card-actions mt-4">
+                            <a href="{{ path('app_resource_show', { id: resource.id }) }}"
+                               class="btn btn-primary btn-sm w-full">
                                 Consulter
                             </a>
                         </div>
+
                     </div>
-                </div>
+                </article>
             {% endfor %}
         </div>
     {% endif %}
 
+    {# ── Favoris (connecté uniquement) ────────────────────────────────────── #}
     {% if app.user %}
-    <section class="mt-5">
-        <h2 class="fw-bold mb-3">Mes articles favoris</h2>
-        <div id="flash-favorites"></div>
-        <div id="favorites-list" class="row row-cols-1 row-cols-md-3 g-3">
-            <p class="text-muted">Chargement...</p>
+    <section class="mt-14">
+        <h2 class="text-2xl font-bold mb-4">Mes articles favoris</h2>
+        <div id="flash-favorites" aria-live="polite"></div>
+        <div id="favorites-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <p class="text-base-content/50 text-sm">Chargement...</p>
         </div>
     </section>
 
@@ -81,19 +113,17 @@
             .then(favorites => {
                 const container = document.getElementById('favorites-list');
                 if (favorites.length === 0) {
-                    container.innerHTML = '<p class="text-muted">Vous n\'avez pas encore de favoris.</p>';
+                    container.innerHTML = '<p class="text-base-content/50 text-sm">Vous n\'avez pas encore de favoris.</p>';
                     return;
                 }
                 container.innerHTML = favorites.map(f => `
-                    <div class="col" id="fav-card-${f.id}">
-                        <div class="card shadow-sm border-0 h-100">
-                            <div class="card-body">
-                                <h5 class="card-title">${f.title}</h5>
-                                <small class="text-muted">Ajouté le ${f.createdAt}</small>
-                            </div>
-                            <div class="card-footer bg-transparent border-0 d-flex gap-2">
-                                <a href="/resources/${f.id}" class="btn btn-primary w-100">Consulter</a>
-                                <button onclick="removeFavorite(${f.id})" class="btn btn-danger w-100">Retirer</button>
+                    <div class="card bg-base-100 shadow-sm" id="fav-card-${f.id}">
+                        <div class="card-body">
+                            <h3 class="card-title text-base">${f.title}</h3>
+                            <p class="text-xs text-base-content/50">Ajouté le ${f.createdAt}</p>
+                            <div class="card-actions justify-end mt-3 gap-2">
+                                <a href="/resources/${f.id}" class="btn btn-primary btn-sm w-full">Consulter</a>
+                                <button onclick="removeFavorite(${f.id})" class="btn btn-error btn-outline btn-sm w-full">Retirer</button>
                             </div>
                         </div>
                     </div>
@@ -112,11 +142,11 @@
                 document.getElementById(`fav-card-${articleId}`)?.remove();
 
                 const flash = document.getElementById('flash-favorites');
-                flash.innerHTML = '<div class="alert alert-success">✅ Ressource retirée des favoris.</div>';
+                flash.innerHTML = '<div role="alert" class="alert alert-success text-sm">✅ Ressource retirée des favoris.</div>';
                 setTimeout(() => flash.innerHTML = '', 3000);
 
-                if (document.querySelectorAll('#favorites-list .col').length === 0) {
-                    document.getElementById('favorites-list').innerHTML = '<p class="text-muted">Vous n\'avez pas encore de favoris.</p>';
+                if (document.querySelectorAll('#favorites-list .card').length === 0) {
+                    document.getElementById('favorites-list').innerHTML = '<p class="text-base-content/50 text-sm">Vous n\'avez pas encore de favoris.</p>';
                 }
             }
         });
@@ -126,5 +156,6 @@
     </script>
     {% endif %}
 
+</div>
 </div>
 {% endblock %}
