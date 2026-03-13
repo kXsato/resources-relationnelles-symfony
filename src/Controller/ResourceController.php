@@ -62,8 +62,9 @@ final class ResourceController extends AbstractController
         }
 
         return $this->render('resource/article_show.html.twig', [
-            'article'   => $resource,
-            'progress'  => $progress,
+            'article'        => $resource,
+            'progress'       => $progress,
+            'relatedArticles' => $resourceRepository->findRelated($resource->getId()),
         ]);
     }
 }
