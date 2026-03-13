@@ -52,23 +52,41 @@ const isModerator = {{ is_granted('ROLE_MODERATOR') ? 'true' : 'false' }};
 
 function renderComment(comment, depth = 0) {
     const margin = depth * 20;
+
     const deleteBtn = (comment.isOwner || isModerator)
         ? `<button onclick="deleteComment(${comment.id})" class="btn btn-sm btn-outline-danger ms-2">🗑 Supprimer</button>`
         : '';
+
     const replyBtn = isLoggedIn
         ? `<button onclick="showReplyForm(${comment.id})" class="btn btn-sm btn-outline-secondary ms-2">↩ Répondre</button>`
+        : '';
+
+    const reportBtn = isLoggedIn && !comment.isOwner
+        ? `<button onclick="reportComment(${comment.id})" class="btn btn-sm btn-outline-warning ms-2">🚩 Signaler</button>`
+        : '';
+
+    const reportDetail = comment.reportCount > 0 && isModerator
+        ? comment.reports.map(r => `${r.user} : ${r.motif}`).join(' / ')
+        : '';
+
+    const reportBadge = comment.reportCount > 0 && isModerator
+        ? `<span class="badge bg-danger ms-2">⚠ ${comment.reportCount} signalement(s) — ${reportDetail}</span>`
         : '';
 
     let html = `
         <div class="card mb-2" style="margin-left: ${margin}px" id="comment-${comment.id}">
             <div class="card-body">
-                <div class="d-flex justify-content-between">
+                <div class="d-flex justify-content-between align-items-start">
                     <strong>${comment.author}</strong>
-                    <small class="text-muted">${comment.createdAt}</small>
+                    <div class="text-end">
+                        ${reportBadge}
+                        <small class="text-muted ms-2">${comment.createdAt}</small>
+                    </div>
                 </div>
                 <p class="mt-2 mb-1">${comment.content}</p>
                 <div>
                     ${replyBtn}
+                    ${reportBtn}
                     ${deleteBtn}
                 </div>
                 <div id="reply-form-${comment.id}" class="mt-2" style="display:none">
@@ -87,45 +105,47 @@ function renderComment(comment, depth = 0) {
     return html;
 }
 
-function loadComments() {
-    fetch(`/comments/resource/${articleId}`)
-        .then(r => r.json())
-        .then(comments => {
-            const container = document.getElementById('comments-list');
-            if (comments.length === 0) {
-                container.innerHTML = '<p class="text-muted">Aucun commentaire pour le moment.</p>';
-                return;
-            }
-            container.innerHTML = comments.map(c => renderComment(c)).join('');
-        });
-}
+window.reportComment = function(commentId) {
+    const motifs = {
+        'inapproprie': 'Contenu inapproprié',
+        'spam': 'Spam',
+        'harcelement': 'Harcèlement',
+        'fausse_info': 'Fausse information',
+        'autre': 'Autre'
+    };
 
-function showReplyForm(commentId) {
-    document.getElementById(`reply-form-${commentId}`).style.display = 'block';
-}
+    const motifKeys = Object.keys(motifs);
+    const motifList = motifKeys.map((k, i) => `${i + 1}. ${motifs[k]}`).join('\n');
+    const choix = prompt(`Choisissez un motif :\n${motifList}\n\nEntrez le numéro :`);
 
-function hideReplyForm(commentId) {
-    document.getElementById(`reply-form-${commentId}`).style.display = 'none';
-}
+    if (!choix) return;
+    const index = parseInt(choix) - 1;
+    if (index < 0 || index >= motifKeys.length) {
+        alert('Choix invalide');
+        return;
+    }
 
-function submitReply(parentId) {
-    const form = document.getElementById(`reply-form-${parentId}`);
-    const content = form.querySelector('textarea').value.trim();
-    if (!content) return;
+    const motif = motifKeys[index];
 
-    fetch('/comments/add', {
+    fetch(`/comments/report/${commentId}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content, resourceId: articleId, parentId })
+        body: JSON.stringify({ motif })
     })
     .then(r => r.json())
-    .then(() => {
-        hideReplyForm(parentId);
-        loadComments();
+    .then(data => {
+        if (data.status === 'reported') {
+            const flash = document.getElementById('flash-comment');
+            flash.innerHTML = '<div class="alert alert-info">✅ Commentaire signalé. Un modérateur va l\'examiner.</div>';
+            setTimeout(() => flash.innerHTML = '', 4000);
+            loadComments();
+        } else if (data.status === 'already_reported') {
+            alert('Vous avez déjà signalé ce commentaire.');
+        }
     });
-}
+};
 
-function deleteComment(commentId) {
+window.deleteComment = function(commentId) {
     if (!confirm('Supprimer ce commentaire ?')) return;
 
     fetch(`/comments/delete/${commentId}`, { method: 'DELETE' })
@@ -141,6 +161,44 @@ function deleteComment(commentId) {
 
                 loadComments();
             }
+        });
+};
+
+window.showReplyForm = function(commentId) {
+    document.getElementById(`reply-form-${commentId}`).style.display = 'block';
+};
+
+window.hideReplyForm = function(commentId) {
+    document.getElementById(`reply-form-${commentId}`).style.display = 'none';
+};
+
+window.submitReply = function(parentId) {
+    const form = document.getElementById(`reply-form-${parentId}`);
+    const content = form.querySelector('textarea').value.trim();
+    if (!content) return;
+
+    fetch('/comments/add', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content, resourceId: articleId, parentId })
+    })
+    .then(r => r.json())
+    .then(() => {
+        window.hideReplyForm(parentId);
+        loadComments();
+    });
+};
+
+function loadComments() {
+    fetch(`/comments/resource/${articleId}`)
+        .then(r => r.json())
+        .then(comments => {
+            const container = document.getElementById('comments-list');
+            if (comments.length === 0) {
+                container.innerHTML = '<p class="text-muted">Aucun commentaire pour le moment.</p>';
+                return;
+            }
+            container.innerHTML = comments.map(c => renderComment(c)).join('');
         });
 }
 

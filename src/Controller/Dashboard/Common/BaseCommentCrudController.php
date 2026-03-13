@@ -3,19 +3,16 @@
 namespace App\Controller\Dashboard\Common;
 
 use App\Entity\Comment;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\BooleanFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
-use EasyCorp\Bundle\EasyAdminBundle\Filter\NumericFilter;
 
 abstract class BaseCommentCrudController extends AbstractCrudController
 {
@@ -44,5 +41,18 @@ abstract class BaseCommentCrudController extends AbstractCrudController
         yield AssociationField::new('user', 'Auteur');
         yield BooleanField::new('isPublished', 'Publié');
         yield DateTimeField::new('createdAt', 'Créé le')->hideOnForm();
+        yield TextField::new('reportSummary', 'Signalements')
+            ->hideOnForm()
+            ->formatValue(function ($value, Comment $comment) {
+                $count = $comment->getReportCount();
+                if ($count === 0) {
+                    return '<span class="badge bg-success">0</span>';
+                }
+                $detail = implode('<br>', array_map(
+                    fn($r) => '<b>' . htmlspecialchars($r['user']) . '</b> : ' . htmlspecialchars($r['motif']),
+                    $comment->getReports()
+                ));
+                return sprintf('<span class="badge bg-danger">⚠ %d</span><br><small>%s</small>', $count, $detail);
+            });
     }
 }

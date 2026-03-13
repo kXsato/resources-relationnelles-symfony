@@ -18,11 +18,13 @@ class CommentController extends AbstractController
     #[Route('/resource/{id}', name: 'comment_list', methods: ['GET'])]
     public function list(Resource $resource, CommentRepository $commentRepository): JsonResponse
     {
-        $comments = $commentRepository->findRootComments($resource);
-
-        $data = array_map(fn(Comment $c) => $this->formatComment($c), $comments);
-
-        return $this->json($data);
+        try {
+            $comments = $commentRepository->findRootComments($resource);
+            $data = array_map(fn(Comment $c) => $this->formatComment($c), $comments);
+            return $this->json($data);
+        } catch (\Throwable $e) {
+            return $this->json(['error' => $e->getMessage()], 500);
+        }
     }
 
     #[Route('/add', name: 'comment_add', methods: ['POST'])]
@@ -54,6 +56,27 @@ class CommentController extends AbstractController
         $em->flush();
 
         return $this->json($this->formatComment($comment));
+    }
+
+    #[Route('/report/{id}', name: 'comment_report', methods: ['POST'])]
+    #[IsGranted('ROLE_USER')]
+    public function report(Comment $comment, EntityManagerInterface $em, Request $request): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+        $motif = $data['motif'] ?? 'Non précisé';
+        
+        /** @var \App\Entity\User $currentUser */
+        $currentUser = $this->getUser();
+        $userName = $currentUser->getUserName();
+
+        if ($comment->hasReportedBy($userName)) {
+            return $this->json(['status' => 'already_reported']);
+        }
+
+        $comment->addReport($userName, $motif);
+        $em->flush();
+
+        return $this->json(['status' => 'reported', 'count' => $comment->getReportCount()]);
     }
 
     #[Route('/delete/{id}', name: 'comment_delete', methods: ['DELETE'])]
@@ -96,6 +119,8 @@ class CommentController extends AbstractController
             'author'      => $authorName,
             'isOwner'     => $isOwner,
             'isModerator' => $this->isGranted('ROLE_MODERATOR'),
+            'reportCount' => $comment->getReportCount(),
+            'reports'     => $comment->getReports(),
             'children'    => array_map(fn(Comment $c) => $this->formatComment($c), $comment->getChildren()->toArray()),
         ];
     }

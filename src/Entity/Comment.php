@@ -25,6 +25,9 @@ class Comment
     #[ORM\Column]
     private ?bool $isPublished = null;
 
+    #[ORM\Column(type: Types::JSON, options: ['default' => '[]'])]
+    private array $reports = [];
+
     #[ORM\ManyToOne(inversedBy: 'comments')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Resource $resource = null;
@@ -60,7 +63,6 @@ class Comment
     public function setContent(string $content): static
     {
         $this->content = $content;
-
         return $this;
     }
 
@@ -72,7 +74,6 @@ class Comment
     public function setCreatedAt(\DateTimeImmutable $createdAt): static
     {
         $this->createdAt = $createdAt;
-
         return $this;
     }
 
@@ -84,8 +85,37 @@ class Comment
     public function setIsPublished(bool $isPublished): static
     {
         $this->isPublished = $isPublished;
-
         return $this;
+    }
+
+    public function getReports(): array
+    {
+        return $this->reports;
+    }
+
+    public function getReportCount(): int
+    {
+        return count($this->reports);
+    }
+
+    public function addReport(string $userName, string $motif): static
+    {
+        $this->reports[] = ['user' => $userName, 'motif' => $motif];
+        return $this;
+    }
+
+    public function resetReports(): static
+    {
+        $this->reports = [];
+        return $this;
+    }
+
+    public function hasReportedBy(string $userName): bool
+    {
+        foreach ($this->reports as $report) {
+            if ($report['user'] === $userName) return true;
+        }
+        return false;
     }
 
     public function getResource(): ?Resource
@@ -96,7 +126,6 @@ class Comment
     public function setResource(?Resource $resource): static
     {
         $this->resource = $resource;
-
         return $this;
     }
 
@@ -108,7 +137,6 @@ class Comment
     public function setUser(?User $user): static
     {
         $this->user = $user;
-
         return $this;
     }
 
@@ -120,7 +148,6 @@ class Comment
     public function setParent(?self $parent): static
     {
         $this->parent = $parent;
-
         return $this;
     }
 
@@ -138,19 +165,16 @@ class Comment
             $this->children->add($child);
             $child->setParent($this);
         }
-
         return $this;
     }
 
     public function removeChild(self $child): static
     {
         if ($this->children->removeElement($child)) {
-            // set the owning side to null (unless already changed)
             if ($child->getParent() === $this) {
                 $child->setParent(null);
             }
         }
-
         return $this;
     }
 
@@ -158,5 +182,10 @@ class Comment
     {
         if ($user === null) return false;
         return $this->user === $user;
+    }
+
+    public function getReportSummary(): string
+    {
+        return (string) $this->getReportCount();
     }
 }

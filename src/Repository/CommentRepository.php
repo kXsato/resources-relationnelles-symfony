@@ -28,4 +28,13 @@ class CommentRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function findReportedComments(): array
+    {
+        return $this->createQueryBuilder('c')
+            ->where('c.reportCount > 0')
+            ->orderBy('c.reportCount', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
 }
