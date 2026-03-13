@@ -110,7 +110,7 @@
                         <a href="{{ path('app_resource_show', {id: related.id}) }}"
                            class="btn btn-primary btn-sm"
                            aria-label="Lire l'article : {{ related.title }}">
-                            Lire
+                            Lire l'article  
                         </a>
                     </div>
                 </div>
@@ -130,7 +130,7 @@
      aria-atomic="true"
      aria-label="Progression de lecture">
     <div id="radial-progress"
-         class="radial-progress text-primary w-12! h-12! text-xs sm:w-16! sm:h-16! sm:text-sm"
+         class="radial-progress text-primary"
          style="--value:{{ progress ? progress.readPercentage : 0 }};"
          aria-valuenow="{{ progress ? progress.readPercentage : 0 }}"
          aria-valuemin="0"
@@ -142,9 +142,5 @@
 </div>
 
 </div>{# /flex flex-col #}
-{% endblock %}
-
-{% block javascripts %}
-    {{ parent() }}
-    {{ importmap('article_show') }}
+<script src="{{ asset('js/article_show.js') }}"></script>
 {% endblock %}

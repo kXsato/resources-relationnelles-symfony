@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function () {
+(function () {
 
     // ── Bouton Favori ─────────────────────────────────────────────────────────
     const btn = document.getElementById('btn-favorite');
@@ -36,8 +36,8 @@ document.addEventListener('DOMContentLoaded', function () {
     // ── Progression de lecture ────────────────────────────────────────────────
     const widget = document.getElementById('reading-progress-widget');
 
-    if (widget && widget.dataset.progressId) {
-        const PROGRESS_ID = parseInt(widget.dataset.progressId, 10);
+    if (widget) {
+        const PROGRESS_ID = widget.dataset.progressId || null; // null si non connecté
         let lastSavedPct = parseInt(widget.dataset.readPercentage, 10) || 0;
         let saveTimer = null;
 
@@ -58,7 +58,8 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         async function saveProgress(pct) {
-            if (pct === lastSavedPct) return;
+            if (!PROGRESS_ID) return; // pas connecté, pas de sauvegarde
+            if (Math.abs(pct - lastSavedPct) < 5) return; // seuil 5%
             try {
                 const res = await fetch('/api/progress/' + PROGRESS_ID, {
                     method: 'PATCH',
@@ -71,7 +72,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         function scheduleSave(pct) {
             clearTimeout(saveTimer);
-            saveTimer = setTimeout(() => saveProgress(pct), 1000);
+            saveTimer = setTimeout(() => saveProgress(pct), 3000); // debounce 3s
         }
 
         window.addEventListener('scroll', function () {
@@ -104,4 +105,4 @@ document.addEventListener('DOMContentLoaded', function () {
         updateRadial(Math.max(lastSavedPct, getScrollPct() ?? 0));
     }
 
-});
+})();
