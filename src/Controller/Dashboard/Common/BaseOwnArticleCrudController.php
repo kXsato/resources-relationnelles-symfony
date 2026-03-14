@@ -223,6 +223,9 @@ abstract class BaseOwnArticleCrudController extends AbstractCrudController imple
             ->setChoices(ResourceStatus::choices())
             ->hideOnForm();
         yield DateTimeField::new('createdAt', 'Créé le')->hideOnForm();
+        yield AssociationField::new('comments', 'Commentaires')
+            ->hideOnIndex()
+            ->setFormTypeOption('disabled', true);
     }
 
     /**

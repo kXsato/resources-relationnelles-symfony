@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html data-theme="light">
     <head>
         <meta charset="UTF-8">
         <title>{% block title %}Welcome!{% endblock %}</title>
@@ -15,7 +15,7 @@
     </head>
     <body class="flex flex-col min-h-screen max-w-full items-center">
         {{ include('partials/_header.html.twig') }}
-        <main class="container growr">
+        <main class="container grow">
             {% block body %}{% endblock %}
         </main>
         {{ include('partials/_footer.html.twig') }}

@@ -3,6 +3,34 @@
 @theme {
     --container-center: true;
 }
+
 @plugin "../vendor/daisyui/daisyui.index.js" {
     themes: pastel --default;
+}
+
+@source "../templates/**/*.twig";
+@source "../assets/**/*.js";
+
+/* Force chat classes */
+.chat { display: grid; grid-template-columns: auto 1fr; gap: 0.25rem; }
+.chat-start { grid-template-columns: auto 1fr; }
+.chat-end { grid-template-columns: 1fr auto; direction: rtl; }
+.chat-end > * { direction: ltr; }
+.chat-header { grid-column: 2; font-size: 0.875rem; opacity: 0.8; }
+.chat-footer { grid-column: 2; font-size: 0.75rem; opacity: 0.5; }
+.chat-bubble {
+    grid-column: 2;
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 1rem;
+    background-color: var(--color-base-300);
+    max-width: 80%;
+    margin-block: 0.25rem;
+}
+.chat-end .chat-header { grid-column: 1; }
+.chat-end .chat-footer { grid-column: 1; }
+.chat-end .chat-bubble { grid-column: 1; }
+.chat-bubble-primary {
+    background-color: var(--color-primary);
+    color: var(--color-primary-content);
 }
