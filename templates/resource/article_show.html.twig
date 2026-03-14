@@ -65,6 +65,10 @@ function renderComment(comment, depth = 0) {
         ? `<button onclick="reportComment(${comment.id})" class="btn btn-sm btn-outline-warning ms-2">🚩 Signaler</button>`
         : '';
 
+    const resetReportsBtn = isModerator && comment.reportCount > 0
+        ? `<button onclick="resetReports(${comment.id})" class="btn btn-sm btn-outline-secondary ms-2">🧹 Supprimer le signalement</button>`
+        : '';
+
     const reportDetail = comment.reportCount > 0 && isModerator
         ? comment.reports.map(r => `${r.user} : ${r.motif}`).join(' / ')
         : '';
@@ -87,6 +91,7 @@ function renderComment(comment, depth = 0) {
                 <div>
                     ${replyBtn}
                     ${reportBtn}
+                    ${resetReportsBtn}
                     ${deleteBtn}
                 </div>
                 <div id="reply-form-${comment.id}" class="mt-2" style="display:none">
@@ -141,6 +146,24 @@ window.reportComment = function(commentId) {
             loadComments();
         } else if (data.status === 'already_reported') {
             alert('Vous avez déjà signalé ce commentaire.');
+        }
+    });
+};
+
+window.resetReports = function(commentId) {
+    if (!confirm('Supprimer tous les signalements de ce commentaire ?')) return;
+
+    fetch(`/comments/reset-reports/${commentId}`, {
+        method: 'POST',
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.status === 'reset') {
+            const flash = document.getElementById('flash-comment');
+            flash.innerHTML = '<div class="alert alert-success">✅ Signalements supprimés.</div>';
+            setTimeout(() => flash.innerHTML = '', 3000);
+            loadComments();
         }
     });
 };

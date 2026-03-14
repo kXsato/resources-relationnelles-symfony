@@ -64,7 +64,7 @@ class CommentController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
         $motif = $data['motif'] ?? 'Non précisé';
-        
+
         /** @var \App\Entity\User $currentUser */
         $currentUser = $this->getUser();
         $userName = $currentUser->getUserName();
@@ -77,6 +77,16 @@ class CommentController extends AbstractController
         $em->flush();
 
         return $this->json(['status' => 'reported', 'count' => $comment->getReportCount()]);
+    }
+
+    #[Route('/reset-reports/{id}', name: 'comment_reset_reports', methods: ['POST'])]
+    #[IsGranted('ROLE_MODERATOR')]
+    public function resetReports(Comment $comment, EntityManagerInterface $em): JsonResponse
+    {
+        $comment->resetReports();
+        $em->flush();
+
+        return $this->json(['status' => 'reset']);
     }
 
     #[Route('/delete/{id}', name: 'comment_delete', methods: ['DELETE'])]
