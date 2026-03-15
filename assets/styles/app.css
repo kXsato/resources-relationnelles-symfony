@@ -34,3 +34,22 @@
     background-color: var(--color-primary);
     color: var(--color-primary-content);
 }
+
+/* Force radial-progress */
+.radial-progress {
+    --value: 0;
+    --size: 4rem;
+    --thickness: 4px;
+    position: relative;
+    display: inline-grid;
+    place-content: center;
+    width: var(--size);
+    height: var(--size);
+    border-radius: 50%;
+    background: radial-gradient(farthest-side, currentColor calc(var(--value) * 1%), transparent 0) top/var(--thickness) var(--thickness) no-repeat,
+        conic-gradient(currentColor calc(var(--value) * 1%), transparent 0);
+    -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - var(--thickness)), black calc(100% - var(--thickness)));
+    mask: radial-gradient(farthest-side, transparent calc(100% - var(--thickness)), black calc(100% - var(--thickness)));
+    font-size: 0.875rem;
+    font-weight: bold;
+}
