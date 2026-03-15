@@ -78,6 +78,28 @@
     </article>
 </main>
 
+{# ── Commentaires ─────────────────────────────────────────────────────────── #}
+<div class="container mx-auto px-4 py-10 max-w-3xl">
+    <h2 class="text-2xl font-bold mb-6">💬 Commentaires</h2>
+
+    {% if app.user %}
+    <div class="mb-6">
+        <textarea id="comment-input" class="textarea textarea-bordered w-full" rows="3" placeholder="Écrire un commentaire..."></textarea>
+        <button id="btn-comment" class="btn btn-primary btn-sm mt-2">Publier</button>
+    </div>
+    {% else %}
+    <div role="alert" class="alert alert-info mb-4">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="h-6 w-6 shrink-0 stroke-current">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <span class="text-black">👋 <a href="{{ path('app_login') }}" class="underline font-bold">Connectez-vous</a> pour écrire un commentaire.</span>
+    </div>
+    {% endif %}
+
+    <div id="flash-comment" class="mb-4"></div>
+    <div id="comments-list"></div>
+</div>
+
 {# ── Articles à lire aussi ────────────────────────────────────────────────── #}
 {% if relatedArticles is defined and relatedArticles is not empty %}
 <section class="bg-base-200 py-12 mt-4 mb-5" aria-labelledby="related-heading">
@@ -121,27 +143,6 @@
 </section>
 {% endif %}
 
-{# ── Commentaires ─────────────────────────────────────────────────────────── #}
-<div class="container mx-auto px-4 py-10 max-w-3xl">
-    <h2 class="text-2xl font-bold mb-6">💬 Commentaires</h2>
-
-    {% if app.user %}
-    <div class="mb-6">
-        <textarea id="comment-input" class="textarea textarea-bordered w-full" rows="3" placeholder="Écrire un commentaire..."></textarea>
-        <button id="btn-comment" class="btn btn-primary btn-sm mt-2">Publier</button>
-    </div>
-    {% else %}
-    <div role="alert" class="alert alert-info mb-4">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="h-6 w-6 shrink-0 stroke-current">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-        </svg>
-        <span class="text-black">👋 <a href="{{ path('app_login') }}" class="underline font-bold">Connectez-vous</a> pour écrire un commentaire.</span>
-    </div>
-    {% endif %}
-
-    <div id="flash-comment" class="mb-4"></div>
-    <div id="comments-list"></div>
-</div>
 
 {# ── Progression de lecture (fixe bas-droite) ─────────────────────────────── #}
 <div id="reading-progress-widget"
