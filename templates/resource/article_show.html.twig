@@ -110,7 +110,7 @@
                         <a href="{{ path('app_resource_show', {id: related.id}) }}"
                            class="btn btn-primary btn-sm"
                            aria-label="Lire l'article : {{ related.title }}">
-                            Lire l'article  
+                            Lire l'article
                         </a>
                     </div>
                 </div>
@@ -120,6 +120,28 @@
     </div>
 </section>
 {% endif %}
+
+{# ── Commentaires ─────────────────────────────────────────────────────────── #}
+<div class="container mx-auto px-4 py-10 max-w-3xl">
+    <h2 class="text-2xl font-bold mb-6">💬 Commentaires</h2>
+
+    {% if app.user %}
+    <div class="mb-6">
+        <textarea id="comment-input" class="textarea textarea-bordered w-full" rows="3" placeholder="Écrire un commentaire..."></textarea>
+        <button id="btn-comment" class="btn btn-primary btn-sm mt-2">Publier</button>
+    </div>
+    {% else %}
+    <div role="alert" class="alert alert-info mb-4">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="h-6 w-6 shrink-0 stroke-current">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <span class="text-black">👋 <a href="{{ path('app_login') }}" class="underline font-bold">Connectez-vous</a> pour écrire un commentaire.</span>
+    </div>
+    {% endif %}
+
+    <div id="flash-comment" class="mb-4"></div>
+    <div id="comments-list"></div>
+</div>
 
 {# ── Progression de lecture (fixe bas-droite) ─────────────────────────────── #}
 <div id="reading-progress-widget"
@@ -142,5 +164,272 @@
 </div>
 
 </div>{# /flex flex-col #}
+
+<script>
+(function() {
+const articleId = {{ article.id|json_encode|raw }};
+const isLoggedIn = {{ app.user ? 'true' : 'false' }};
+const isModerator = {{ is_granted('ROLE_MODERATOR') ? 'true' : 'false' }};
+
+function renderComment(comment, depth = 0) {
+    const marginLeft = depth * 24;
+    const chatAlign = depth % 2 === 1 ? 'chat-end' : 'chat-start';
+
+    const deleteBtn = (comment.isOwner || isModerator)
+        ? `<button onclick="deleteComment(${comment.id})" class="btn btn-xs btn-error btn-outline">🗑 Supprimer</button>`
+        : '';
+
+    const replyBtn = isLoggedIn
+        ? `<button onclick="showReplyForm(${comment.id})" class="btn btn-xs btn-outline">↩ Répondre</button>`
+        : '';
+
+    const reportBtn = isLoggedIn && !comment.isOwner
+        ? `<button onclick="reportComment(${comment.id})" class="btn btn-xs btn-warning btn-outline">🚩 Signaler</button>`
+        : '';
+
+    const resetReportsBtn = isModerator && comment.reportCount > 0
+        ? `<button onclick="resetReports(${comment.id})" class="btn btn-xs btn-outline">🧹 Supprimer le signalement</button>`
+        : '';
+
+    const reportDetail = comment.reportCount > 0 && isModerator
+        ? comment.reports.map(r => `<b>${r.user}</b> : ${r.motif}`).join(' / ')
+        : '';
+
+    const reportAlert = comment.reportCount > 0 && isModerator
+        ? `<div role="alert" class="alert alert-warning py-2 px-3 text-sm mb-2">
+               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24">
+                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+               </svg>
+               <span class="text-black">⚠ ${comment.reportCount} signalement(s) — ${reportDetail}</span>
+           </div>`
+        : '';
+
+    let html = `
+        <div style="margin-left: ${marginLeft}px" id="comment-${comment.id}" class="mb-4">
+            ${reportAlert}
+            <div class="chat ${chatAlign}">
+                <div class="chat-header mb-1">
+                    <span class="font-bold">${comment.author}</span>
+                    <time class="text-xs opacity-50 ml-2">${comment.createdAt}</time>
+                </div>
+                <div class="chat-bubble ${comment.isOwner ? 'chat-bubble-primary' : ''}">
+                    ${comment.content}
+                </div>
+                <div class="chat-footer mt-1 flex gap-1 flex-wrap">
+                    ${replyBtn}
+                    ${reportBtn}
+                    ${resetReportsBtn}
+                    ${deleteBtn}
+                </div>
+            </div>
+            <div id="reply-form-${comment.id}" class="mt-2 ml-4" style="display:none">
+                <textarea class="textarea textarea-bordered textarea-sm w-full mb-2" rows="2" placeholder="Votre réponse..."></textarea>
+                <div class="flex gap-2">
+                    <button onclick="submitReply(${comment.id})" class="btn btn-xs btn-primary">Répondre</button>
+                    <button onclick="hideReplyForm(${comment.id})" class="btn btn-xs btn-ghost">Annuler</button>
+                </div>
+            </div>
+        </div>
+    `;
+
+    comment.children.forEach(child => {
+        html += renderComment(child, depth + 1);
+    });
+
+    return html;
+}
+
+window.reportComment = function(commentId) {
+    const motifs = {
+        'inapproprie': 'Contenu inapproprié',
+        'spam': 'Spam',
+        'harcelement': 'Harcèlement',
+        'fausse_info': 'Fausse information',
+        'autre': 'Autre'
+    };
+
+    const motifKeys = Object.keys(motifs);
+    const motifList = motifKeys.map((k, i) => `${i + 1}. ${motifs[k]}`).join('\n');
+    const choix = prompt(`Choisissez un motif :\n${motifList}\n\nEntrez le numéro :`);
+
+    if (!choix) return;
+    const index = parseInt(choix) - 1;
+    if (index < 0 || index >= motifKeys.length) {
+        alert('Choix invalide');
+        return;
+    }
+
+    const motif = motifKeys[index];
+
+    fetch(`/comments/report/${commentId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ motif })
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.status === 'reported') {
+            const flash = document.getElementById('flash-comment');
+            flash.innerHTML = `<div role="alert" class="alert alert-success mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>✅ Commentaire signalé. Un modérateur va l'examiner.</span>
+            </div>`;
+            setTimeout(() => flash.innerHTML = '', 4000);
+            loadComments();
+        } else if (data.status === 'already_reported') {
+            const flash = document.getElementById('flash-comment');
+            flash.innerHTML = `<div role="alert" class="alert alert-warning mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+                <span class="text-black">⚠ Vous avez déjà signalé ce commentaire.</span>
+            </div>`;
+            setTimeout(() => flash.innerHTML = '', 4000);
+        }
+    });
+};
+
+window.resetReports = function(commentId) {
+    if (!confirm('Supprimer tous les signalements de ce commentaire ?')) return;
+
+    fetch(`/comments/reset-reports/${commentId}`, {
+        method: 'POST',
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.status === 'reset') {
+            const flash = document.getElementById('flash-comment');
+            flash.innerHTML = `<div role="alert" class="alert alert-success mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>✅ Signalements supprimés.</span>
+            </div>`;
+            setTimeout(() => flash.innerHTML = '', 3000);
+            loadComments();
+        }
+    });
+};
+
+window.deleteComment = function(commentId) {
+    if (!confirm('Supprimer ce commentaire ?')) return;
+
+    fetch(`/comments/delete/${commentId}`, { method: 'DELETE' })
+        .then(r => r.json())
+        .then(data => {
+            if (data.status === 'deleted') {
+                const flash = document.getElementById('flash-comment');
+                flash.innerHTML = `<div role="alert" class="alert alert-success mb-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>✅ Commentaire supprimé.</span>
+                </div>`;
+                setTimeout(() => flash.innerHTML = '', 3000);
+                loadComments();
+            }
+        });
+};
+
+window.showReplyForm = function(commentId) {
+    document.getElementById(`reply-form-${commentId}`).style.display = 'block';
+};
+
+window.hideReplyForm = function(commentId) {
+    document.getElementById(`reply-form-${commentId}`).style.display = 'none';
+};
+
+window.submitReply = function(parentId) {
+    const form = document.getElementById(`reply-form-${parentId}`);
+    const content = form.querySelector('textarea').value.trim();
+    if (!content) return;
+
+    fetch('/comments/add', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content, resourceId: articleId, parentId })
+    })
+    .then(r => r.json())
+    .then(() => {
+        window.hideReplyForm(parentId);
+        loadComments();
+    });
+};
+
+function loadComments() {
+    fetch(`/comments/resource/${articleId}`)
+        .then(r => r.json())
+        .then(comments => {
+            const container = document.getElementById('comments-list');
+            if (comments.length === 0) {
+                container.innerHTML = `<div role="alert" class="alert">
+                    <span>Aucun commentaire pour le moment.</span>
+                </div>`;
+                return;
+            }
+            container.innerHTML = comments.map(c => renderComment(c)).join('');
+        });
+}
+
+const btnComment = document.getElementById('btn-comment');
+if (btnComment) {
+    btnComment.addEventListener('click', function () {
+        const content = document.getElementById('comment-input').value.trim();
+        if (!content) return;
+
+        fetch('/comments/add', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ content, resourceId: articleId })
+        })
+        .then(r => r.json())
+        .then(() => {
+            document.getElementById('comment-input').value = '';
+            loadComments();
+        });
+    });
+}
+
+const btn = document.getElementById('btn-favorite');
+if (btn) {
+    const articleId2 = btn.dataset.articleId;
+    fetch('/favorites/list')
+        .then(r => r.json())
+        .then(favorites => {
+            const isFav = favorites.some(f => f.id == articleId2);
+            btn.classList.toggle('btn-warning', isFav);
+            btn.classList.toggle('btn-outline', !isFav);
+            const label = document.getElementById('btn-favorite-label');
+            if (label) label.textContent = isFav ? '★ Retirer des favoris' : 'Mettre en favori';
+        });
+
+    btn.addEventListener('click', function () {
+        fetch(`/favorites/toggle/${articleId2}`, {
+            method: 'POST',
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(r => r.json())
+        .then(data => {
+            const label = document.getElementById('btn-favorite-label');
+            if (data.status === 'added') {
+                btn.classList.add('btn-warning');
+                btn.classList.remove('btn-outline');
+                if (label) label.textContent = '★ Retirer des favoris';
+            } else {
+                btn.classList.remove('btn-warning');
+                btn.classList.add('btn-outline');
+                if (label) label.textContent = 'Mettre en favori';
+            }
+        });
+    });
+}
+
+loadComments();
+})();
+</script>
+
 <script src="{{ asset('js/article_show.js') }}"></script>
 {% endblock %}

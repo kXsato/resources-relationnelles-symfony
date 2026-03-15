@@ -127,5 +127,8 @@ abstract class BasePublishedArticleCrudController extends AbstractCrudController
             ->hideOnForm();
         yield DateTimeField::new('createdAt', 'Créé le');
         yield DateTimeField::new('updatedAt', 'Modifié le')->hideOnIndex();
+        yield AssociationField::new('comments', 'Commentaires')
+            ->hideOnIndex()
+            ->setFormTypeOption('disabled', true);
     }
 }

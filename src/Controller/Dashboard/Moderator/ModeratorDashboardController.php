@@ -14,6 +14,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Component\HttpFoundation\Response;
+use App\Controller\Dashboard\Moderator\ModeratorCommentCrudController;
 
 /**
  * Tableau de bord des modérateurs.
@@ -65,6 +66,7 @@ class ModeratorDashboardController extends AbstractDashboardController
             MenuItem::linkTo(ModeratorFavoriteCrudController::class, 'Mes favoris', 'fas fa-star'),
             MenuItem::linkTo(ModeratorProgressCrudController::class, 'Mes lectures en cours', 'fas fa-book-open'),
             MenuItem::linkTo(ModeratorCompletedProgressCrudController::class, 'Mes lectures terminées', 'fas fa-check-circle'),
+            MenuItem::linkTo(ModeratorCommentCrudController::class, 'Commentaires', 'fas fa-comments'),
             ]);
         yield MenuItem::subMenu('Modération')->setSubItems([
             MenuItem::linkTo(ModeratorArticleCrudController::class, 'Articles en attente', 'fas fa-clock')

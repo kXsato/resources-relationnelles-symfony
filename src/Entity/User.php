@@ -64,11 +64,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: UserRessourceProgress::class, mappedBy: 'UserRessources', cascade: ['remove'], orphanRemoval: true)]
     private Collection $userRessourceProgress;
 
+    /**
+     * @var Collection<int, Comment>
+     */
+    #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'user', orphanRemoval: true)]
+    private Collection $comments;
+
     public function __construct()
     {
         $this->resources = new ArrayCollection();
         $this->favorites = new ArrayCollection();
         $this->userRessourceProgress = new ArrayCollection();
+        $this->comments = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -84,7 +91,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setEmail(string $email): static
     {
         $this->email = $email;
-
         return $this;
     }
 
@@ -97,14 +103,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $roles = $this->roles;
         $roles[] = 'ROLE_USER';
-
         return array_unique($roles);
     }
 
     public function setRoles(array $roles): static
     {
         $this->roles = $roles;
-
         return $this;
     }
 
@@ -116,7 +120,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPassword(string $password): static
     {
         $this->password = $password;
-
         return $this;
     }
 
@@ -129,7 +132,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $data = (array) $this;
         $data["\0".self::class."\0password"] = hash('crc32c', $this->password);
-
         return $data;
     }
 
@@ -141,7 +143,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setUserName(string $userName): static
     {
         $this->userName = $userName;
-
         return $this;
     }
 
@@ -153,7 +154,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setBirthDate(\DateTime $birthDate): static
     {
         $this->birthDate = $birthDate;
-
         return $this;
     }
 
@@ -165,7 +165,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setLastLogin(\DateTime $lastLogin): static
     {
         $this->lastLogin = $lastLogin;
-
         return $this;
     }
 
@@ -183,7 +182,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setRegistrationDate(\DateTime $registrationDate): static
     {
         $this->registrationDate = $registrationDate;
-
         return $this;
     }
 
@@ -198,7 +196,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             $this->resources->add($resource);
             $resource->setAuthor($this);
         }
-
         return $this;
     }
 
@@ -209,7 +206,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $resource->setAuthor(null);
             }
         }
-
         return $this;
     }
 
@@ -224,7 +220,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             $this->favorites->add($favorite);
             $favorite->setUser($this);
         }
-
         return $this;
     }
 
@@ -235,7 +230,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $favorite->setUser(null);
             }
         }
-
         return $this;
     }
 
@@ -252,7 +246,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setIsAccountActivated(bool $isAccountActivated): static
     {
         $this->isAccountActivated = $isAccountActivated;
-
         return $this;
     }
 
@@ -264,21 +257,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setReactivationRequestedAt(?\DateTime $reactivationRequestedAt): static
     {
         $this->reactivationRequestedAt = $reactivationRequestedAt;
-
         return $this;
     }
 
     public function getRole(): string
     {
         $specialRoles = array_filter($this->roles, fn($r) => $r !== 'ROLE_USER');
-
         return !empty($specialRoles) ? reset($specialRoles) : 'ROLE_USER';
     }
 
     public function setRole(string $role): static
     {
         $this->roles = $role !== 'ROLE_USER' ? [$role] : [];
-
         return $this;
     }
 
@@ -290,7 +280,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPlainPassword(?string $plainPassword): static
     {
         $this->plainPassword = $plainPassword;
-
         return $this;
     }
 
@@ -308,19 +297,43 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             $this->userRessourceProgress->add($userRessourceProgress);
             $userRessourceProgress->setUserRessources($this);
         }
-
         return $this;
     }
 
     public function removeUserRessourceProgress(UserRessourceProgress $userRessourceProgress): static
     {
         if ($this->userRessourceProgress->removeElement($userRessourceProgress)) {
-            // set the owning side to null (unless already changed)
             if ($userRessourceProgress->getUserRessources() === $this) {
                 $userRessourceProgress->setUserRessources(null);
             }
         }
+        return $this;
+    }
 
+    /**
+     * @return Collection<int, Comment>
+     */
+    public function getComments(): Collection
+    {
+        return $this->comments;
+    }
+
+    public function addComment(Comment $comment): static
+    {
+        if (!$this->comments->contains($comment)) {
+            $this->comments->add($comment);
+            $comment->setUser($this);
+        }
+        return $this;
+    }
+
+    public function removeComment(Comment $comment): static
+    {
+        if ($this->comments->removeElement($comment)) {
+            if ($comment->getUser() === $this) {
+                $comment->setUser(null);
+            }
+        }
         return $this;
     }
 }
