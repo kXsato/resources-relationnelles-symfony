@@ -9,6 +9,10 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: ActivityRepository::class)]
 class Activity extends Resource
 {
+    public const GAME_TYPES = [
+        'Quiz' => 'quiz',
+    ];
+
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $content = null;
 
@@ -28,7 +32,6 @@ class Activity extends Resource
     {
         parent::__construct();
         $this->setStatus('published');
-
     }
 
     public function getContent(): ?string { return $this->content; }

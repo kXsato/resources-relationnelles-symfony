@@ -57,7 +57,10 @@ class AdminActivityCrudController extends AbstractCrudController
         yield TextField::new('slug', 'Slug')->hideOnIndex();
         yield TextareaField::new('description', 'Description')->hideOnIndex();
         yield TextareaField::new('content', 'Contenu')->hideOnIndex();
-        yield TextField::new('gameType', 'Type de jeu');
+        yield ChoiceField::new('gameType', 'Type de jeu')
+            ->setChoices(Activity::GAME_TYPES)
+            ->renderExpanded(false)
+            ->allowMultipleChoices(false);
         yield DateTimeField::new('startDate', 'Date de début');
         yield DateTimeField::new('endDate', 'Date de fin');
         yield IntegerField::new('maxParticipants', 'Participants max');
