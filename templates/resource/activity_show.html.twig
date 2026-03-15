@@ -1,0 +1,427 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ article.title }}{% endblock %}
+
+{% block body %}
+<div class="flex flex-col min-h-screen w-full">
+
+{# Skip navigation (RGAA) #}
+<a href="#activity-content" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 btn btn-primary btn-sm z-50">
+    Aller au contenu
+</a>
+
+{# ── Breadcrumbs ──────────────────────────────────────────────────────────── #}
+<nav aria-label="Fil d'Ariane" class="container mx-auto px-4 pt-4">
+    <div class="breadcrumbs text-sm">
+        <ul>
+            <li><a href="/">Accueil</a></li>
+            <li><a href="{{ path('app_resource_list') }}">Ressources</a></li>
+            <li aria-current="page"><span class="inline-block max-w-[40vw] truncate align-bottom">{{ article.title }}</span></li>
+        </ul>
+    </div>
+</nav>
+
+{# ── Hero ─────────────────────────────────────────────────────────────────── #}
+<div class="hero bg-base-200 py-8 md:py-16" role="banner">
+    <div class="hero-content text-center max-w-2xl w-full px-4">
+        <div class="w-full">
+            <span class="badge badge-secondary mb-4">🎯 Activité</span>
+
+            {% if article.categories is not empty %}
+            <div class="flex flex-wrap justify-center gap-2 mb-4" aria-label="Catégories">
+                {% for category in article.categories %}
+                    <span class="badge badge-primary">{{ category.name }}</span>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 break-words">{{ article.title }}</h1>
+
+            <p class="text-base-content/70 text-sm sm:text-base">
+                Publié le
+                <time datetime="{{ article.createdAt|date('Y-m-d') }}">{{ article.createdAt|date('d/m/Y') }}</time>
+                par <span class="font-medium">{{ article.displayAuthor }}</span>
+            </p>
+        </div>
+    </div>
+</div>
+
+{# ── Infos activité ───────────────────────────────────────────────────────── #}
+<div class="container mx-auto px-4 py-6 max-w-3xl">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+        {% if article.gameType %}
+        <div class="card bg-base-200 p-4 text-center">
+            <div class="text-2xl mb-1">📍</div>
+            <div class="text-xs text-base-content/60 mb-1">Type de jeu</div>
+            <div class="font-semibold text-sm">{{ article.gameType }}</div>
+        </div>
+        {% endif %}
+
+        {% if article.startDate %}
+        <div class="card bg-base-200 p-4 text-center">
+            <div class="text-2xl mb-1">📅</div>
+            <div class="text-xs text-base-content/60 mb-1">Date de début</div>
+            <div class="font-semibold text-sm">{{ article.startDate|date('d/m/Y') }}</div>
+        </div>
+        {% endif %}
+
+        {% if article.endDate %}
+        <div class="card bg-base-200 p-4 text-center">
+            <div class="text-2xl mb-1">🏁</div>
+            <div class="text-xs text-base-content/60 mb-1">Date de fin</div>
+            <div class="font-semibold text-sm">{{ article.endDate|date('d/m/Y') }}</div>
+        </div>
+        {% endif %}
+
+        {% if article.maxParticipants %}
+        <div class="card bg-base-200 p-4 text-center">
+            <div class="text-2xl mb-1">👥</div>
+            <div class="text-xs text-base-content/60 mb-1">Participants max</div>
+            <div class="font-semibold text-sm">{{ article.maxParticipants }}</div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{# ── Contenu de l'activité ────────────────────────────────────────────────── #}
+<main id="main-content">
+    <article class="container mx-auto px-4 py-6 md:py-10 max-w-3xl" aria-labelledby="activity-heading">
+        <h2 id="activity-heading" class="sr-only">Contenu de l'activité</h2>
+
+        <div id="activity-content" class="prose prose-sm sm:prose-base md:prose-lg max-w-none">
+            {{ article.content|raw }}
+        </div>
+
+        {# ── Boutons call-to-action ───────────────────────────────────────── #}
+        <div class="flex flex-col sm:flex-row gap-3 mt-8 md:mt-10" role="group" aria-label="Actions sur l'activité">
+            <a href="{{ path('app_resource_list') }}" class="btn btn-outline btn-neutral w-full sm:w-auto">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                </svg>
+                Retour aux ressources
+            </a>
+        </div>
+    </article>
+</main>
+
+{# ── Activités similaires ─────────────────────────────────────────────────── #}
+{% if relatedArticles is defined and relatedArticles is not empty %}
+<section class="bg-base-200 py-12 mt-4 mb-5" aria-labelledby="related-heading">
+    <div class="container mx-auto px-4">
+        <h2 id="related-heading" class="text-2xl font-bold mb-6">À découvrir aussi</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6" role="list">
+            {% for related in relatedArticles %}
+            <div class="card bg-base-100 shadow-md hover:shadow-lg transition-shadow" role="listitem">
+                <div class="card-body">
+                    {% if related.categories is not empty %}
+                    <div class="flex flex-wrap gap-1 mb-2" aria-label="Catégories">
+                        {% for cat in related.categories %}
+                            <span class="badge badge-ghost badge-sm">{{ cat.name }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <h3 class="card-title text-lg line-clamp-2">{{ related.title }}</h3>
+
+                    {% if related.description %}
+                    <p class="text-base-content/70 text-sm line-clamp-3">{{ related.description }}</p>
+                    {% endif %}
+
+                    <p class="text-xs text-base-content/50 mt-2">
+                        <time datetime="{{ related.createdAt|date('Y-m-d') }}">{{ related.createdAt|date('d/m/Y') }}</time>
+                        · {{ related.displayAuthor }}
+                    </p>
+
+                    <div class="card-actions justify-end mt-4">
+                        <a href="{{ path('app_resource_show', {id: related.id}) }}"
+                           class="btn btn-primary btn-sm"
+                           aria-label="Voir l'activité : {{ related.title }}">
+                            Voir l'activité
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{# ── Chat ─────────────────────────────────────────────────────────────────── #}
+<div class="container mx-auto px-4 py-10 max-w-3xl">
+    <h2 class="text-2xl font-bold mb-6">💬 Discussion</h2>
+
+    {% if app.user %}
+    <div class="mb-6">
+        <textarea id="comment-input" class="textarea textarea-bordered w-full" rows="3" placeholder="Participer à la discussion..."></textarea>
+        <button id="btn-comment" class="btn btn-primary btn-sm mt-2">Envoyer</button>
+    </div>
+    {% else %}
+    <div role="alert" class="alert alert-info mb-4">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="h-6 w-6 shrink-0 stroke-current">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <span class="text-black">👋 <a href="{{ path('app_login') }}" class="underline font-bold">Connectez-vous</a> pour participer à la discussion.</span>
+    </div>
+    {% endif %}
+
+    <div id="flash-comment" class="mb-4"></div>
+    <div id="comments-list"></div>
+</div>
+
+{# ── Progression (fixe bas-droite) ───────────────────────────────────────── #}
+<div id="reading-progress-widget"
+     style="position:fixed; bottom:1rem; right:1rem; z-index:1000;"
+     data-progress-id="{{ progress ? progress.id : '' }}"
+     data-read-percentage="{{ progress ? progress.readPercentage : 0 }}"
+     aria-live="polite"
+     aria-atomic="true"
+     aria-label="Progression">
+    <div id="radial-progress"
+         class="radial-progress text-primary"
+         style="--value:{{ progress ? progress.readPercentage : 0 }};"
+         aria-valuenow="{{ progress ? progress.readPercentage : 0 }}"
+         aria-valuemin="0"
+         aria-valuemax="100"
+         role="progressbar"
+         aria-label="Progression : {{ progress ? progress.readPercentage : 0 }}%">
+        {{ progress ? progress.readPercentage : 0 }}%
+    </div>
+</div>
+
+</div>{# /flex flex-col #}
+
+<script>
+(function() {
+const articleId = {{ article.id|json_encode|raw }};
+const isLoggedIn = {{ app.user ? 'true' : 'false' }};
+const isModerator = {{ is_granted('ROLE_MODERATOR') ? 'true' : 'false' }};
+
+function renderComment(comment, depth = 0) {
+    const marginLeft = depth * 24;
+    const chatAlign = depth % 2 === 1 ? 'chat-end' : 'chat-start';
+
+    const deleteBtn = (comment.isOwner || isModerator)
+        ? `<button onclick="deleteComment(${comment.id})" class="btn btn-xs btn-error btn-outline">🗑 Supprimer</button>`
+        : '';
+
+    const replyBtn = isLoggedIn
+        ? `<button onclick="showReplyForm(${comment.id})" class="btn btn-xs btn-outline">↩ Répondre</button>`
+        : '';
+
+    const reportBtn = isLoggedIn && !comment.isOwner
+        ? `<button onclick="reportComment(${comment.id})" class="btn btn-xs btn-warning btn-outline">🚩 Signaler</button>`
+        : '';
+
+    const resetReportsBtn = isModerator && comment.reportCount > 0
+        ? `<button onclick="resetReports(${comment.id})" class="btn btn-xs btn-outline">🧹 Supprimer le signalement</button>`
+        : '';
+
+    const reportDetail = comment.reportCount > 0 && isModerator
+        ? comment.reports.map(r => `<b>${r.user}</b> : ${r.motif}`).join(' / ')
+        : '';
+
+    const reportAlert = comment.reportCount > 0 && isModerator
+        ? `<div role="alert" class="alert alert-warning py-2 px-3 text-sm mb-2">
+               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24">
+                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+               </svg>
+               <span class="text-black">⚠ ${comment.reportCount} signalement(s) — ${reportDetail}</span>
+           </div>`
+        : '';
+
+    let html = `
+        <div style="margin-left: ${marginLeft}px" id="comment-${comment.id}" class="mb-4">
+            ${reportAlert}
+            <div class="chat ${chatAlign}">
+                <div class="chat-header mb-1">
+                    <span class="font-bold">${comment.author}</span>
+                    <time class="text-xs opacity-50 ml-2">${comment.createdAt}</time>
+                </div>
+                <div class="chat-bubble ${comment.isOwner ? 'chat-bubble-primary' : ''}">
+                    ${comment.content}
+                </div>
+                <div class="chat-footer mt-1 flex gap-1 flex-wrap">
+                    ${replyBtn}
+                    ${reportBtn}
+                    ${resetReportsBtn}
+                    ${deleteBtn}
+                </div>
+            </div>
+            <div id="reply-form-${comment.id}" class="mt-2 ml-4" style="display:none">
+                <textarea class="textarea textarea-bordered textarea-sm w-full mb-2" rows="2" placeholder="Votre réponse..."></textarea>
+                <div class="flex gap-2">
+                    <button onclick="submitReply(${comment.id})" class="btn btn-xs btn-primary">Répondre</button>
+                    <button onclick="hideReplyForm(${comment.id})" class="btn btn-xs btn-ghost">Annuler</button>
+                </div>
+            </div>
+        </div>
+    `;
+
+    comment.children.forEach(child => {
+        html += renderComment(child, depth + 1);
+    });
+
+    return html;
+}
+
+window.reportComment = function(commentId) {
+    const motifs = {
+        'inapproprie': 'Contenu inapproprié',
+        'spam': 'Spam',
+        'harcelement': 'Harcèlement',
+        'fausse_info': 'Fausse information',
+        'autre': 'Autre'
+    };
+
+    const motifKeys = Object.keys(motifs);
+    const motifList = motifKeys.map((k, i) => `${i + 1}. ${motifs[k]}`).join('\n');
+    const choix = prompt(`Choisissez un motif :\n${motifList}\n\nEntrez le numéro :`);
+
+    if (!choix) return;
+    const index = parseInt(choix) - 1;
+    if (index < 0 || index >= motifKeys.length) {
+        alert('Choix invalide');
+        return;
+    }
+
+    const motif = motifKeys[index];
+
+    fetch(`/comments/report/${commentId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ motif })
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.status === 'reported') {
+            const flash = document.getElementById('flash-comment');
+            flash.innerHTML = `<div role="alert" class="alert alert-success mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>✅ Message signalé. Un modérateur va l'examiner.</span>
+            </div>`;
+            setTimeout(() => flash.innerHTML = '', 4000);
+            loadComments();
+        } else if (data.status === 'already_reported') {
+            const flash = document.getElementById('flash-comment');
+            flash.innerHTML = `<div role="alert" class="alert alert-warning mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+                <span class="text-black">⚠ Vous avez déjà signalé ce message.</span>
+            </div>`;
+            setTimeout(() => flash.innerHTML = '', 4000);
+        }
+    });
+};
+
+window.resetReports = function(commentId) {
+    if (!confirm('Supprimer tous les signalements de ce message ?')) return;
+
+    fetch(`/comments/reset-reports/${commentId}`, {
+        method: 'POST',
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.status === 'reset') {
+            const flash = document.getElementById('flash-comment');
+            flash.innerHTML = `<div role="alert" class="alert alert-success mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>✅ Signalements supprimés.</span>
+            </div>`;
+            setTimeout(() => flash.innerHTML = '', 3000);
+            loadComments();
+        }
+    });
+};
+
+window.deleteComment = function(commentId) {
+    if (!confirm('Supprimer ce message ?')) return;
+
+    fetch(`/comments/delete/${commentId}`, { method: 'DELETE' })
+        .then(r => r.json())
+        .then(data => {
+            if (data.status === 'deleted') {
+                const flash = document.getElementById('flash-comment');
+                flash.innerHTML = `<div role="alert" class="alert alert-success mb-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>✅ Message supprimé.</span>
+                </div>`;
+                setTimeout(() => flash.innerHTML = '', 3000);
+                loadComments();
+            }
+        });
+};
+
+window.showReplyForm = function(commentId) {
+    document.getElementById(`reply-form-${commentId}`).style.display = 'block';
+};
+
+window.hideReplyForm = function(commentId) {
+    document.getElementById(`reply-form-${commentId}`).style.display = 'none';
+};
+
+window.submitReply = function(parentId) {
+    const form = document.getElementById(`reply-form-${parentId}`);
+    const content = form.querySelector('textarea').value.trim();
+    if (!content) return;
+
+    fetch('/comments/add', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content, resourceId: articleId, parentId })
+    })
+    .then(r => r.json())
+    .then(() => {
+        window.hideReplyForm(parentId);
+        loadComments();
+    });
+};
+
+function loadComments() {
+    fetch(`/comments/resource/${articleId}`)
+        .then(r => r.json())
+        .then(comments => {
+            const container = document.getElementById('comments-list');
+            if (comments.length === 0) {
+                container.innerHTML = `<div role="alert" class="alert">
+                    <span>Aucun message pour le moment. Soyez le premier à participer !</span>
+                </div>`;
+                return;
+            }
+            container.innerHTML = comments.map(c => renderComment(c)).join('');
+        });
+}
+
+const btnComment = document.getElementById('btn-comment');
+if (btnComment) {
+    btnComment.addEventListener('click', function () {
+        const content = document.getElementById('comment-input').value.trim();
+        if (!content) return;
+
+        fetch('/comments/add', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ content, resourceId: articleId })
+        })
+        .then(r => r.json())
+        .then(() => {
+            document.getElementById('comment-input').value = '';
+            loadComments();
+        });
+    });
+}
+
+loadComments();
+})();
+</script>
+
+<script src="{{ asset('js/article_show.js') }}"></script>
+{% endblock %}

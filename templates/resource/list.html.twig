@@ -54,6 +54,8 @@
                             {% set type = resource.resourceType %}
                             {% if type == 'article' %}
                                 <span class="badge badge-primary badge-sm">📄 Article</span>
+                            {% elseif type == 'activity' %}
+                                <span class="badge badge-secondary badge-sm">🎯 Activité</span>
                             {% elseif type == 'video' %}
                                 <span class="badge badge-error badge-sm">🎬 Vidéo</span>
                             {% elseif type == 'game' %}

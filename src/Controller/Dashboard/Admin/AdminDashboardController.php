@@ -12,6 +12,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use Symfony\Component\HttpFoundation\Response;
 use App\Controller\Dashboard\Admin\AdminCommentCrudController;
+use App\Controller\Dashboard\Admin\AdminActivityCrudController;
 
 #[AdminDashboard(routePath: '/admin', routeName: 'admin')]
 class AdminDashboardController extends AbstractDashboardController
@@ -54,6 +55,7 @@ class AdminDashboardController extends AbstractDashboardController
         yield MenuItem::linkTo(AdminArticleCrudController::class, 'Articles en attente', 'fas fa-book')
             ->setBadge($pendingCount > 0 ? $pendingCount : null, 'danger');
         yield MenuItem::linkTo(AdminPublishedArticleCrudController::class, 'Articles publiés', 'fas fa-check');
+        yield MenuItem::linkTo(AdminActivityCrudController::class, 'Activités', 'fas fa-running');
         yield MenuItem::linkToDashboard('Statistiques', 'fas fa-chart-bar');
 
         yield MenuItem::linkToLogout('Logout', 'fa fa-sign-out');

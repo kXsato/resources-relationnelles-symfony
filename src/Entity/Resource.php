@@ -13,6 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\DiscriminatorColumn(name: 'type', type: 'string', length: 20)]
 #[ORM\DiscriminatorMap([
     'article' => Article::class,
+    'activity' => Activity::class,
 ])]
 #[ORM\HasLifecycleCallbacks]
 abstract class Resource
