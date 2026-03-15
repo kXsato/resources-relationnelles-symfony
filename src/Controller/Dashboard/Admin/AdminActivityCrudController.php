@@ -15,11 +15,15 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Bundle\SecurityBundle\Security;
 
 class AdminActivityCrudController extends AbstractCrudController
 {
-    public function __construct(private Security $security) {}
+    public function __construct(
+        private Security $security,
+        private AdminUrlGenerator $adminUrlGenerator
+    ) {}
 
     public static function getEntityFqcn(): string
     {
@@ -44,8 +48,18 @@ class AdminActivityCrudController extends AbstractCrudController
 
     public function configureActions(Actions $actions): Actions
     {
+        $manageQuestions = Action::new('manageQuestions', 'Gérer les questions', 'fas fa-question-circle')
+            ->linkToUrl(function(Activity $activity) {
+                return $this->adminUrlGenerator
+                    ->setController(AdminQuizQuestionCrudController::class)
+                    ->setAction(Action::INDEX)
+                    ->set('filters[activity][value]', $activity->getId())
+                    ->generateUrl();
+            });
+
         return $actions
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
+            ->add(Crud::PAGE_INDEX, $manageQuestions)
             ->update(Crud::PAGE_INDEX, Action::DETAIL, fn(Action $a) => $a
                 ->setLabel('Consulter')
                 ->setIcon('fas fa-eye'));
@@ -63,7 +77,6 @@ class AdminActivityCrudController extends AbstractCrudController
             ->allowMultipleChoices(false);
         yield DateTimeField::new('startDate', 'Date de début');
         yield DateTimeField::new('endDate', 'Date de fin');
-        yield IntegerField::new('maxParticipants', 'Participants max');
         yield AssociationField::new('categories', 'Catégories');
         yield AssociationField::new('author', 'Auteur')->hideOnForm();
         yield ChoiceField::new('status', 'Statut')

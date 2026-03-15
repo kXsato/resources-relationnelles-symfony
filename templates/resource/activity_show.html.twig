@@ -51,7 +51,7 @@
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         {% if article.gameType %}
         <div class="card bg-base-200 p-4 text-center">
-            <div class="text-2xl mb-1">📍</div>
+            <div class="text-2xl mb-1">🎮</div>
             <div class="text-xs text-base-content/60 mb-1">Type de jeu</div>
             <div class="font-semibold text-sm">{{ article.gameType }}</div>
         </div>
@@ -72,14 +72,6 @@
             <div class="font-semibold text-sm">{{ article.endDate|date('d/m/Y') }}</div>
         </div>
         {% endif %}
-
-        {% if article.maxParticipants %}
-        <div class="card bg-base-200 p-4 text-center">
-            <div class="text-2xl mb-1">👥</div>
-            <div class="text-xs text-base-content/60 mb-1">Participants max</div>
-            <div class="font-semibold text-sm">{{ article.maxParticipants }}</div>
-        </div>
-        {% endif %}
     </div>
 </div>
 
@@ -92,7 +84,6 @@
             {{ article.content|raw }}
         </div>
 
-        {# ── Boutons call-to-action ───────────────────────────────────────── #}
         <div class="flex flex-col sm:flex-row gap-3 mt-8 md:mt-10" role="group" aria-label="Actions sur l'activité">
             <a href="{{ path('app_resource_list') }}" class="btn btn-outline btn-neutral w-full sm:w-auto">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -103,6 +94,47 @@
         </div>
     </article>
 </main>
+
+{# ── Quiz ─────────────────────────────────────────────────────────────────── #}
+{# DEBUG #}
+{% if article.gameType == 'quiz' and article.questions is not empty %}
+<div class="container mx-auto px-4 py-10 max-w-3xl">
+    <h2 class="text-2xl font-bold mb-6">🧠 Quiz</h2>
+
+    {% if article.endDate and article.endDate < now %}
+    <div role="alert" class="alert alert-error mb-4">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <span>🚫 Cette activité est terminée depuis le {{ article.endDate|date('d/m/Y') }}.</span>
+    </div>
+    <a href="{{ path('app_resource_list') }}" class="btn btn-outline btn-neutral btn-sm">← Retour aux ressources</a>
+
+    {% elseif app.user %}
+    <div id="quiz-container">
+        <div id="quiz-start">
+            <div role="alert" class="alert alert-info mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="h-6 w-6 shrink-0 stroke-current">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <span>{{ article.questions|length }} question(s) — Sélectionne ta réponse pour chaque question.</span>
+            </div>
+            <button onclick="startQuiz()" class="btn btn-primary">🚀 Commencer le quiz</button>
+        </div>
+        <div id="quiz-questions" style="display:none"></div>
+        <div id="quiz-result" style="display:none"></div>
+    </div>
+
+    {% else %}
+    <div role="alert" class="alert alert-info mb-4">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="h-6 w-6 shrink-0 stroke-current">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <span class="text-black">👋 <a href="{{ path('app_login') }}" class="underline font-bold">Connectez-vous</a> pour participer au quiz.</span>
+    </div>
+    {% endif %}
+</div>
+{% endif %}
 
 {# ── Chat ─────────────────────────────────────────────────────────────────── #}
 <div class="container mx-auto px-4 py-10 max-w-3xl">
@@ -169,8 +201,6 @@
 </section>
 {% endif %}
 
-
-
 {# ── Progression (fixe bas-droite) ───────────────────────────────────────── #}
 <div id="reading-progress-widget"
      style="position:fixed; bottom:1rem; right:1rem; z-index:1000;"
@@ -199,6 +229,114 @@ const articleId = {{ article.id|json_encode|raw }};
 const isLoggedIn = {{ app.user ? 'true' : 'false' }};
 const isModerator = {{ is_granted('ROLE_MODERATOR') ? 'true' : 'false' }};
 
+// ── Quiz ──────────────────────────────────────────────────────────────────
+let quizQuestions = [];
+let currentQuestion = 0;
+let userAnswers = {};
+
+window.startQuiz = function() {
+    fetch(`/quiz/questions/{{ article.id }}`)
+        .then(r => r.json())
+        .then(questions => {
+            quizQuestions = questions;
+            currentQuestion = 0;
+            userAnswers = {};
+            document.getElementById('quiz-start').style.display = 'none';
+            showQuestion();
+        });
+};
+
+function showQuestion() {
+    const q = quizQuestions[currentQuestion];
+    const total = quizQuestions.length;
+    const container = document.getElementById('quiz-questions');
+    container.style.display = 'block';
+
+    container.innerHTML = `
+        <div class="card bg-base-100 shadow mb-4">
+            <div class="card-body">
+                <div class="text-xs text-base-content/50 mb-2">Question ${currentQuestion + 1} / ${total}</div>
+                <p class="font-bold text-lg mb-4">${q.question}</p>
+                <div class="flex flex-col gap-2">
+                    <label class="flex items-center gap-3 cursor-pointer p-3 rounded-lg border hover:bg-base-200">
+                        <input type="radio" name="answer" value="1" class="radio radio-primary" />
+                        <span>1. ${q.propositionA}</span>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer p-3 rounded-lg border hover:bg-base-200">
+                        <input type="radio" name="answer" value="2" class="radio radio-primary" />
+                        <span>2. ${q.propositionB}</span>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer p-3 rounded-lg border hover:bg-base-200">
+                        <input type="radio" name="answer" value="3" class="radio radio-primary" />
+                        <span>3. ${q.propositionC}</span>
+                    </label>
+                </div>
+                <div class="mt-4">
+                    <button onclick="nextQuestion(${q.id})" class="btn btn-primary btn-sm">
+                        ${currentQuestion + 1 < total ? 'Question suivante →' : 'Terminer le quiz 🏁'}
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+window.nextQuestion = function(questionId) {
+    const selected = document.querySelector('input[name="answer"]:checked');
+    if (!selected) {
+        alert('Veuillez sélectionner une réponse.');
+        return;
+    }
+
+    userAnswers[questionId] = parseInt(selected.value);
+    currentQuestion++;
+
+    if (currentQuestion < quizQuestions.length) {
+        showQuestion();
+    } else {
+        submitQuiz();
+    }
+};
+
+function submitQuiz() {
+    fetch(`/quiz/answer/{{ article.id }}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ answers: userAnswers })
+    })
+    .then(r => r.json())
+    .then(data => {
+        document.getElementById('quiz-questions').style.display = 'none';
+        const result = document.getElementById('quiz-result');
+        result.style.display = 'block';
+
+        const percent = Math.round((data.score / data.total) * 100);
+        let emoji = percent >= 80 ? '🏆' : percent >= 50 ? '👍' : '💪';
+
+        result.innerHTML = `
+            <div class="card bg-base-100 shadow text-center">
+                <div class="card-body">
+                    <div class="text-5xl mb-4">${emoji}</div>
+                    <h3 class="text-2xl font-bold mb-2">Quiz terminé !</h3>
+                    <p class="text-lg">Score : <strong>${data.score} / ${data.total}</strong></p>
+                    <p class="text-base-content/60">${percent}% de bonnes réponses</p>
+                    <div class="mt-4">
+                        <button onclick="restartQuiz()" class="btn btn-outline btn-sm">🔄 Recommencer</button>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+}
+
+window.restartQuiz = function() {
+    document.getElementById('quiz-result').style.display = 'none';
+    document.getElementById('quiz-start').style.display = 'block';
+    userAnswers = {};
+    currentQuestion = 0;
+};
+
+// ── Chat ──────────────────────────────────────────────────────────────────
 function renderComment(comment, depth = 0) {
     const marginLeft = depth * 24;
     const chatAlign = depth % 2 === 1 ? 'chat-end' : 'chat-start';

@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ActivityRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -25,13 +27,22 @@ class Activity extends Resource
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $endDate = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?int $maxParticipants = null;
+    /**
+     * @var Collection<int, QuizQuestion>
+     */
+    #[ORM\OneToMany(targetEntity: QuizQuestion::class, mappedBy: 'activity', orphanRemoval: true)]
+    private Collection $questions;
 
     public function __construct()
     {
         parent::__construct();
         $this->setStatus('published');
+        $this->questions = new ArrayCollection();
+    }
+
+    public function __toString(): string
+    {
+        return $this->getTitle() ?? '';
     }
 
     public function getContent(): ?string { return $this->content; }
@@ -66,11 +77,27 @@ class Activity extends Resource
         return $this;
     }
 
-    public function getMaxParticipants(): ?int { return $this->maxParticipants; }
+    /**
+     * @return Collection<int, QuizQuestion>
+     */
+    public function getQuestions(): Collection { return $this->questions; }
 
-    public function setMaxParticipants(?int $maxParticipants): static
+    public function addQuestion(QuizQuestion $question): static
     {
-        $this->maxParticipants = $maxParticipants;
+        if (!$this->questions->contains($question)) {
+            $this->questions->add($question);
+            $question->setActivity($this);
+        }
+        return $this;
+    }
+
+    public function removeQuestion(QuizQuestion $question): static
+    {
+        if ($this->questions->removeElement($question)) {
+            if ($question->getActivity() === $this) {
+                $question->setActivity(null);
+            }
+        }
         return $this;
     }
 }

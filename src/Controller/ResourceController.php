@@ -68,6 +68,7 @@ final class ResourceController extends AbstractController
             'article'         => $resource,
             'progress'        => $progress,
             'relatedArticles' => $resourceRepository->findRelated($resource->getId()),
+            'now' => new \DateTimeImmutable('now', new \DateTimeZone('Europe/Paris')),
         ]);
     }
 }
