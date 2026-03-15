@@ -3,6 +3,8 @@
 namespace App\Controller\Dashboard\Admin;
 
 use App\Entity\Activity;
+use App\Entity\User;
+use App\Enum\ResourceStatus;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -13,13 +15,26 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use App\Enum\ResourceStatus;
+use Symfony\Bundle\SecurityBundle\Security;
 
 class AdminActivityCrudController extends AbstractCrudController
 {
+    public function __construct(private Security $security) {}
+
     public static function getEntityFqcn(): string
     {
         return Activity::class;
+    }
+
+    public function createEntity(string $entityFqcn): Activity
+    {
+        $activity = new Activity();
+
+        /** @var User $user */
+        $user = $this->security->getUser();
+        $activity->setAuthor($user);
+
+        return $activity;
     }
 
     public function configureCrud(Crud $crud): Crud
