@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/api/progress', name: 'api_progress_')]
+#[Route('/progress', name: 'api_progress_')]
 class ApiProgressController extends AbstractController
 {
     public function __construct(

@@ -20,3 +20,11 @@ http://172.20.10.6 {
 
     file_server
 }
+
+#acces http pour ethan
+http://192.168.0.125 {
+    root * /var/www/html/public
+    encode gzip
+    php_fastcgi php:9000
+    file_server
+}
