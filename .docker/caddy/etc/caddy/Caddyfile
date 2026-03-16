@@ -10,8 +10,8 @@ resources-relationnelles.test {
     file_server
 }
 
-# Accès HTTP pour appareils physiques sur le réseau local (Expo Go)
-http://172.20.10.6 {
+# Accès HTTP pour appareils physiques sur le réseau local (Expo Go, mobile)
+:80 {
     root * /var/www/html/public
 
     encode gzip

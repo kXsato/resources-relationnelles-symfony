@@ -22,10 +22,9 @@ security:
 
         api:
             pattern: ^/api
-            stateless: false
+            stateless: true
             provider: app_user_provider
-            lazy: true
-            context: main
+            jwt: ~
 
         dev:
             # Ensure dev tools and static assets are always allowed
