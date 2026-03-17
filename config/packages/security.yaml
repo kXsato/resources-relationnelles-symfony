@@ -20,6 +20,11 @@ security:
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
 
+        user_registration:
+            pattern: ^/api/users$
+            stateless: true
+            security: false
+
         api:
             pattern: ^/api
             stateless: true
@@ -55,6 +60,7 @@ security:
         - { path: ^/favorites, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/api/login, roles: PUBLIC_ACCESS }
         - { path: ^/api/register, roles: PUBLIC_ACCESS }
+        - { path: ^/api/users$, roles: PUBLIC_ACCESS, methods: [POST] }
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/super-admin, roles: ROLE_SUPER_ADMIN }

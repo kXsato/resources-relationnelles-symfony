@@ -4,7 +4,10 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Post;
 use App\Repository\UserRepository;
+use App\State\UserRegistrationProcessor;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Serializer\Attribute\Ignore;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -16,7 +19,17 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ApiResource(normalizationContext: ['groups' => ['user:read']])]
+#[ApiResource(
+    operations: [
+        new Get(normalizationContext: ['groups' => ['user:read']]),
+        new Post(
+            denormalizationContext: ['groups' => ['user:write']],
+            normalizationContext: ['groups' => ['user:read']],
+            processor: UserRegistrationProcessor::class,
+            security: 'is_granted("PUBLIC_ACCESS")',
+        ),
+    ],
+)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 #[ORM\HasLifecycleCallbacks]
 #[UniqueEntity(fields: ['email'], message: 'Cette adresse e-mail est déjà utilisée.')]
@@ -30,7 +43,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180)]
-    #[Groups(['user:read'])]
+    #[Groups(['user:read', 'user:write'])]
     private ?string $email = null;
 
     #[ORM\Column]
@@ -41,11 +54,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null; // Jamais exposé (pas de groupe)
 
     #[ORM\Column(length: 255)]
-    #[Groups(['user:read'])]
+    #[Groups(['user:read', 'user:write'])]
     private ?string $userName = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
-    #[Groups(['user:read'])]
+    #[Groups(['user:read', 'user:write'])]
     private ?\DateTime $birthDate = null;
 
     #[ORM\Column(nullable: true)]
@@ -72,6 +85,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Ignore]
     private Collection $favorites;
 
+    #[Groups(['user:write'])]
     private ?string $plainPassword = null;
 
     /**
