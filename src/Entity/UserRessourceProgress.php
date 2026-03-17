@@ -2,31 +2,73 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiProperty;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
 use App\Repository\UserRessourceProgressRepository;
+use App\State\UserRessourceProgressProcessor;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: UserRessourceProgressRepository::class)]
+#[ApiResource(
+    shortName: 'Progress',
+    operations: [
+        new GetCollection(
+            security: "is_granted('ROLE_USER')",
+            normalizationContext: ['groups' => ['progress:read']],
+        ),
+        new Get(
+            security: "is_granted('ROLE_USER') and object.getUserRessources() == user",
+            normalizationContext: ['groups' => ['progress:read']],
+        ),
+        new Post(
+            security: "is_granted('ROLE_USER')",
+            normalizationContext: ['groups' => ['progress:read']],
+            denormalizationContext: ['groups' => ['progress:write']],
+            processor: UserRessourceProgressProcessor::class,
+        ),
+        new Patch(
+            security: "is_granted('ROLE_USER') and object.getUserRessources() == user",
+            normalizationContext: ['groups' => ['progress:read']],
+            denormalizationContext: ['groups' => ['progress:patch']],
+        ),
+    ],
+)]
 class UserRessourceProgress
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['progress:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 50)]
+    #[Groups(['progress:read'])]
     private ?string $status = null;
 
     #[ORM\Column]
+    #[Groups(['progress:read', 'progress:write', 'progress:patch'])]
     private ?int $readPercentage = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['progress:read'])]
     private ?\DateTime $completeAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'userRessourceProgress')]
     private ?User $UserRessources = null;
 
     #[ORM\ManyToOne(inversedBy: 'userRessourceProgresses')]
+    #[Groups(['progress:read'])]
     private ?Resource $resource = null;
+
+    /** Transient — utilisé uniquement en écriture (POST), résolu par le processor */
+    #[ApiProperty]
+    #[Groups(['progress:write'])]
+    private ?int $resourceId = null;
 
     public function getId(): ?int
     {
@@ -96,6 +138,18 @@ class UserRessourceProgress
     public function setResource(?Resource $resource): static
     {
         $this->resource = $resource;
+
+        return $this;
+    }
+
+    public function getResourceId(): ?int
+    {
+        return $this->resourceId;
+    }
+
+    public function setResourceId(?int $resourceId): static
+    {
+        $this->resourceId = $resourceId;
 
         return $this;
     }

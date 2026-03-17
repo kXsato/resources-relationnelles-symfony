@@ -35,15 +35,15 @@ abstract class Resource
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['resource:list', 'resource:read'])]
+    #[Groups(['resource:list', 'resource:read', 'progress:read', 'favorite:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['resource:list', 'resource:read'])]
+    #[Groups(['resource:list', 'resource:read', 'progress:read', 'favorite:read'])]
     private ?string $title = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['resource:read'])]
+    #[Groups(['resource:read', 'progress:read', 'favorite:read'])]
     private ?string $slug = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
