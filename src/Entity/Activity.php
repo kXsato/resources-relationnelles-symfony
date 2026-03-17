@@ -3,10 +3,13 @@
 namespace App\Entity;
 
 use App\Repository\ActivityRepository;
+use ApiPlatform\Metadata\ApiProperty;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Serializer\Attribute\Ignore;
 
 #[ORM\Entity(repositoryClass: ActivityRepository::class)]
 class Activity extends Resource
@@ -16,21 +19,23 @@ class Activity extends Resource
     ];
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(['resource:read'])]
     private ?string $content = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['resource:list', 'resource:read'])]
     private ?string $gameType = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['resource:list', 'resource:read'])]
     private ?\DateTimeImmutable $startDate = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['resource:list', 'resource:read'])]
     private ?\DateTimeImmutable $endDate = null;
 
-    /**
-     * @var Collection<int, QuizQuestion>
-     */
     #[ORM\OneToMany(targetEntity: QuizQuestion::class, mappedBy: 'activity', orphanRemoval: true)]
+    #[Groups(['resource:read'])]
     private Collection $questions;
 
     public function __construct()
@@ -77,9 +82,6 @@ class Activity extends Resource
         return $this;
     }
 
-    /**
-     * @return Collection<int, QuizQuestion>
-     */
     public function getQuestions(): Collection { return $this->questions; }
 
     public function addQuestion(QuizQuestion $question): static

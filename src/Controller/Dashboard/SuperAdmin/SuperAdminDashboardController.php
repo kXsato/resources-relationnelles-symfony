@@ -34,13 +34,15 @@ class SuperAdminDashboardController extends AbstractDashboardController
 
     public function configureMenuItems(): iterable
     {
+        yield MenuItem::linkToUrl('🌐 Voir les ressources', 'fas fa-globe', 'https://resources-relationnelles.test/resources');
+
         /** @var User $user */
         $user = $this->getUser();
         $pendingCount = $this->articleRepository->countPendingExcludingAuthor($user);
         $reactivationCount = $this->userRepository->countReactivationRequests();
 
         yield MenuItem::subMenu('Mon espace personnelle')->setSubItems([
-            MenuItem::linkToCrud('Mon compte', 'fas fa-user', \App\Entity\User::class)->setController(SuperAdminProfileCrudController::class)->setAction('edit')->setEntityId($this->getUser()->getId()),
+            MenuItem::linkTo(SuperAdminProfileCrudController::class, 'Mon compte', 'fas fa-user')->setAction('edit')->setEntityId($user->getId()),
             MenuItem::linkTo(SuperAdminOwnArticleCrudController::class, 'Mes articles', 'fas fa-book'),
             MenuItem::linkTo(SuperAdminFavoriteCrudController::class, 'Mes favoris', 'fas fa-star'),
             MenuItem::linkTo(SuperAdminProgressCrudController::class, 'Mes lectures en cours', 'fas fa-book-open'),

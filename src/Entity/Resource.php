@@ -2,11 +2,16 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiProperty;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
 use App\Repository\ResourceRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Serializer\Attribute\Ignore;
 
 #[ORM\Entity(repositoryClass: ResourceRepository::class)]
 #[ORM\InheritanceType('JOINED')]
@@ -16,52 +21,70 @@ use Doctrine\ORM\Mapping as ORM;
     'activity' => Activity::class,
 ])]
 #[ORM\HasLifecycleCallbacks]
+#[ApiResource(
+    operations: [
+        new GetCollection(
+            uriTemplate: '/resources',
+            normalizationContext: ['groups' => ['resource:list']],
+        ),
+    ],
+    security: "is_granted('PUBLIC_ACCESS')",
+)]
 abstract class Resource
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['resource:list', 'resource:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['resource:list', 'resource:read'])]
     private ?string $title = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['resource:read'])]
     private ?string $slug = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(['resource:list', 'resource:read'])]
     private ?string $description = null;
 
     #[ORM\Column]
+    #[Groups(['resource:list', 'resource:read'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column]
+    #[Groups(['resource:read'])]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\Column(length: 20)]
+    #[Groups(['resource:read'])]
     private ?string $status = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Ignore]
     private ?string $rejectionReason = null;
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'resources')]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    #[ApiProperty(readable: false)]
+    #[Ignore]
     private ?User $author = null;
 
     #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'resources')]
     #[ORM\JoinTable(name: 'resource_category')]
+    #[Groups(['resource:list', 'resource:read'])]
     private Collection $categories;
 
-    /**
-     * @var Collection<int, UserRessourceProgress>
-     */
     #[ORM\OneToMany(targetEntity: UserRessourceProgress::class, mappedBy: 'resource', orphanRemoval: true)]
+    #[ApiProperty(readable: false)]
+    #[Ignore]
     private Collection $userRessourceProgresses;
 
-    /**
-     * @var Collection<int, Comment>
-     */
     #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'resource', orphanRemoval: true)]
+    #[ApiProperty(readable: false)]
+    #[Ignore]
     private Collection $comments;
 
     public function __construct()
@@ -151,6 +174,7 @@ abstract class Resource
         return $this;
     }
 
+    #[Groups(['resource:list', 'resource:read'])]
     public function getDisplayAuthor(): string
     {
         if ($this->author === null || !$this->author->isAccountActivated()) {
@@ -159,15 +183,13 @@ abstract class Resource
         return $this->author->getUserName();
     }
 
+    #[Groups(['resource:list', 'resource:read'])]
     public function getResourceType(): string
     {
         $parts = explode('\\', static::class);
         return strtolower(end($parts));
     }
 
-    /**
-     * @return Collection<int, Category>
-     */
     public function getCategories(): Collection { return $this->categories; }
 
     public function addCategory(Category $category): static
@@ -184,9 +206,6 @@ abstract class Resource
         return $this;
     }
 
-    /**
-     * @return Collection<int, UserRessourceProgress>
-     */
     public function getUserRessourceProgresses(): Collection { return $this->userRessourceProgresses; }
 
     public function addUserRessourceProgress(UserRessourceProgress $userRessourceProgress): static
@@ -208,9 +227,6 @@ abstract class Resource
         return $this;
     }
 
-    /**
-     * @return Collection<int, Comment>
-     */
     public function getComments(): Collection { return $this->comments; }
 
     public function addComment(Comment $comment): static

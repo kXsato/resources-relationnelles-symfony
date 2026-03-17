@@ -7,26 +7,15 @@ use App\Entity\Article;
 use App\Repository\ResourceRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/api/resources', name: 'api_resources_')]
 class ApiResourceController extends AbstractController
 {
     public function __construct(
         private readonly ResourceRepository $resourceRepository,
     ) {}
 
-    #[Route('', name: 'list', methods: ['GET'])]
-    public function list(Request $request): JsonResponse
-    {
-        $categoryId = $request->query->getInt('category') ?: null;
-        $resources = $this->resourceRepository->findPublished($categoryId);
-
-        return $this->json(array_map(fn($r) => $this->serializeList($r), $resources));
-    }
-
-    #[Route('/{id}', name: 'show', methods: ['GET'])]
+    #[Route('/api/resources/{id}', name: 'api_resources_show', methods: ['GET'], priority: 10)]
     public function show(int $id): JsonResponse
     {
         $resource = $this->resourceRepository->find($id);
@@ -41,13 +30,13 @@ class ApiResourceController extends AbstractController
     private function serializeList($resource): array
     {
         return [
-            'id'          => $resource->getId(),
-            'title'       => $resource->getTitle(),
-            'description' => $resource->getDescription(),
-            'type'        => $resource->getResourceType(),
-            'createdAt'   => $resource->getCreatedAt()?->format('d/m/Y'),
-            'author'      => $resource->getDisplayAuthor(),
-            'categories'  => $resource->getCategories()->map(fn($c) => [
+            'id'            => $resource->getId(),
+            'title'         => $resource->getTitle(),
+            'description'   => $resource->getDescription(),
+            'resourceType'  => $resource->getResourceType(),
+            'createdAt'     => $resource->getCreatedAt()?->format('d/m/Y'),
+            'displayAuthor' => $resource->getDisplayAuthor(),
+            'categories'    => $resource->getCategories()->map(fn($c) => [
                 'id'   => $c->getId(),
                 'name' => $c->getName(),
             ])->toArray(),

@@ -35,8 +35,6 @@ class ApiQuizController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function answer(Request $request, Activity $activity): JsonResponse
     {
-        $authHeader = $request->headers->get('Authorization');
-        dump($authHeader); // sera visible dans les logs Docker
         $now = new \DateTimeImmutable();
         if ($activity->getEndDate() && $activity->getEndDate() < $now) {
             return $this->json(['error' => 'expired'], 410);

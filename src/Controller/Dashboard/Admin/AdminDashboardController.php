@@ -35,6 +35,7 @@ class AdminDashboardController extends AbstractDashboardController
 
     public function configureMenuItems(): iterable
     {
+        yield MenuItem::linkToUrl('Voir les ressources', 'fas fa-globe', 'https://resources-relationnelles.test/resources');
         /** @var \App\Entity\User $admin */
         $admin = $this->getUser();
         $pendingCount = $this->articleRepository->countPendingExcludingAuthor($admin);

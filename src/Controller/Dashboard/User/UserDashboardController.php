@@ -38,6 +38,7 @@ class UserDashboardController extends AbstractDashboardController
 
     public function configureMenuItems(): iterable
     {
+        yield MenuItem::linkToUrl('Voir les ressources', 'fas fa-globe', 'https://resources-relationnelles.test/resources');
         yield MenuItem::linkToDashboard('Mon profil', 'fas fa-user');
         yield MenuItem::linkTo(UserArticleCrudController::class, 'Mes articles', 'fas fa-newspaper');
         yield MenuItem::linkTo(UserFavoriteCrudController::class, 'Mes favoris', 'fas fa-star');

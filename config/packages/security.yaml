@@ -50,6 +50,8 @@ security:
         - { path: ^/api/comments, roles: PUBLIC_ACCESS }
         - { path: ^/api/favorites, roles: PUBLIC_ACCESS }
         - { path: ^/api/quiz/answer, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/api/comments/resource, roles: PUBLIC_ACCESS }
+        - { path: ^/api/comments, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/progress, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/quiz, roles: IS_AUTHENTICATED_FULLY }
