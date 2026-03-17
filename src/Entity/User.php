@@ -2,7 +2,11 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiProperty;
+use ApiPlatform\Metadata\ApiResource;
 use App\Repository\UserRepository;
+use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Serializer\Attribute\Ignore;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -12,6 +16,7 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
+#[ApiResource(normalizationContext: ['groups' => ['user:read']])]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 #[ORM\HasLifecycleCallbacks]
 #[UniqueEntity(fields: ['email'], message: 'Cette adresse e-mail est déjà utilisée.')]
@@ -21,27 +26,34 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['user:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 180)]
+    #[Groups(['user:read'])]
     private ?string $email = null;
 
     #[ORM\Column]
+    #[Groups(['user:read'])]
     private array $roles = [];
 
     #[ORM\Column]
-    private ?string $password = null;
+    private ?string $password = null; // Jamais exposé (pas de groupe)
 
     #[ORM\Column(length: 255)]
+    #[Groups(['user:read'])]
     private ?string $userName = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[Groups(['user:read'])]
     private ?\DateTime $birthDate = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['user:read'])]
     private ?\DateTime $lastLogin = null;
 
     #[ORM\Column]
+    #[Groups(['user:read'])]
     private ?\DateTime $registrationDate = null;
 
     #[ORM\Column(options: ['default' => true])]
@@ -51,9 +63,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?\DateTime $reactivationRequestedAt = null;
 
     #[ORM\OneToMany(targetEntity: Resource::class, mappedBy: 'author')]
+    #[ApiProperty(readable: false)]
+    #[Ignore]
     private Collection $resources;
 
     #[ORM\OneToMany(targetEntity: Favorite::class, mappedBy: 'user', orphanRemoval: true)]
+    #[ApiProperty(readable: false)]
+    #[Ignore]
     private Collection $favorites;
 
     private ?string $plainPassword = null;
@@ -62,12 +78,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var Collection<int, UserRessourceProgress>
      */
     #[ORM\OneToMany(targetEntity: UserRessourceProgress::class, mappedBy: 'UserRessources', cascade: ['remove'], orphanRemoval: true)]
+    #[ApiProperty(readable: false)]
+    #[Ignore]
     private Collection $userRessourceProgress;
 
     /**
      * @var Collection<int, Comment>
      */
     #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'user', orphanRemoval: true)]
+    #[ApiProperty(readable: false)]
+    #[Ignore]
     private Collection $comments;
 
     public function __construct()
@@ -185,6 +205,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    #[Ignore]
     public function getResources(): Collection
     {
         return $this->resources;
@@ -209,6 +230,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    #[Ignore]
     public function getFavorites(): Collection
     {
         return $this->favorites;
@@ -286,6 +308,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @return Collection<int, UserRessourceProgress>
      */
+    #[Ignore]
     public function getUserRessourceProgress(): Collection
     {
         return $this->userRessourceProgress;
@@ -313,6 +336,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @return Collection<int, Comment>
      */
+    #[Ignore]
     public function getComments(): Collection
     {
         return $this->comments;

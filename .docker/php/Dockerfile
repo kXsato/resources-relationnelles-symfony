@@ -10,7 +10,6 @@ RUN apk add --no-cache \
         dcron \
     && docker-php-ext-install \
         intl \
-        opcache \
         pdo_mysql \
         zip
 
