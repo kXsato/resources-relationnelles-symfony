@@ -55,7 +55,7 @@ class ModeratorDashboardController extends AbstractDashboardController
 
     public function configureMenuItems(): iterable
     {
-        yield MenuItem::linkToUrl('🌐 Voir les ressources', 'fas fa-globe', 'https://resources-relationnelles.test/resources');
+        yield MenuItem::linkToUrl('Voir les ressources', 'fas fa-globe', 'https://resources-relationnelles.test/resources');
         /** @var \App\Entity\User $moderator */
         $moderator = $this->getUser();
         $pendingCount = $this->articleRepository->countPendingExcludingAuthor($moderator);
