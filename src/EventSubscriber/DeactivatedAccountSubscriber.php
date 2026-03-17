@@ -36,6 +36,14 @@ class DeactivatedAccountSubscriber implements EventSubscriberInterface
 
         $path = $event->getRequest()->getPathInfo();
 
+        // Les routes /api ne doivent jamais être redirigées :
+        // - les endpoints non authentifiés (ex: /api/login_check) n'ont pas de token
+        // - les endpoints authentifiés portent un header Authorization
+        // Dans les deux cas, l'app mobile gère le compte désactivé via isAccountActivated.
+        if (str_starts_with($path, '/api')) {
+            return;
+        }
+
         foreach (self::ALLOWED_PATHS as $allowed) {
             if (str_starts_with($path, $allowed)) {
                 return;

@@ -13,6 +13,11 @@ security:
             pattern: ^/(_profiler|_wdt|assets|build)/
             security: false
 
+        user_registration:
+            pattern: ^/api/users$
+            stateless: true
+            security: false
+
         api:
             pattern: ^/api
             stateless: true
@@ -35,8 +40,11 @@ security:
                 path: app_logout
 
     access_control:
+        - { path: ^/api/docs, roles: PUBLIC_ACCESS }
         - { path: ^/api/login_check, roles: PUBLIC_ACCESS }
+        - { path: ^/api/login, roles: PUBLIC_ACCESS }
         - { path: ^/api/register, roles: PUBLIC_ACCESS }
+        - { path: ^/api/users$, roles: PUBLIC_ACCESS, methods: [POST] }
         - { path: ^/api/resources, roles: PUBLIC_ACCESS }
         - { path: ^/api/quiz/questions, roles: PUBLIC_ACCESS }
         - { path: ^/api/comments, roles: PUBLIC_ACCESS }
