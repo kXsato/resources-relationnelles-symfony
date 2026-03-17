@@ -70,6 +70,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?\DateTime $registrationDate = null;
 
     #[ORM\Column(options: ['default' => true])]
+    #[Groups(['user:read'])]
     private bool $isAccountActivated = true;
 
     #[ORM\Column(nullable: true)]
@@ -269,6 +270,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    #[Groups(['user:read'])]
     public function isAccountActivated(): bool
     {
         return $this->isAccountActivated;
