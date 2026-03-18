@@ -28,3 +28,9 @@ http://192.168.0.125 {
     php_fastcgi php:9000
     file_server
 }
+
+mail.resources-relationnelles.test {
+    tls /etc/caddy/certs/mail.resources-relationnelles.test.pem /etc/caddy/certs/mail.resources-relationnelles.test-key.pem
+
+    reverse_proxy mailpit:8025
+}

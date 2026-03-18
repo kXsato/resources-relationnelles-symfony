@@ -18,6 +18,11 @@ security:
             stateless: true
             security: false
 
+        reset_password:
+            pattern: ^/api/reset-password
+            stateless: true
+            security: false
+
         api:
             pattern: ^/api
             stateless: true
@@ -44,6 +49,7 @@ security:
         - { path: ^/api/login_check, roles: PUBLIC_ACCESS }
         - { path: ^/api/login, roles: PUBLIC_ACCESS }
         - { path: ^/api/register, roles: PUBLIC_ACCESS }
+        - { path: ^/api/reset-password, roles: PUBLIC_ACCESS }
         - { path: ^/api/users$, roles: PUBLIC_ACCESS, methods: [POST] }
         - { path: ^/api/resources, roles: PUBLIC_ACCESS }
         - { path: ^/api/quiz/questions, roles: PUBLIC_ACCESS }

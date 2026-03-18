@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Email envoyé{% endblock %}
+
+{% block body %}
+<div class="grow flex items-center justify-center">
+<div class="card bg-base-100 w-96 shadow-sm">
+    <div class="card-body gap-4 text-center">
+        <div class="flex justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+            </svg>
+        </div>
+        <h2 class="card-title justify-center">Email envoyé !</h2>
+        <p class="text-sm text-base-content/70">
+            Si un compte correspond à votre adresse email, un lien de réinitialisation vient d'être envoyé.
+            Ce lien expirera dans {{ resetToken.expirationMessageKey|trans(resetToken.expirationMessageData, 'ResetPasswordBundle') }}.
+        </p>
+        <p class="text-sm text-base-content/50">
+            Vous n'avez rien reçu ? Vérifiez vos spams ou
+            <a href="{{ path('app_forgot_password_request') }}" class="link link-primary">réessayez</a>.
+        </p>
+        <a href="{{ path('app_login') }}" class="btn btn-ghost btn-sm">Retour à la connexion</a>
+    </div>
+</div>
+</div>
+{% endblock %}

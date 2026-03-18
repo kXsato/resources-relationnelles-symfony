@@ -298,6 +298,22 @@ articles:
       createdAt: "2026-03-10T09:00:00"
       content: "Les personnes hautement sensibles (HSP) traitent les informations émotionnelles et sensorielles de façon plus profonde."
 
+    # ── Article réservé aux majeurs (pour tester la restriction d'âge) ───────
+    - title: "Sexualité et relations intimes : comprendre ses besoins"
+      slug: "sexualite-relations-intimes-comprendre-besoins"
+      description: "Un guide pour adultes sur la communication intime, le consentement et l'expression des besoins affectifs et sexuels dans une relation."
+      status: "published"
+      author: "alice"
+      categories: [communication, lien_social]
+      createdAt: "2026-03-10T10:00:00"
+      isAdultOnly: true
+      content: |
+          <h2>Pourquoi parler de sexualité dans une relation ?</h2>
+          <p>La sexualité est une composante fondamentale de nombreuses relations adultes. Pourtant, elle reste souvent taboue, même entre partenaires.</p>
+          <p>Apprendre à exprimer ses besoins, à poser des limites et à entendre ceux de l'autre est un acte de communication à part entière.</p>
+          <h2>Le consentement : une conversation permanente</h2>
+          <p>Le consentement n'est pas un formulaire à signer une fois pour toutes. C'est un dialogue continu, fondé sur le respect mutuel et la liberté de changer d'avis à tout moment.</p>
+
     - title: "Construire des relations saines après un traumatisme relationnel"
       slug: "relations-saines-apres-traumatisme-relationnel"
       description: "Un guide complet pour comprendre les blessures relationnelles, reconnaître leurs effets et retrouver progressivement confiance dans les autres."

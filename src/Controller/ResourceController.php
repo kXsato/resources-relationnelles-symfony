@@ -3,11 +3,12 @@
 namespace App\Controller;
 
 use App\Entity\Activity;
-use App\Entity\Article;
 use App\Entity\UserRessourceProgress;
 use App\Repository\CategoryRepository;
 use App\Repository\ResourceRepository;
 use App\Repository\UserRessourceProgressRepository;
+use App\Security\Voter\ResourceVoter;
+use App\Service\AgeVerificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -17,15 +18,19 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class ResourceController extends AbstractController
 {
+    public function __construct(private readonly AgeVerificationService $ageVerification) {}
+
     #[Route('/resources', name: 'app_resource_list')]
     public function list(Request $request, ResourceRepository $resourceRepository, CategoryRepository $categoryRepository): Response
     {
         $categoryId = $request->query->getInt('category') ?: null;
+        $type = $request->query->get('type') ?: null;
 
         return $this->render('resource/list.html.twig', [
-            'resources'         => $resourceRepository->findPublished($categoryId),
+            'resources'         => $resourceRepository->findPublished($categoryId, $type, null, $this->ageVerification->isCurrentUserAdult()),
             'categories'        => $categoryRepository->findAll(),
             'currentCategoryId' => $categoryId,
+            'currentType'       => $type,
         ]);
     }
 
@@ -38,8 +43,17 @@ final class ResourceController extends AbstractController
             throw $this->createNotFoundException("Cette ressource n'est pas disponible.");
         }
 
-        $progress = null;
         $user = $security->getUser();
+
+        if ($resource->isAdultOnly()) {
+            if (!$user) {
+                $this->addFlash('warning', 'Vous devez vous connecter ou créer un compte pour accéder à cette ressource réservée aux adultes.');
+                return $this->redirectToRoute('app_login');
+            }
+            $this->denyAccessUnlessGranted(ResourceVoter::VIEW, $resource, "Cette ressource est réservée aux personnes majeures.");
+        }
+
+        $progress = null;
         if ($user) {
             $progress = $progressRepository->findOneBy([
                 'UserRessources' => $user,

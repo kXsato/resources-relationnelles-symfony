@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Articles{% endblock %}
+{% block title %}Ressources{% endblock %}
 
 {% block body %}
 <div class="flex flex-col w-full">
@@ -10,7 +10,7 @@
     <div class="breadcrumbs text-sm">
         <ul>
             <li><a href="/">Accueil</a></li>
-            <li aria-current="page">Articles</li>
+            <li aria-current="page">Ressources</li>
         </ul>
     </div>
 </nav>
@@ -23,15 +23,48 @@
 
 <div class="container mx-auto px-4 py-6">
 
+    {# ── Banderole ressources restreintes (non connecté) ──────────────────── #}
+    {% if not app.user %}
+    <div class="alert alert-info mb-6 flex items-center gap-3">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+        <span>
+            Certaines ressources sont réservées aux adultes.
+            <a href="{{ path('app_login') }}" class="link font-semibold">Connectez-vous</a>
+            ou <a href="{{ path('app_register') }}" class="link font-semibold">créez un compte</a> pour y accéder.
+        </span>
+    </div>
+    {% endif %}
+
+    {# ── Filtre par type ───────────────────────────────────────────────────── #}
+    <nav aria-label="Filtrer par type" class="flex flex-wrap gap-2 justify-center mb-4">
+        <a href="{{ path('app_resource_list', currentCategoryId ? { category: currentCategoryId } : {}) }}"
+           class="btn btn-sm {{ currentType is null ? 'btn-primary' : 'btn-ghost' }}">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+            Tout
+        </a>
+        <a href="{{ path('app_resource_list', { type: 'article' }|merge(currentCategoryId ? { category: currentCategoryId } : {})) }}"
+           class="btn btn-sm {{ currentType == 'article' ? 'btn-primary' : 'btn-ghost' }}">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            Articles
+        </a>
+        <a href="{{ path('app_resource_list', { type: 'activity' }|merge(currentCategoryId ? { category: currentCategoryId } : {})) }}"
+           class="btn btn-sm {{ currentType == 'activity' ? 'btn-primary' : 'btn-ghost' }}">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            Activités
+        </a>
+    </nav>
+
     {# ── Filtres par catégorie ─────────────────────────────────────────────── #}
     <nav aria-label="Filtrer par catégorie" class="flex flex-wrap gap-2 justify-center mb-8">
-        <a href="{{ path('app_resource_list') }}"
+        <a href="{{ path('app_resource_list', currentType ? { type: currentType } : {}) }}"
            class="badge badge-lg {{ currentCategoryId is null ? 'badge-primary' : 'badge-neutral badge-outline' }}"
            {% if currentCategoryId is null %}aria-current="true"{% endif %}>
             Toutes
         </a>
         {% for category in categories %}
-            <a href="{{ path('app_resource_list', { category: category.id }) }}"
+            <a href="{{ path('app_resource_list', { category: category.id }|merge(currentType ? { type: currentType } : {})) }}"
                class="badge badge-lg {{ currentCategoryId == category.id ? 'badge-primary' : 'badge-neutral badge-outline' }}"
                {% if currentCategoryId == category.id %}aria-current="true"{% endif %}>
                 {{ category.name }}
@@ -53,13 +86,15 @@
                         <div class="flex items-center justify-between mb-2">
                             {% set type = resource.resourceType %}
                             {% if type == 'article' %}
-                                <span class="badge badge-primary badge-sm">📄 Article</span>
+                                <span class="badge badge-primary badge-sm gap-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                                    Article
+                                </span>
                             {% elseif type == 'activity' %}
-                                <span class="badge badge-secondary badge-sm">🎯 Activité</span>
-                            {% elseif type == 'video' %}
-                                <span class="badge badge-error badge-sm">🎬 Vidéo</span>
-                            {% elseif type == 'game' %}
-                                <span class="badge badge-success badge-sm">🎮 Jeu</span>
+                                <span class="badge badge-secondary badge-sm gap-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                                    Activité
+                                </span>
                             {% else %}
                                 <span class="badge badge-neutral badge-sm">{{ type|capitalize }}</span>
                             {% endif %}
@@ -101,7 +136,7 @@
     {# ── Favoris (connecté uniquement) ────────────────────────────────────── #}
     {% if app.user %}
     <section class="mt-14">
-        <h2 class="text-2xl font-bold mb-4">Mes articles favoris</h2>
+        <h2 class="text-2xl font-bold mb-4">Mes favoris</h2>
         <div id="flash-favorites" aria-live="polite"></div>
         <div id="favorites-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <p class="text-base-content/50 text-sm">Chargement...</p>
@@ -144,7 +179,7 @@
                 document.getElementById(`fav-card-${articleId}`)?.remove();
 
                 const flash = document.getElementById('flash-favorites');
-                flash.innerHTML = '<div role="alert" class="alert alert-success text-sm">✅ Ressource retirée des favoris.</div>';
+                flash.innerHTML = '<div role="alert" class="alert alert-success text-sm"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> Ressource retirée des favoris.</div>';
                 setTimeout(() => flash.innerHTML = '', 3000);
 
                 if (document.querySelectorAll('#favorites-list .card').length === 0) {

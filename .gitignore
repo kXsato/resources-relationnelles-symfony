@@ -7,6 +7,7 @@
 /public/bundles/
 /var/
 /vendor/
+/.claude/
 ###< symfony/framework-bundle ###
 
 ###> phpunit/phpunit ###

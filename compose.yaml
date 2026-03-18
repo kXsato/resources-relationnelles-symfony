@@ -36,6 +36,30 @@ services:
     depends_on:
       - php
 
+  message-queue:
+    build: .docker/php
+    command: php bin/console messenger:consume async --time-limit=3600 --memory-limit=128M -vv
+    volumes:
+      - .:/var/www/html
+    networks:
+      - app
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  mailpit:
+    image: axllent/mailpit
+    restart: unless-stopped
+    ports:
+      - 8025:8025
+      - 1025:1025
+    environment:
+      MP_MAX_MESSAGES: 5000
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
+    networks:
+      - app
+
 volumes:
   db_data:
   caddy_data:
