@@ -21,11 +21,13 @@ final class ResourceController extends AbstractController
     public function list(Request $request, ResourceRepository $resourceRepository, CategoryRepository $categoryRepository): Response
     {
         $categoryId = $request->query->getInt('category') ?: null;
+        $type = $request->query->get('type') ?: null;
 
         return $this->render('resource/list.html.twig', [
-            'resources'         => $resourceRepository->findPublished($categoryId),
+            'resources'         => $resourceRepository->findPublished($categoryId, $type),
             'categories'        => $categoryRepository->findAll(),
             'currentCategoryId' => $categoryId,
+            'currentType'       => $type,
         ]);
     }
 
