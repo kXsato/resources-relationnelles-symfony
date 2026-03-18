@@ -3,13 +3,12 @@
 namespace App\Controller;
 
 use App\Entity\Activity;
-use App\Entity\Article;
-use App\Entity\User;
 use App\Entity\UserRessourceProgress;
 use App\Repository\CategoryRepository;
 use App\Repository\ResourceRepository;
 use App\Repository\UserRessourceProgressRepository;
 use App\Security\Voter\ResourceVoter;
+use App\Service\AgeVerificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -19,18 +18,16 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class ResourceController extends AbstractController
 {
+    public function __construct(private readonly AgeVerificationService $ageVerification) {}
+
     #[Route('/resources', name: 'app_resource_list')]
     public function list(Request $request, ResourceRepository $resourceRepository, CategoryRepository $categoryRepository): Response
     {
         $categoryId = $request->query->getInt('category') ?: null;
         $type = $request->query->get('type') ?: null;
 
-        $user = $this->getUser();
-        $showAdult = $user instanceof User && $user->getBirthDate() !== null
-            && $user->getBirthDate()->diff(new \DateTimeImmutable())->y >= 18;
-
         return $this->render('resource/list.html.twig', [
-            'resources'         => $resourceRepository->findPublished($categoryId, $type, null, $showAdult),
+            'resources'         => $resourceRepository->findPublished($categoryId, $type, null, $this->ageVerification->isCurrentUserAdult()),
             'categories'        => $categoryRepository->findAll(),
             'currentCategoryId' => $categoryId,
             'currentType'       => $type,

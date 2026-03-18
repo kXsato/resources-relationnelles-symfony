@@ -4,6 +4,7 @@ namespace App\Security\Voter;
 
 use App\Entity\Resource;
 use App\Entity\User;
+use App\Service\AgeVerificationService;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -11,6 +12,8 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 class ResourceVoter extends Voter
 {
     public const VIEW = 'RESOURCE_VIEW';
+
+    public function __construct(private readonly AgeVerificationService $ageVerification) {}
 
     protected function supports(string $attribute, mixed $subject): bool
     {
@@ -29,11 +32,6 @@ class ResourceVoter extends Voter
             return false;
         }
 
-        $birthDate = $user->getBirthDate();
-        if ($birthDate === null) {
-            return false;
-        }
-
-        return $birthDate->diff(new \DateTimeImmutable())->y >= 18;
+        return $this->ageVerification->isAdult($user);
     }
 }
