@@ -5,7 +5,7 @@ define symfony.console
 	$(DOCKER_COMPOSE) exec $(PHP_CONT) php bin/console $(1)
 endef
 
-.PHONY: help install app.database app.fixtures docker.build docker.up docker.down docker.logs.php docker.logs.db docker.logs.caddy docker.shell.php app.watch.theme app.build.theme
+.PHONY: help install app.database app.fixtures docker.build docker.up docker.down docker.logs.php docker.logs.db docker.logs.caddy docker.shell.php app.watch.theme app.build.theme app.queue
 
 help: ## Affiche cette aide
 	@grep -E '^[a-zA-Z._-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
@@ -51,3 +51,6 @@ app.watch.theme: ## Lance le watch Tailwind
 
 app.build.theme: ## Compile le thème Tailwind
 	$(call symfony.console,tailwind:build)
+
+app.queue: ## Consomme la file de messages (Messenger)
+	$(call symfony.console,messenger:consume async -vv)

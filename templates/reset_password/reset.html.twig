@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouveau mot de passe{% endblock %}
+
+{% block body %}
+<div class="grow flex items-center justify-center">
+<div class="card bg-base-100 w-96 shadow-sm">
+    <div class="card-body gap-4">
+        <h2 class="card-title">Nouveau mot de passe</h2>
+        <p class="text-sm text-base-content/60">Choisissez un mot de passe d'au moins 12 caractères.</p>
+
+        {{ form_start(resetForm, { attr: { class: 'flex flex-col gap-4' } }) }}
+            <div class="flex flex-col gap-1">
+                {{ form_label(resetForm.plainPassword.first, null, { label_attr: { class: 'label' } }) }}
+                {{ form_widget(resetForm.plainPassword.first, { attr: { class: 'input input-bordered w-full' } }) }}
+                {{ form_errors(resetForm.plainPassword.first) }}
+            </div>
+            <div class="flex flex-col gap-1">
+                {{ form_label(resetForm.plainPassword.second, null, { label_attr: { class: 'label' } }) }}
+                {{ form_widget(resetForm.plainPassword.second, { attr: { class: 'input input-bordered w-full' } }) }}
+                {{ form_errors(resetForm.plainPassword.second) }}
+            </div>
+            {{ form_errors(resetForm.plainPassword) }}
+            <button class="btn btn-primary w-full" type="submit">Réinitialiser le mot de passe</button>
+        {{ form_end(resetForm) }}
+    </div>
+</div>
+</div>
+{% endblock %}
