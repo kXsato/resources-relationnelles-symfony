@@ -1,0 +1,87 @@
+activities:
+
+  - title: "Quiz : Les bases de la nutrition"
+    slug: "quiz-bases-nutrition"
+    description: "Teste tes connaissances sur les fondamentaux de la nutrition et d'une alimentation équilibrée."
+    status: "published"
+    gameType: "quiz"
+    content: |
+      <p>Bienvenue dans ce quiz sur la <strong>nutrition</strong> !</p>
+      <p>La nutrition est la science qui étudie les relations entre les aliments et la santé.
+      Une bonne alimentation est essentielle pour maintenir un corps en bonne santé.</p>
+      <p>Réponds aux questions suivantes pour évaluer tes connaissances.</p>
+    categories: [bien_etre]
+    author: admin
+    startDate: "2025-01-01"
+    endDate: "2026-12-31"
+    createdAt: "2025-01-10"
+
+  - title: "Quiz : Gestion des émotions"
+    slug: "quiz-gestion-emotions"
+    description: "Un quiz pour tester tes connaissances sur la gestion des émotions au quotidien."
+    status: "published"
+    gameType: "quiz"
+    content: |
+      <p>Les <strong>émotions</strong> jouent un rôle central dans nos relations et notre bien-être.</p>
+      <p>Savoir les identifier, les comprendre et les réguler est une compétence essentielle.
+      Ce quiz te propose de faire le point sur tes connaissances en gestion émotionnelle.</p>
+    categories: [emotions]
+
+    author: admin
+    startDate: "2025-02-01"
+    endDate: "2026-12-31"
+    createdAt: "2025-02-05"
+
+  - title: "Quiz : Résolution de conflits"
+    slug: "quiz-resolution-conflits"
+    description: "Révise les stratégies et techniques pour mieux gérer les conflits."
+    status: "published"
+    gameType: "quiz"
+    content: |
+      <p>Ce quiz aborde les <strong>techniques de résolution de conflits</strong> :</p>
+      <ul>
+        <li>L'écoute active</li>
+        <li>La communication non violente</li>
+        <li>La médiation</li>
+      </ul>
+      <p>Bonne chance !</p>
+    categories: [gestion_conflits]
+    author: admin
+    startDate: "2025-03-01"
+    endDate: "2026-12-31"
+    createdAt: "2025-03-10"
+
+  - title: "Quiz : Communication bienveillante"
+    slug: "quiz-communication-bienveillante"
+    description: "Sauras-tu identifier les clés d'une communication bienveillante et efficace ?"
+    status: "published"
+    gameType: "quiz"
+    content: |
+      <p>La <strong>communication bienveillante</strong> est au cœur des relations harmonieuses.</p>
+      <p>Ce quiz t'invite à explorer les principes fondamentaux d'une communication
+      respectueuse et constructive, que ce soit au travail ou dans ta vie personnelle.</p>
+    categories: [communication]
+    author: admin
+    startDate: "2025-04-01"
+    endDate: "2026-12-31"
+    createdAt: "2025-04-15"
+
+  - title: "Activité : Atelier de cohésion sociale"
+    slug: "atelier-cohesion-sociale"
+    description: "Un atelier pour renforcer les liens sociaux et développer l'empathie."
+    status: "published"
+    gameType: ~
+    content: |
+      <p>Le <strong>lien social</strong> est fondamental pour notre équilibre.</p>
+      <p>Dans cet atelier, tu trouveras des exercices pour renforcer tes relations :</p>
+      <ul>
+        <li>Exercices d'écoute active</li>
+        <li>Mises en situation d'empathie</li>
+        <li>Activités de groupe et de coopération</li>
+      </ul>
+      <p>Ensemble, construisons des liens plus forts !</p>
+    categories: [lien_social]
+    author: admin
+    startDate: ~
+    endDate: ~
+    createdAt: "2025-05-01"

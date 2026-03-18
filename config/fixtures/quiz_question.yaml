@@ -1,0 +1,145 @@
+quiz_questions:
+
+  # ── Quiz Bien-être / Nutrition ────────────────────────────────────────────
+  - activity: "quiz-bases-nutrition"
+    question: "Quel nutriment est la principale source d'énergie du corps humain ?"
+    propositionA: "Les protéines"
+    propositionB: "Les glucides"
+    propositionC: "Les lipides"
+    correctAnswer: 2
+
+  - activity: "quiz-bases-nutrition"
+    question: "Combien de repas par jour est-il généralement recommandé de prendre ?"
+    propositionA: "2 repas"
+    propositionB: "4 repas"
+    propositionC: "3 repas"
+    correctAnswer: 3
+
+  - activity: "quiz-bases-nutrition"
+    question: "Quelle vitamine est produite par la peau sous l'effet du soleil ?"
+    propositionA: "Vitamine C"
+    propositionB: "Vitamine A"
+    propositionC: "Vitamine D"
+    correctAnswer: 3
+
+  - activity: "quiz-bases-nutrition"
+    question: "Quelle quantité d'eau est-il conseillé de boire par jour ?"
+    propositionA: "0,5 litre"
+    propositionB: "1,5 à 2 litres"
+    propositionC: "4 litres minimum"
+    correctAnswer: 2
+
+  - activity: "quiz-bases-nutrition"
+    question: "Lequel de ces aliments est une bonne source de protéines végétales ?"
+    propositionA: "Le riz blanc"
+    propositionB: "Les lentilles"
+    propositionC: "La pomme"
+    correctAnswer: 2
+
+  # ── Quiz Gestion des émotions ─────────────────────────────────────────────
+  - activity: "quiz-gestion-emotions"
+    question: "Quelle est la première étape pour mieux gérer ses émotions ?"
+    propositionA: "Les ignorer complètement"
+    propositionB: "Les identifier et les nommer"
+    propositionC: "Les exprimer sans aucun filtre"
+    correctAnswer: 2
+
+  - activity: "quiz-gestion-emotions"
+    question: "Qu'est-ce que la régulation émotionnelle ?"
+    propositionA: "Supprimer toutes ses émotions négatives"
+    propositionB: "Exprimer ses émotions sans retenue"
+    propositionC: "La capacité à moduler l'intensité et la durée de ses émotions"
+    correctAnswer: 3
+
+  - activity: "quiz-gestion-emotions"
+    question: "Quelle technique aide à réduire le stress rapidement ?"
+    propositionA: "La respiration abdominale profonde"
+    propositionB: "Regarder son téléphone"
+    propositionC: "Boire du café"
+    correctAnswer: 1
+
+  - activity: "quiz-gestion-emotions"
+    question: "Qu'est-ce que l'intelligence émotionnelle ?"
+    propositionA: "La capacité à résoudre des problèmes mathématiques"
+    propositionB: "La capacité à percevoir, comprendre et gérer ses émotions et celles des autres"
+    propositionC: "L'absence totale d'émotions"
+    correctAnswer: 2
+
+  - activity: "quiz-gestion-emotions"
+    question: "Quelle émotion est souvent à l'origine de la colère ?"
+    propositionA: "La joie"
+    propositionB: "La peur ou la blessure non exprimée"
+    propositionC: "La surprise"
+    correctAnswer: 2
+
+  # ── Quiz Résolution de conflits ───────────────────────────────────────────
+  - activity: "quiz-resolution-conflits"
+    question: "Qu'est-ce que la communication non violente (CNV) ?"
+    propositionA: "Une technique pour éviter tout conflit"
+    propositionB: "Un mode de communication basé sur l'observation, les besoins et les demandes"
+    propositionC: "Une méthode pour imposer son point de vue"
+    correctAnswer: 2
+
+  - activity: "quiz-resolution-conflits"
+    question: "Quelle est la première étape dans la résolution d'un conflit ?"
+    propositionA: "Chercher immédiatement un compromis"
+    propositionB: "Identifier les besoins et émotions de chaque partie"
+    propositionC: "Demander à un supérieur de trancher"
+    correctAnswer: 2
+
+  - activity: "quiz-resolution-conflits"
+    question: "Qu'est-ce que la médiation ?"
+    propositionA: "Un procès judiciaire"
+    propositionB: "Un processus où un tiers neutre aide les parties à trouver un accord"
+    propositionC: "Une technique de manipulation"
+    correctAnswer: 2
+
+  - activity: "quiz-resolution-conflits"
+    question: "L'écoute active consiste à :"
+    propositionA: "Préparer sa réponse pendant que l'autre parle"
+    propositionB: "Écouter en reformulant et en montrant de l'empathie"
+    propositionC: "Rester silencieux sans réagir"
+    correctAnswer: 2
+
+  - activity: "quiz-resolution-conflits"
+    question: "Quelle attitude favorise la désescalade d'un conflit ?"
+    propositionA: "Hausser le ton pour se faire entendre"
+    propositionB: "Adopter un ton calme et bienveillant"
+    propositionC: "Ignorer l'autre personne"
+    correctAnswer: 2
+
+  # ── Quiz Communication bienveillante ──────────────────────────────────────
+  - activity: "quiz-communication-bienveillante"
+    question: "Qu'est-ce qu'un message en « je » ?"
+    propositionA: "Un message qui accuse l'autre de ses torts"
+    propositionB: "Un message qui exprime son ressenti sans accuser l'autre"
+    propositionC: "Un message écrit à la première personne du pluriel"
+    correctAnswer: 2
+
+  - activity: "quiz-communication-bienveillante"
+    question: "La communication non verbale représente environ quelle part de la communication ?"
+    propositionA: "10%"
+    propositionB: "40%"
+    propositionC: "Plus de 55%"
+    correctAnswer: 3
+
+  - activity: "quiz-communication-bienveillante"
+    question: "Qu'est-ce que l'empathie dans la communication ?"
+    propositionA: "Se mettre à la place de l'autre pour comprendre son ressenti"
+    propositionB: "Être d'accord avec tout ce que dit l'autre"
+    propositionC: "Plaindre l'autre de sa situation"
+    correctAnswer: 1
+
+  - activity: "quiz-communication-bienveillante"
+    question: "Quelle phrase illustre une communication bienveillante ?"
+    propositionA: "Tu as encore tout raté !"
+    propositionB: "Je me sens frustré quand les délais ne sont pas respectés"
+    propositionC: "C'est toujours la même chose avec toi"
+    correctAnswer: 2
+
+  - activity: "quiz-communication-bienveillante"
+    question: "À quoi sert le feedback positif dans la communication ?"
+    propositionA: "À flatter l'autre pour obtenir quelque chose"
+    propositionB: "À renforcer les comportements constructifs et motiver"
+    propositionC: "À éviter les conflits en ne disant que du bien"
+    correctAnswer: 2
