@@ -142,8 +142,8 @@
 
     {% if app.user %}
     <div class="mb-6">
-        <textarea id="comment-input" class="textarea textarea-bordered w-full" rows="3" placeholder="Participer à la discussion..."></textarea>
-        <button id="btn-comment" class="btn btn-primary btn-sm mt-2">Envoyer</button>
+        <textarea id="comment-input" class="textarea textarea-bordered w-full outline-none shadow-none" rows="3" placeholder="Participer à la discussion..."></textarea>
+        <button id="btn-comment" class="btn btn-primary btn-sm mt-2">📝 Envoyer</button>
     </div>
     {% else %}
     <div role="alert" class="alert alert-info mb-4">
@@ -389,7 +389,7 @@ function renderComment(comment, depth = 0) {
                 </div>
             </div>
             <div id="reply-form-${comment.id}" class="mt-2 ml-4" style="display:none">
-                <textarea class="textarea textarea-bordered textarea-sm w-full mb-2" rows="2" placeholder="Votre réponse..."></textarea>
+                <textarea class="textarea textarea-bordered textarea-sm w-full mb-2 outline-none shadow-none" rows="2" placeholder="Votre réponse..."></textarea>
                 <div class="flex gap-2">
                     <button onclick="submitReply(${comment.id})" class="btn btn-xs btn-primary">Répondre</button>
                     <button onclick="hideReplyForm(${comment.id})" class="btn btn-xs btn-ghost">Annuler</button>
