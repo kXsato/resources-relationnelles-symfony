@@ -16,68 +16,71 @@
         <ul>
             <li><a href="/">Accueil</a></li>
             <li><a href="{{ path('app_resource_list') }}">Ressources</a></li>
-            <li aria-current="page"><span class="inline-block max-w-[40vw] truncate align-bottom">{{ article.title }}</span></li>
+            <li aria-current="page">
+                <span class="inline-block max-w-[40vw] truncate align-bottom">{{ article.title }}</span>
+            </li>
         </ul>
     </div>
 </nav>
 
 {# ── Hero ─────────────────────────────────────────────────────────────────── #}
-<div class="hero bg-base-200 py-8 md:py-16" role="banner">
+<div class="hero bg-gradient-to-br from-primary/10 via-base-200 to-secondary/10 py-10 md:py-20" role="banner">
     <div class="hero-content text-center max-w-2xl w-full px-4">
         <div class="w-full">
-            <span class="badge badge-secondary mb-4">🎯 Activité</span>
-
-            {% if article.categories is not empty %}
-            <div class="flex flex-wrap justify-center gap-2 mb-4" aria-label="Catégories">
-                {% for category in article.categories %}
-                    <span class="badge badge-primary">{{ category.name }}</span>
-                {% endfor %}
+            <div class="flex flex-wrap justify-center gap-2 mb-5">
+                <span class="badge badge-secondary badge-lg gap-1">🎯 Activité</span>
+                {% if article.categories is not empty %}
+                    {% for category in article.categories %}
+                        <span class="badge badge-primary badge-lg">{{ category.name }}</span>
+                    {% endfor %}
+                {% endif %}
             </div>
-            {% endif %}
 
-            <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 break-words">{{ article.title }}</h1>
+            <h1 class="text-2xl sm:text-3xl md:text-5xl font-extrabold mb-5 break-words leading-tight">
+                {{ article.title }}
+            </h1>
 
-            <p class="text-base-content/70 text-sm sm:text-base">
+            <p class="text-base-content/60 text-sm sm:text-base">
                 Publié le
                 <time datetime="{{ article.createdAt|date('Y-m-d') }}">{{ article.createdAt|date('d/m/Y') }}</time>
-                par <span class="font-medium">{{ article.displayAuthor }}</span>
+                par <span class="font-semibold text-base-content/80">{{ article.displayAuthor }}</span>
             </p>
         </div>
     </div>
 </div>
 
 {# ── Infos activité ───────────────────────────────────────────────────────── #}
-<div class="container mx-auto px-4 py-6 max-w-3xl">
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+<div class="container mx-auto px-4 py-8 max-w-3xl">
+    {% if article.gameType or article.startDate or article.endDate %}
+    <div class="stats stats-vertical sm:stats-horizontal shadow w-full bg-base-200 rounded-2xl mb-8">
         {% if article.gameType %}
-        <div class="card bg-base-200 p-4 text-center">
-            <div class="text-2xl mb-1">🎮</div>
-            <div class="text-xs text-base-content/60 mb-1">Type de jeu</div>
-            <div class="font-semibold text-sm">{{ article.gameType }}</div>
+        <div class="stat place-items-center">
+            <div class="stat-figure text-primary text-3xl">🎮</div>
+            <div class="stat-title">Type de jeu</div>
+            <div class="stat-value text-primary text-lg">{{ article.gameType|capitalize }}</div>
         </div>
         {% endif %}
-
         {% if article.startDate %}
-        <div class="card bg-base-200 p-4 text-center">
-            <div class="text-2xl mb-1">📅</div>
-            <div class="text-xs text-base-content/60 mb-1">Date de début</div>
-            <div class="font-semibold text-sm">{{ article.startDate|date('d/m/Y') }}</div>
+        <div class="stat place-items-center">
+            <div class="stat-figure text-secondary text-3xl">📅</div>
+            <div class="stat-title">Date de début</div>
+            <div class="stat-value text-secondary text-lg">{{ article.startDate|date('d/m/Y') }}</div>
         </div>
         {% endif %}
-
         {% if article.endDate %}
-        <div class="card bg-base-200 p-4 text-center">
-            <div class="text-2xl mb-1">🏁</div>
-            <div class="text-xs text-base-content/60 mb-1">Date de fin</div>
-            <div class="font-semibold text-sm">{{ article.endDate|date('d/m/Y') }}</div>
+        <div class="stat place-items-center">
+            <div class="stat-figure text-accent text-3xl">🏁</div>
+            <div class="stat-title">Date de fin</div>
+            <div class="stat-value text-accent text-lg">{{ article.endDate|date('d/m/Y') }}</div>
         </div>
         {% endif %}
     </div>
+    {% endif %}
 </div>
 
 {# ── Contenu de l'activité ────────────────────────────────────────────────── #}
 <main id="main-content">
-    <article class="container mx-auto px-4 py-6 md:py-10 max-w-3xl" aria-labelledby="activity-heading">
+    <article class="container mx-auto px-4 pb-6 md:pb-10 max-w-3xl" aria-labelledby="activity-heading">
         <h2 id="activity-heading" class="sr-only">Contenu de l'activité</h2>
 
         <div id="activity-content" class="prose prose-sm sm:prose-base md:prose-lg max-w-none">
@@ -86,7 +89,7 @@
 
         <div class="flex flex-col sm:flex-row gap-3 mt-8 md:mt-10" role="group" aria-label="Actions sur l'activité">
             <a href="{{ path('app_resource_list') }}" class="btn btn-outline btn-neutral w-full sm:w-auto">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                 </svg>
                 Retour aux ressources
@@ -96,41 +99,92 @@
 </main>
 
 {# ── Quiz ─────────────────────────────────────────────────────────────────── #}
-{# DEBUG #}
 {% if article.gameType == 'quiz' and article.questions is not empty %}
-<div class="container mx-auto px-4 py-10 max-w-3xl">
-    <h2 class="text-2xl font-bold mb-6">🧠 Quiz</h2>
+<div class="container mx-auto px-4 py-10 max-w-3xl" id="quiz-section">
+
+    <div class="divider divider-primary text-xl font-bold mb-8">
+        <span class="flex items-center gap-2">🧠 Quiz</span>
+    </div>
 
     {% if article.endDate and article.endDate < now %}
-    <div role="alert" class="alert alert-error mb-4">
+    {# ── Quiz expiré ── #}
+    <div role="alert" class="alert alert-error shadow-lg rounded-2xl">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
-        <span>🚫 Cette activité est terminée depuis le {{ article.endDate|date('d/m/Y') }}.</span>
+        <div>
+            <h3 class="font-bold">Activité terminée</h3>
+            <div class="text-sm">Cette activité s'est clôturée le {{ article.endDate|date('d/m/Y') }}.</div>
+        </div>
     </div>
-    <a href="{{ path('app_resource_list') }}" class="btn btn-outline btn-neutral btn-sm">← Retour aux ressources</a>
+    <a href="{{ path('app_resource_list') }}" class="btn btn-outline btn-neutral btn-sm mt-4">← Retour aux ressources</a>
 
     {% elseif app.user %}
+    {# ── Quiz connecté ── #}
     <div id="quiz-container">
+
+        {# ── Écran de démarrage ── #}
         <div id="quiz-start">
-            <div role="alert" class="alert alert-info mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="h-6 w-6 shrink-0 stroke-current">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
-                <span>{{ article.questions|length }} question(s) — Sélectionne ta réponse pour chaque question.</span>
+            <div class="card bg-base-100 shadow-xl border border-primary/20 rounded-3xl overflow-hidden">
+                <div class="card-body items-center text-center gap-6 py-12 px-8">
+                    <div class="text-6xl animate-bounce">🧠</div>
+                    <h3 class="card-title text-2xl font-extrabold">Prêt à relever le défi ?</h3>
+                    <p class="text-base-content/60 max-w-sm">
+                        Ce quiz contient <span class="badge badge-primary badge-lg font-bold">{{ article.questions|length }} question(s)</span>.
+                        Sélectionne la meilleure réponse pour chacune.
+                    </p>
+
+                    {# Steps indicatifs #}
+                    <ul class="steps steps-horizontal w-full max-w-xs text-xs mt-2" id="quiz-steps-preview">
+                        {% for i in 1..article.questions|length %}
+                        <li class="step {% if loop.first %}step-primary{% endif %}"></li>
+                        {% endfor %}
+                    </ul>
+
+                    <button onclick="startQuiz()" class="btn btn-primary btn-lg gap-2 rounded-2xl mt-2 px-10">
+                        🚀 Commencer le quiz
+                    </button>
+                </div>
             </div>
-            <button onclick="startQuiz()" class="btn btn-primary">🚀 Commencer le quiz</button>
         </div>
-        <div id="quiz-questions" style="display:none"></div>
-        <div id="quiz-result" style="display:none"></div>
+
+        {# ── Questions ── #}
+        <div id="quiz-questions" class="hidden">
+            {# Barre de progression en haut #}
+            <div class="flex items-center justify-between mb-3">
+                <span id="quiz-progress-label" class="text-sm font-semibold text-base-content/60">Question 1 / ?</span>
+                <span id="quiz-progress-pct" class="text-sm font-bold text-primary">0%</span>
+            </div>
+            <progress id="quiz-progress-bar" class="progress progress-primary w-full mb-6 h-3 rounded-full" value="0" max="100"></progress>
+
+            {# Steps horizontaux #}
+            <ul class="steps steps-horizontal w-full mb-8 text-xs" id="quiz-steps">
+                {% for q in article.questions %}
+                <li class="step" id="step-{{ loop.index0 }}"></li>
+                {% endfor %}
+            </ul>
+
+            {# Carte de la question courante #}
+            <div id="quiz-question-card"></div>
+        </div>
+
+        {# ── Résultats ── #}
+        <div id="quiz-result" class="hidden"></div>
+
     </div>
 
     {% else %}
-    <div role="alert" class="alert alert-info mb-4">
+    {# ── Non connecté ── #}
+    <div role="alert" class="alert alert-info shadow-lg rounded-2xl">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="h-6 w-6 shrink-0 stroke-current">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
         </svg>
-        <span class="text-black">👋 <a href="{{ path('app_login') }}" class="underline font-bold">Connectez-vous</a> pour participer au quiz.</span>
+        <div>
+            <h3 class="font-bold">Connexion requise</h3>
+            <div class="text-sm">
+                <a href="{{ path('app_login') }}" class="link link-primary font-bold">Connectez-vous</a> pour participer au quiz.
+            </div>
+        </div>
     </div>
     {% endif %}
 </div>
@@ -142,7 +196,13 @@
 
     {% if app.user %}
     <div class="mb-6">
-        <textarea id="comment-input" class="textarea textarea-bordered w-full outline-none shadow-none" rows="3" placeholder="Participer à la discussion..."></textarea>
+        <textarea
+            class="w-full border border-gray-300 
+            focus:border-gray-400 focus:outline-none focus:ring-0
+            outline-none shadow-none p-2"
+            style="border-radius: 14px;"
+            rows="2"
+            placeholder="Participer à la discussion..."></textarea>
         <button id="btn-comment" class="btn btn-primary btn-sm mt-2">📝 Envoyer</button>
     </div>
     {% else %}
@@ -160,37 +220,39 @@
 
 {# ── Activités similaires ─────────────────────────────────────────────────── #}
 {% if relatedArticles is defined and relatedArticles is not empty %}
-<section class="bg-base-200 py-12 mt-4 mb-5" aria-labelledby="related-heading">
+<section class="bg-gradient-to-br from-base-200 to-base-300 py-14 mt-4 mb-5" aria-labelledby="related-heading">
     <div class="container mx-auto px-4">
-        <h2 id="related-heading" class="text-2xl font-bold mb-6">À découvrir aussi</h2>
+        <h2 id="related-heading" class="text-2xl font-extrabold mb-8 flex items-center gap-2">
+            ✨ À découvrir aussi
+        </h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6" role="list">
             {% for related in relatedArticles %}
-            <div class="card bg-base-100 shadow-md hover:shadow-lg transition-shadow" role="listitem">
-                <div class="card-body">
+            <div class="card bg-base-100 shadow-md hover:shadow-xl transition-all hover:-translate-y-1 duration-200 rounded-2xl" role="listitem">
+                <div class="card-body gap-2">
                     {% if related.categories is not empty %}
-                    <div class="flex flex-wrap gap-1 mb-2" aria-label="Catégories">
+                    <div class="flex flex-wrap gap-1 mb-1" aria-label="Catégories">
                         {% for cat in related.categories %}
                             <span class="badge badge-ghost badge-sm">{{ cat.name }}</span>
                         {% endfor %}
                     </div>
                     {% endif %}
 
-                    <h3 class="card-title text-lg line-clamp-2">{{ related.title }}</h3>
+                    <h3 class="card-title text-base line-clamp-2">{{ related.title }}</h3>
 
                     {% if related.description %}
-                    <p class="text-base-content/70 text-sm line-clamp-3">{{ related.description }}</p>
+                    <p class="text-base-content/60 text-sm line-clamp-3">{{ related.description }}</p>
                     {% endif %}
 
-                    <p class="text-xs text-base-content/50 mt-2">
+                    <p class="text-xs text-base-content/40 mt-1">
                         <time datetime="{{ related.createdAt|date('Y-m-d') }}">{{ related.createdAt|date('d/m/Y') }}</time>
                         · {{ related.displayAuthor }}
                     </p>
 
-                    <div class="card-actions justify-end mt-4">
+                    <div class="card-actions justify-end mt-3">
                         <a href="{{ path('app_resource_show', {id: related.id}) }}"
-                           class="btn btn-primary btn-sm"
+                           class="btn btn-primary btn-sm rounded-xl"
                            aria-label="Voir l'activité : {{ related.title }}">
-                            Voir l'activité
+                            Voir l'activité →
                         </a>
                     </div>
                 </div>
@@ -201,6 +263,7 @@
 </section>
 {% endif %}
 
+{# ── Progression (fixe bas-droite) ───────────────────────────────────────── #}
 {# ── Progression (fixe bas-droite) ───────────────────────────────────────── #}
 <div id="reading-progress-widget"
      style="position:fixed; bottom:1rem; right:1rem; z-index:1000;"
@@ -224,69 +287,126 @@
 </div>{# /flex flex-col #}
 
 <script>
-(function() {
+(function () {
 const articleId = {{ article.id|json_encode|raw }};
 const isLoggedIn = {{ app.user ? 'true' : 'false' }};
 const isModerator = {{ is_granted('ROLE_MODERATOR') ? 'true' : 'false' }};
 
-// ── Quiz ──────────────────────────────────────────────────────────────────
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+//  QUIZ
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 let quizQuestions = [];
 let currentQuestion = 0;
 let userAnswers = {};
 
-window.startQuiz = function() {
+window.startQuiz = function () {
     fetch(`/quiz/questions/{{ article.id }}`)
         .then(r => r.json())
         .then(questions => {
             quizQuestions = questions;
             currentQuestion = 0;
             userAnswers = {};
-            document.getElementById('quiz-start').style.display = 'none';
+            document.getElementById('quiz-start').classList.add('hidden');
+            document.getElementById('quiz-questions').classList.remove('hidden');
+            renderSteps();
             showQuestion();
         });
 };
 
+function renderSteps() {
+    const steps = document.getElementById('quiz-steps');
+    if (!steps) return;
+    steps.innerHTML = quizQuestions
+        .map((_, i) => `<li class="step text-xs" id="step-${i}" data-content="${i + 1}"></li>`)
+        .join('');
+}
+
+function updateProgress() {
+    const total = quizQuestions.length;
+    const pct = Math.round((currentQuestion / total) * 100);
+    const bar = document.getElementById('quiz-progress-bar');
+    const pctEl = document.getElementById('quiz-progress-pct');
+    const label = document.getElementById('quiz-progress-label');
+    if (bar) bar.value = pct;
+    if (pctEl) pctEl.textContent = pct + '%';
+    if (label) label.textContent = `Question ${currentQuestion + 1} / ${total}`;
+
+    // Colorer les steps complétés
+    for (let i = 0; i < total; i++) {
+        const s = document.getElementById(`step-${i}`);
+        if (!s) continue;
+        s.classList.remove('step-primary', 'step-success', 'step-warning');
+        if (i < currentQuestion) s.classList.add('step-success');
+        else if (i === currentQuestion) s.classList.add('step-primary');
+    }
+}
+
 function showQuestion() {
     const q = quizQuestions[currentQuestion];
     const total = quizQuestions.length;
-    const container = document.getElementById('quiz-questions');
-    container.style.display = 'block';
+    const isLast = currentQuestion + 1 === total;
+    updateProgress();
 
-    container.innerHTML = `
-        <div class="card bg-base-100 shadow mb-4">
-            <div class="card-body">
-                <div class="text-xs text-base-content/50 mb-2">Question ${currentQuestion + 1} / ${total}</div>
-                <p class="font-bold text-lg mb-4">${q.question}</p>
-                <div class="flex flex-col gap-2">
-                    <label class="flex items-center gap-3 cursor-pointer p-3 rounded-lg border hover:bg-base-200">
-                        <input type="radio" name="answer" value="1" class="radio radio-primary" />
-                        <span>1. ${q.propositionA}</span>
-                    </label>
-                    <label class="flex items-center gap-3 cursor-pointer p-3 rounded-lg border hover:bg-base-200">
-                        <input type="radio" name="answer" value="2" class="radio radio-primary" />
-                        <span>2. ${q.propositionB}</span>
-                    </label>
-                    <label class="flex items-center gap-3 cursor-pointer p-3 rounded-lg border hover:bg-base-200">
-                        <input type="radio" name="answer" value="3" class="radio radio-primary" />
-                        <span>3. ${q.propositionC}</span>
-                    </label>
+    const card = document.getElementById('quiz-question-card');
+    card.innerHTML = `
+        <div class="card bg-base-100 shadow-xl border border-primary/20 rounded-3xl overflow-hidden animate-fade-in">
+            <div class="card-body gap-5 py-8 px-6 md:px-10">
+
+                <div class="flex items-center gap-3">
+                    <div class="badge badge-primary badge-lg font-bold">${currentQuestion + 1} / ${total}</div>
+                    ${isLast ? '<div class="badge badge-warning badge-outline badge-sm">Dernière question !</div>' : ''}
                 </div>
-                <div class="mt-4">
-                    <button onclick="nextQuestion(${q.id})" class="btn btn-primary btn-sm">
-                        ${currentQuestion + 1 < total ? 'Question suivante →' : 'Terminer le quiz 🏁'}
+
+                <p class="text-lg md:text-xl font-bold leading-snug">${q.question}</p>
+
+                <div class="flex flex-col gap-3 mt-2" id="options-group">
+                    ${[
+                        { val: 1, text: q.propositionA },
+                        { val: 2, text: q.propositionB },
+                        { val: 3, text: q.propositionC },
+                    ].map(opt => `
+                        <label class="quiz-option flex items-center gap-4 cursor-pointer p-4 rounded-2xl border-2 border-base-300 bg-base-50 hover:border-primary hover:bg-primary/5 transition-all duration-150 select-none"
+                               data-val="${opt.val}">
+                            <input type="radio" name="answer" value="${opt.val}" class="radio radio-primary radio-sm shrink-0" />
+                            <span class="text-sm md:text-base">${opt.text}</span>
+                        </label>
+                    `).join('')}
+                </div>
+
+                <div class="card-actions justify-between items-center mt-2">
+                    <span class="text-xs text-base-content/40">Sélectionne une réponse pour continuer</span>
+                    <button onclick="nextQuestion(${q.id})"
+                            class="btn btn-primary gap-2 rounded-2xl px-8"
+                            id="btn-next">
+                        ${isLast ? '🏁 Terminer le quiz' : 'Suivant →'}
                     </button>
                 </div>
             </div>
         </div>
     `;
+
+    // Highlight au clic
+    card.querySelectorAll('.quiz-option').forEach(label => {
+        label.addEventListener('click', () => {
+            card.querySelectorAll('.quiz-option').forEach(l => {
+                l.classList.remove('border-primary', 'bg-primary/10');
+            });
+            label.classList.add('border-primary', 'bg-primary/10');
+        });
+    });
 }
 
-window.nextQuestion = function(questionId) {
+window.nextQuestion = function (questionId) {
     const selected = document.querySelector('input[name="answer"]:checked');
     if (!selected) {
-        alert('Veuillez sélectionner une réponse.');
+        // Toast d'erreur
+        showToast('⚠ Veuillez sélectionner une réponse.', 'alert-warning');
         return;
     }
+
+    // Marquer l'étape comme réussie
+    const step = document.getElementById(`step-${currentQuestion}`);
+    if (step) { step.classList.remove('step-primary'); step.classList.add('step-success'); }
 
     userAnswers[questionId] = parseInt(selected.value);
     currentQuestion++;
@@ -294,11 +414,21 @@ window.nextQuestion = function(questionId) {
     if (currentQuestion < quizQuestions.length) {
         showQuestion();
     } else {
+        // Mettre à 100% avant de soumettre
+        const bar = document.getElementById('quiz-progress-bar');
+        if (bar) bar.value = 100;
+        document.getElementById('quiz-progress-pct').textContent = '100%';
         submitQuiz();
     }
 };
 
 function submitQuiz() {
+    document.getElementById('quiz-question-card').innerHTML = `
+        <div class="flex flex-col items-center gap-4 py-12">
+            <span class="loading loading-spinner loading-lg text-primary"></span>
+            <p class="text-base-content/60 text-sm">Calcul de votre score…</p>
+        </div>`;
+
     fetch(`/quiz/answer/{{ article.id }}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -306,32 +436,81 @@ function submitQuiz() {
     })
     .then(r => r.json())
     .then(data => {
-        document.getElementById('quiz-questions').style.display = 'none';
+        document.getElementById('quiz-questions').classList.add('hidden');
         const result = document.getElementById('quiz-result');
-        result.style.display = 'block';
+        result.classList.remove('hidden');
 
         const percent = Math.round((data.score / data.total) * 100);
-        let emoji = percent >= 80 ? '🏆' : percent >= 50 ? '👍' : '💪';
+        const isSuccess = percent >= 50;
+        const alertType = percent >= 80 ? 'alert-success' : percent >= 50 ? 'alert-warning' : 'alert-error';
+        const iconColor = percent >= 80 ? '#22c55e' : percent >= 50 ? '#f59e0b' : '#ef4444';
+        const msg = percent >= 80
+            ? 'Excellent travail ! Tu maîtrises le sujet.'
+            : percent >= 50
+            ? 'Bien joué ! Encore un peu de pratique.'
+            : 'Continue tes efforts, tu vas y arriver !';
+
+        // Icône SVG : trophée si >= 50%, croix si < 50%
+        const iconSvg = isSuccess
+            ? `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="120" height="120" fill="none">
+                  <!-- Coupe -->
+                  <path d="M20 8 h24 v20 a12 12 0 0 1 -24 0 Z" fill="${iconColor}" opacity="0.9"/>
+                  <!-- Anses -->
+                  <path d="M20 12 Q8 12 8 22 Q8 30 20 30" stroke="${iconColor}" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+                  <path d="M44 12 Q56 12 56 22 Q56 30 44 30" stroke="${iconColor}" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+                  <!-- Pied -->
+                  <rect x="28" y="28" width="8" height="12" rx="2" fill="${iconColor}"/>
+                  <!-- Base -->
+                  <rect x="20" y="40" width="24" height="5" rx="2.5" fill="${iconColor}"/>
+                  <!-- Étoile -->
+                  <text x="32" y="25" text-anchor="middle" font-size="12" fill="white" font-weight="bold">★</text>
+               </svg>`
+            : `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="120" height="120" fill="none">
+                  <circle cx="32" cy="32" r="28" fill="${iconColor}" opacity="0.15"/>
+                  <circle cx="32" cy="32" r="28" stroke="${iconColor}" stroke-width="3"/>
+                  <line x1="20" y1="20" x2="44" y2="44" stroke="${iconColor}" stroke-width="5" stroke-linecap="round"/>
+                  <line x1="44" y1="20" x2="20" y2="44" stroke="${iconColor}" stroke-width="5" stroke-linecap="round"/>
+               </svg>`;
 
         result.innerHTML = `
-            <div class="card bg-base-100 shadow text-center">
-                <div class="card-body">
-                    <div class="text-5xl mb-4">${emoji}</div>
-                    <h3 class="text-2xl font-bold mb-2">Quiz terminé !</h3>
-                    <p class="text-lg">Score : <strong>${data.score} / ${data.total}</strong></p>
-                    <p class="text-base-content/60">${percent}% de bonnes réponses</p>
-                    <div class="mt-4">
-                        <button onclick="restartQuiz()" class="btn btn-outline btn-sm">🔄 Recommencer</button>
+            <div class="card bg-base-100 shadow-2xl border border-base-300 rounded-3xl overflow-hidden">
+                <div class="card-body items-center text-center gap-6 py-12 px-8">
+                    <h3 class="text-3xl font-extrabold">Quiz terminé !</h3>
+
+                    <div class="flex items-center justify-center">${iconSvg}</div>
+
+                    <div role="alert" class="alert ${alertType} rounded-2xl w-full max-w-sm">
+                        <span class="font-medium">${msg}</span>
                     </div>
+
+                    <div class="stats stats-horizontal shadow bg-base-200 rounded-2xl w-full max-w-xs">
+                        <div class="stat place-items-center">
+                            <div class="stat-title text-xs">Bonnes réponses</div>
+                            <div class="stat-value text-success">${data.score}</div>
+                        </div>
+                        <div class="stat place-items-center">
+                            <div class="stat-title text-xs">Mauvaises réponses</div>
+                            <div class="stat-value text-error">${data.total - data.score}</div>
+                        </div>
+                        <div class="stat place-items-center">
+                            <div class="stat-title text-xs">Total</div>
+                            <div class="stat-value">${data.total}</div>
+                        </div>
+                    </div>
+
+                    <button onclick="restartQuiz()" class="btn btn-outline btn-primary gap-2 rounded-2xl">
+                        🔄 Recommencer
+                    </button>
                 </div>
             </div>
         `;
     });
 }
 
-window.restartQuiz = function() {
-    document.getElementById('quiz-result').style.display = 'none';
-    document.getElementById('quiz-start').style.display = 'block';
+window.restartQuiz = function () {
+    document.getElementById('quiz-result').classList.add('hidden');
+    document.getElementById('quiz-questions').classList.add('hidden');
+    document.getElementById('quiz-start').classList.remove('hidden');
     userAnswers = {};
     currentQuestion = 0;
 };
@@ -389,7 +568,13 @@ function renderComment(comment, depth = 0) {
                 </div>
             </div>
             <div id="reply-form-${comment.id}" class="mt-2 ml-4" style="display:none">
-                <textarea class="textarea textarea-bordered textarea-sm w-full mb-2 outline-none shadow-none" rows="2" placeholder="Votre réponse..."></textarea>
+                <textarea
+                    class="w-full border border-gray-300 
+                    focus:border-gray-400 focus:outline-none focus:ring-0
+                    outline-none shadow-none p-2"
+                    style="border-radius: 14px;"
+                    rows="2"
+                    placeholder="Votre réponse..."></textarea>
                 <div class="flex gap-2">
                     <button onclick="submitReply(${comment.id})" class="btn btn-xs btn-primary">Répondre</button>
                     <button onclick="hideReplyForm(${comment.id})" class="btn btn-xs btn-ghost">Annuler</button>
