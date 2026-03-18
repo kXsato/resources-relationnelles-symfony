@@ -34,7 +34,7 @@ class SuperAdminDashboardController extends AbstractDashboardController
 
     public function configureMenuItems(): iterable
     {
-        yield MenuItem::linkToUrl('Voir les ressources', 'fas fa-globe', 'https://resources-relationnelles.test/resources');
+        yield MenuItem::linkToUrl('Retour au site', 'fas fa-globe', 'https://resources-relationnelles.test/resources');
 
         /** @var User $user */
         $user = $this->getUser();
