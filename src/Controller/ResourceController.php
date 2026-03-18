@@ -4,10 +4,12 @@ namespace App\Controller;
 
 use App\Entity\Activity;
 use App\Entity\Article;
+use App\Entity\User;
 use App\Entity\UserRessourceProgress;
 use App\Repository\CategoryRepository;
 use App\Repository\ResourceRepository;
 use App\Repository\UserRessourceProgressRepository;
+use App\Security\Voter\ResourceVoter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -23,8 +25,12 @@ final class ResourceController extends AbstractController
         $categoryId = $request->query->getInt('category') ?: null;
         $type = $request->query->get('type') ?: null;
 
+        $user = $this->getUser();
+        $showAdult = $user instanceof User && $user->getBirthDate() !== null
+            && $user->getBirthDate()->diff(new \DateTimeImmutable())->y >= 18;
+
         return $this->render('resource/list.html.twig', [
-            'resources'         => $resourceRepository->findPublished($categoryId, $type),
+            'resources'         => $resourceRepository->findPublished($categoryId, $type, null, $showAdult),
             'categories'        => $categoryRepository->findAll(),
             'currentCategoryId' => $categoryId,
             'currentType'       => $type,
@@ -40,8 +46,17 @@ final class ResourceController extends AbstractController
             throw $this->createNotFoundException("Cette ressource n'est pas disponible.");
         }
 
-        $progress = null;
         $user = $security->getUser();
+
+        if ($resource->isAdultOnly()) {
+            if (!$user) {
+                $this->addFlash('warning', 'Vous devez vous connecter ou créer un compte pour accéder à cette ressource réservée aux adultes.');
+                return $this->redirectToRoute('app_login');
+            }
+            $this->denyAccessUnlessGranted(ResourceVoter::VIEW, $resource, "Cette ressource est réservée aux personnes majeures.");
+        }
+
+        $progress = null;
         if ($user) {
             $progress = $progressRepository->findOneBy([
                 'UserRessources' => $user,

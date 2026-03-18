@@ -33,6 +33,8 @@ class ArticleFixtures extends Fixture implements DependentFixtureInterface
                 $article->addCategory($this->getReference('category_' . $categoryKey, Category::class));
             }
 
+            $article->setIsAdultOnly($articleData['isAdultOnly'] ?? false);
+
             if (!empty($articleData['author'])) {
                 /** @var User $user */
                 $user = $this->getReference('user_' . $articleData['author'], User::class);

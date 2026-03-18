@@ -19,12 +19,17 @@ class ResourceRepository extends ServiceEntityRepository
     /**
      * @return Resource[]
      */
-    public function findPublished(?int $categoryId = null, ?string $type = null, ?int $limit = null): array
+    public function findPublished(?int $categoryId = null, ?string $type = null, ?int $limit = null, bool $showAdult = false): array
     {
         $qb = $this->createQueryBuilder('r')
             ->where('r.status = :status')
             ->setParameter('status', 'published')
             ->orderBy('r.id', 'DESC');
+
+        if (!$showAdult) {
+            $qb->andWhere('r.isAdultOnly = :isAdultOnly')
+               ->setParameter('isAdultOnly', false);
+        }
 
         if ($categoryId !== null) {
             $qb->join('r.categories', 'c')

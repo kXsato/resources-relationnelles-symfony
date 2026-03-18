@@ -31,6 +31,8 @@ use Symfony\Component\Serializer\Attribute\Ignore;
         new Get(
             uriTemplate: '/resources/{id}',
             normalizationContext: ['groups' => ['resource:read']],
+            security: "is_granted('RESOURCE_VIEW', object)",
+            securityMessage: "Cette ressource n'est pas accessible aux mineurs.",
         ),
     ],
     security: "is_granted('PUBLIC_ACCESS')",
@@ -70,6 +72,10 @@ abstract class Resource
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     #[Ignore]
     private ?string $rejectionReason = null;
+
+    #[ORM\Column(options: ['default' => false])]
+    #[Groups(['resource:list', 'resource:read'])]
+    private bool $isAdultOnly = false;
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'resources')]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
@@ -168,6 +174,14 @@ abstract class Resource
     public function setRejectionReason(?string $rejectionReason): static
     {
         $this->rejectionReason = $rejectionReason;
+        return $this;
+    }
+
+    public function isAdultOnly(): bool { return $this->isAdultOnly; }
+
+    public function setIsAdultOnly(bool $isAdultOnly): static
+    {
+        $this->isAdultOnly = $isAdultOnly;
         return $this;
     }
 

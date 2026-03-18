@@ -199,3 +199,13 @@ users:
       birthDate: "1993-07-21T00:00:00"
       registrationDate: "2026-03-08T14:00:00"
       isAccountActivated: true
+
+    # ── Utilisateur mineur (pour tester le blocage des ressources adultes) ───
+    - email: "mineur@gmail.com"
+      password: "User123"
+      roles: [ROLE_USER]
+      userName: "mineur"
+      birthDate: "2010-06-15T00:00:00"
+      registrationDate: "2026-03-15T10:00:00"
+      lastLogin: "2026-03-17T14:00:00"
+      isAccountActivated: true
