@@ -64,6 +64,7 @@ class ModeratorDashboardController extends AbstractDashboardController
 
         yield MenuItem::subMenu('Mes ressources')->setSubItems([
             MenuItem::linkTo(ModeratorOwnArticleCrudController::class, 'Mes articles', 'fas fa-newspaper'),
+            MenuItem::linkTo(ModeratorActivityCrudController::class, 'Mes activités', 'fas fa-running'),
             MenuItem::linkTo(ModeratorFavoriteCrudController::class, 'Mes favoris', 'fas fa-star'),
             MenuItem::linkTo(ModeratorProgressCrudController::class, 'Mes lectures en cours', 'fas fa-book-open'),
             MenuItem::linkTo(ModeratorCompletedProgressCrudController::class, 'Mes lectures terminées', 'fas fa-check-circle'),

@@ -44,6 +44,7 @@ class SuperAdminDashboardController extends AbstractDashboardController
         yield MenuItem::subMenu('Mon espace personnelle')->setSubItems([
             MenuItem::linkTo(SuperAdminProfileCrudController::class, 'Mon compte', 'fas fa-user')->setAction('edit')->setEntityId($user->getId()),
             MenuItem::linkTo(SuperAdminOwnArticleCrudController::class, 'Mes articles', 'fas fa-book'),
+            MenuItem::linkTo(SuperAdminActivityCrudController::class, 'Mes activités', 'fas fa-running'),
             MenuItem::linkTo(SuperAdminFavoriteCrudController::class, 'Mes favoris', 'fas fa-star'),
             MenuItem::linkTo(SuperAdminProgressCrudController::class, 'Mes lectures en cours', 'fas fa-book-open'),
             MenuItem::linkTo(SuperAdminCompletedProgressCrudController::class, 'Mes lectures terminées', 'fas fa-check-circle'),

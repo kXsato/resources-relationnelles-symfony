@@ -41,6 +41,7 @@ class UserDashboardController extends AbstractDashboardController
         yield MenuItem::linkToUrl('Retour au site', 'fas fa-globe', 'https://resources-relationnelles.test/resources');
         yield MenuItem::linkToDashboard('Mon profil', 'fas fa-user');
         yield MenuItem::linkTo(UserArticleCrudController::class, 'Mes articles', 'fas fa-newspaper');
+        yield MenuItem::linkTo(UserActivityCrudController::class, 'Mes activités', 'fas fa-running');
         yield MenuItem::linkTo(UserFavoriteCrudController::class, 'Mes favoris', 'fas fa-star');
         yield MenuItem::linkTo(UserProgressCrudController::class, 'Mes lectures en cours', 'fas fa-book-open');
         yield MenuItem::linkTo(UserCompletedProgressCrudController::class, 'Mes lectures terminées', 'fas fa-check-circle');
