@@ -45,6 +45,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 180)]
     #[Groups(['user:read', 'user:write'])]
+    #[Assert\NotBlank(message: 'L\'email est requis.', groups: ['Default', 'user:write'])]
+    #[Assert\Email(message: 'L\'adresse email n\'est pas valide.', groups: ['Default', 'user:write'])]
     private ?string $email = null;
 
     #[ORM\Column]
@@ -52,10 +54,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private array $roles = [];
 
     #[ORM\Column]
-    private ?string $password = null; // Jamais exposé (pas de groupe)
+    private ?string $password = null;
 
     #[ORM\Column(length: 255)]
     #[Groups(['user:read', 'user:write'])]
+    #[Assert\NotBlank(message: 'Le nom d\'utilisateur est requis.', groups: ['Default', 'user:write'])]
+    #[Assert\Length(
+        min: 3,
+        max: 50,
+        minMessage: 'Le nom d\'utilisateur doit contenir au moins {{ limit }} caractères.',
+        maxMessage: 'Le nom d\'utilisateur ne peut pas dépasser {{ limit }} caractères.',
+        groups: ['Default', 'user:write']
+    )]
+    #[Assert\Regex(
+        pattern: '/^[a-zA-Z0-9_\-\.]+$/',
+        message: 'Le nom d\'utilisateur ne peut contenir que des lettres, chiffres, underscores, tirets et points.',
+        groups: ['Default', 'user:write']
+    )]
     private ?string $userName = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
@@ -88,23 +103,31 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $favorites;
 
     #[Groups(['user:write'])]
-    #[Assert\NotBlank(message: 'Veuillez saisir un mot de passe.', groups: ['user:write'])]
-    #[Assert\Length(min: 6, max: 15, minMessage: 'Le mot de passe doit contenir au moins {{ limit }} caractères.', maxMessage: 'Le mot de passe ne peut pas dépasser {{ limit }} caractères.', groups: ['user:write'])]
-    #[Assert\Regex(pattern: '/[A-Z]/', message: 'Le mot de passe doit contenir au moins une majuscule.', groups: ['user:write'])]
-    #[Assert\Regex(pattern: '/\d/', message: 'Le mot de passe doit contenir au moins un chiffre.', groups: ['user:write'])]
+    #[Assert\NotBlank(message: 'Veuillez saisir un mot de passe.', groups: ['Default', 'user:write'])]
+    #[Assert\Length(
+        min: 6,
+        max: 15,
+        minMessage: 'Le mot de passe doit contenir au moins {{ limit }} caractères.',
+        maxMessage: 'Le mot de passe ne peut pas dépasser {{ limit }} caractères.',
+        groups: ['Default', 'user:write']
+    )]
+    #[Assert\Regex(
+        pattern: '/[A-Z]/',
+        message: 'Le mot de passe doit contenir au moins une majuscule.',
+        groups: ['Default', 'user:write']
+    )]
+    #[Assert\Regex(
+        pattern: '/\d/',
+        message: 'Le mot de passe doit contenir au moins un chiffre.',
+        groups: ['Default', 'user:write']
+    )]
     private ?string $plainPassword = null;
 
-    /**
-     * @var Collection<int, UserRessourceProgress>
-     */
     #[ORM\OneToMany(targetEntity: UserRessourceProgress::class, mappedBy: 'UserRessources', cascade: ['remove'], orphanRemoval: true)]
     #[ApiProperty(readable: false)]
     #[Ignore]
     private Collection $userRessourceProgress;
 
-    /**
-     * @var Collection<int, Comment>
-     */
     #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'user', orphanRemoval: true)]
     #[ApiProperty(readable: false)]
     #[Ignore]
@@ -118,15 +141,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->comments = new ArrayCollection();
     }
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
+    public function getId(): ?int { return $this->id; }
 
-    public function getEmail(): ?string
-    {
-        return $this->email;
-    }
+    public function getEmail(): ?string { return $this->email; }
 
     public function setEmail(string $email): static
     {
@@ -152,10 +169,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getPassword(): ?string
-    {
-        return $this->password;
-    }
+    public function getPassword(): ?string { return $this->password; }
 
     public function setPassword(string $password): static
     {
@@ -175,10 +189,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $data;
     }
 
-    public function getUserName(): ?string
-    {
-        return $this->userName;
-    }
+    public function getUserName(): ?string { return $this->userName; }
 
     public function setUserName(string $userName): static
     {
@@ -186,10 +197,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getBirthDate(): ?\DateTime
-    {
-        return $this->birthDate;
-    }
+    public function getBirthDate(): ?\DateTime { return $this->birthDate; }
 
     public function setBirthDate(\DateTime $birthDate): static
     {
@@ -197,10 +205,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getLastLogin(): ?\DateTime
-    {
-        return $this->lastLogin;
-    }
+    public function getLastLogin(): ?\DateTime { return $this->lastLogin; }
 
     public function setLastLogin(\DateTime $lastLogin): static
     {
@@ -214,10 +219,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->registrationDate = new \DateTime();
     }
 
-    public function getRegistrationDate(): ?\DateTime
-    {
-        return $this->registrationDate;
-    }
+    public function getRegistrationDate(): ?\DateTime { return $this->registrationDate; }
 
     public function setRegistrationDate(\DateTime $registrationDate): static
     {
@@ -226,10 +228,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     #[Ignore]
-    public function getResources(): Collection
-    {
-        return $this->resources;
-    }
+    public function getResources(): Collection { return $this->resources; }
 
     public function addResource(Resource $resource): static
     {
@@ -251,10 +250,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     #[Ignore]
-    public function getFavorites(): Collection
-    {
-        return $this->favorites;
-    }
+    public function getFavorites(): Collection { return $this->favorites; }
 
     public function addFavorite(Favorite $favorite): static
     {
@@ -276,10 +272,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     #[Groups(['user:read'])]
-    public function isAccountActivated(): bool
-    {
-        return $this->isAccountActivated;
-    }
+    public function isAccountActivated(): bool { return $this->isAccountActivated; }
 
     public function getAccountStatus(): string
     {
@@ -292,10 +285,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getReactivationRequestedAt(): ?\DateTime
-    {
-        return $this->reactivationRequestedAt;
-    }
+    public function getReactivationRequestedAt(): ?\DateTime { return $this->reactivationRequestedAt; }
 
     public function setReactivationRequestedAt(?\DateTime $reactivationRequestedAt): static
     {
@@ -315,10 +305,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getPlainPassword(): ?string
-    {
-        return $this->plainPassword;
-    }
+    public function getPlainPassword(): ?string { return $this->plainPassword; }
 
     public function setPlainPassword(?string $plainPassword): static
     {
@@ -326,14 +313,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @return Collection<int, UserRessourceProgress>
-     */
     #[Ignore]
-    public function getUserRessourceProgress(): Collection
-    {
-        return $this->userRessourceProgress;
-    }
+    public function getUserRessourceProgress(): Collection { return $this->userRessourceProgress; }
 
     public function addUserRessourceProgress(UserRessourceProgress $userRessourceProgress): static
     {
@@ -354,14 +335,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @return Collection<int, Comment>
-     */
     #[Ignore]
-    public function getComments(): Collection
-    {
-        return $this->comments;
-    }
+    public function getComments(): Collection { return $this->comments; }
 
     public function addComment(Comment $comment): static
     {
