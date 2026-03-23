@@ -405,40 +405,6 @@ if (btnComment) {
     });
 }
 
-const btn = document.getElementById('btn-favorite');
-if (btn) {
-    const articleId2 = btn.dataset.articleId;
-    fetch('/favorites/list')
-        .then(r => r.json())
-        .then(favorites => {
-            const isFav = favorites.some(f => f.id == articleId2);
-            btn.classList.toggle('btn-warning', isFav);
-            btn.classList.toggle('btn-outline', !isFav);
-            const label = document.getElementById('btn-favorite-label');
-            if (label) label.textContent = isFav ? '★ Retirer des favoris' : 'Mettre en favori';
-        });
-
-    btn.addEventListener('click', function () {
-        fetch(`/favorites/toggle/${articleId2}`, {
-            method: 'POST',
-            headers: { 'X-Requested-With': 'XMLHttpRequest' }
-        })
-        .then(r => r.json())
-        .then(data => {
-            const label = document.getElementById('btn-favorite-label');
-            if (data.status === 'added') {
-                btn.classList.add('btn-warning');
-                btn.classList.remove('btn-outline');
-                if (label) label.textContent = '★ Retirer des favoris';
-            } else {
-                btn.classList.remove('btn-warning');
-                btn.classList.add('btn-outline');
-                if (label) label.textContent = 'Mettre en favori';
-            }
-        });
-    });
-}
-
 loadComments();
 })();
 </script>
